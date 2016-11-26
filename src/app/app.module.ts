@@ -1,10 +1,19 @@
+import { StoreModule } from '@ngrx/store';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { Routes, RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: LoginComponent
+  }
+]
 
 @NgModule({
   declarations: [
@@ -13,8 +22,10 @@ import { LoginComponent } from './login/login.component';
   ],
   imports: [
     BrowserModule,
-    FormsModule,
-    HttpModule
+    ReactiveFormsModule,
+    HttpModule,
+    RouterModule.forRoot(routes),
+    StoreModule.provideStore({}),
   ],
   providers: [],
   bootstrap: [AppComponent]

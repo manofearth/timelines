@@ -1,6 +1,6 @@
 import { Store } from '@ngrx/store';
 import { LoginAction } from '../reducers';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { LoginComponent } from './login.component';
 
@@ -27,8 +27,8 @@ describe('LoginComponent', () => {
       spyOn(mockStore, 'dispatch');
 
       component.form.controls.email.setValue('test@mail.ru');
-      component.form.controls.password.setValue('somepass');
-      component.form.controls.passwordAgain.setValue('somepass');
+      component.form.controls.password.setValue('some password');
+      component.form.controls.passwordAgain.setValue('some password');
 
       component.submit();
 
@@ -36,8 +36,8 @@ describe('LoginComponent', () => {
         type: 'ACTION_LOGIN',
         payload: {
           email: 'test@mail.ru',
-          password: 'somepass',
-          passwordAgain: 'somepass'
+          password: 'some password',
+          passwordAgain: 'some password'
         }
       }
 
@@ -66,6 +66,7 @@ describe('LoginComponent', () => {
     beforeEach(async(() => {
       TestBed.configureTestingModule({
         declarations: [LoginComponent],
+        imports: [ReactiveFormsModule],
         providers: [
           FormBuilder,
           { provide: Store, useValue: {} }
@@ -82,6 +83,10 @@ describe('LoginComponent', () => {
 
     it('should create', () => {
       expect(component).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('form input[formGroupName=email]')).not.toBeNull();
+      expect(fixture.nativeElement.querySelector('form input[formGroupName=password]')).not.toBeNull();
+      expect(fixture.nativeElement.querySelector('form input[formGroupName=passwordAgain]')).not.toBeNull();
+      expect(fixture.nativeElement.querySelector('#submit-button').innerText).toBe('Заполните все поля');
     });
   });
 });
