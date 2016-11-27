@@ -1,13 +1,13 @@
-import {LoginFormData} from './login/login.component';
+import {SignupFormData} from './signup/signup.component';
 import {Action} from '@ngrx/store';
 
-export type ActionType = 'ACTION_LOGIN';
+export type ActionType = 'ACTION_SIGNUP';
 
 interface TimelinesAction extends Action {
     type: ActionType;
 }
 
-export interface LoginAction extends TimelinesAction {
-    type: 'ACTION_LOGIN';
-    payload: LoginFormData;
-}
+export interface SignupAction extends TimelinesAction {
+    type: 'ACTION_SIGNUP';
+    payload: SignupFormData;
+};

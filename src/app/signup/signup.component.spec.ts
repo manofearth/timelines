@@ -1,28 +1,28 @@
 import { Store } from '@ngrx/store';
-import { LoginAction } from '../reducers';
+import { SignupAction } from '../reducers';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { LoginComponent } from './login.component';
+import { SignupComponent } from './signup.component';
 
-describe('LoginComponent', () => {
+describe('SignupComponent', () => {
 
   describe('Isolated', () => {
 
     let mockStore: any;
     const fb = new FormBuilder();
-    let component: LoginComponent;
+    let component: SignupComponent;
 
     beforeEach(() => {
       mockStore = {
         dispatch: () => { }
-      }
+      };
 
-      component = new LoginComponent(fb, mockStore);
+      component = new SignupComponent(fb, mockStore);
       component.ngOnInit();
 
     });
 
-    it('should emit LOGIN action on submit', () => {
+    it('should emit SIGNUP action on submit', () => {
 
       spyOn(mockStore, 'dispatch');
 
@@ -32,14 +32,14 @@ describe('LoginComponent', () => {
 
       component.submit();
 
-      const expectedAction: LoginAction = {
-        type: 'ACTION_LOGIN',
+      const expectedAction: SignupAction = {
+        type: 'ACTION_SIGNUP',
         payload: {
           email: 'test@mail.ru',
           password: 'some password',
           passwordAgain: 'some password'
         }
-      }
+      };
 
       expect(mockStore.dispatch).toHaveBeenCalledWith(expectedAction);
 
@@ -60,12 +60,12 @@ describe('LoginComponent', () => {
 
 
   describe('Shallow', () => {
-    let component: LoginComponent;
-    let fixture: ComponentFixture<LoginComponent>;
+    let component: SignupComponent;
+    let fixture: ComponentFixture<SignupComponent>;
 
     beforeEach(async(() => {
       TestBed.configureTestingModule({
-        declarations: [LoginComponent],
+        declarations: [SignupComponent],
         imports: [ReactiveFormsModule],
         providers: [
           FormBuilder,
@@ -76,7 +76,7 @@ describe('LoginComponent', () => {
     }));
 
     beforeEach(() => {
-      fixture = TestBed.createComponent(LoginComponent);
+      fixture = TestBed.createComponent(SignupComponent);
       component = fixture.componentInstance;
       fixture.detectChanges();
     });

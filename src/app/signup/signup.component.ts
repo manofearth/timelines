@@ -1,4 +1,4 @@
-import { LoginAction } from '../reducers';
+import { SignupAction } from '../reducers';
 import { Validators, FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
@@ -7,35 +7,35 @@ import * as mapValues from 'lodash/mapValues';
 import * as property from 'lodash/property';
 import * as values from 'lodash/values';
 
-interface LoginForm extends FormGroup {
+interface SignupForm extends FormGroup {
   controls: {
     email: FormControl;
     password: FormControl;
     passwordAgain: FormControl;
   };
-  value: LoginFormData;
+  value: SignupFormData;
 }
 
-export interface LoginFormData {
+export interface SignupFormData {
   email: string;
   password: string;
   passwordAgain: string;
 }
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
+  selector: 'app-signup',
+  templateUrl: './signup.component.html',
+  styleUrls: ['./signup.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoginComponent implements OnInit {
+export class SignupComponent implements OnInit {
 
-  form: LoginForm;
+  form: SignupForm;
 
   private readonly errorMessages: { [key: string]: string } = {
     required: 'Заполните все поля',
     passwordsNotEqual: 'Пароли не совпадают',
-    incorrectEmail: 'Ошибка в email',
+    incorrectEmail: 'Введите правильный email',
   };
 
   constructor(private fb: FormBuilder, private store: Store<AppState>) {
@@ -43,14 +43,14 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.form = <LoginForm>this.fb.group({
+    this.form = <SignupForm>this.fb.group({
       email: [null, Validators.compose([
         Validators.required,
         validateEmail,
       ])],
       password: [null, Validators.required],
       passwordAgain: [null, Validators.required],
-    }, { validator: validateLoginForm });
+    }, { validator: validateSignupForm });
 
   }
 
@@ -59,8 +59,8 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    const action: LoginAction = {
-      type: 'ACTION_LOGIN',
+    const action: SignupAction = {
+      type: 'ACTION_SIGNUP',
       payload: this.form.value
     };
     this.store.dispatch(action);
@@ -78,7 +78,7 @@ export class LoginComponent implements OnInit {
   }
 }
 
-function validateLoginForm(form: LoginForm) {
+function validateSignupForm(form: SignupForm) {
 
   const errors = values(mapValues(form.controls, property('errors')));
   const mergedErrors = Object.assign({}, ...errors);
