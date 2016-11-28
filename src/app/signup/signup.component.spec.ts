@@ -1,7 +1,7 @@
 import { Store } from '@ngrx/store';
 import { SignupAction } from '../reducers';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, TestBed } from '@angular/core/testing';
 import { SignupComponent } from './signup.component';
 
 describe('SignupComponent', () => {
@@ -14,7 +14,8 @@ describe('SignupComponent', () => {
 
     beforeEach(() => {
       mockStore = {
-        dispatch: () => { }
+        dispatch: () => {
+        }
       };
 
       component = new SignupComponent(fb, mockStore);
@@ -60,8 +61,6 @@ describe('SignupComponent', () => {
 
 
   describe('Shallow', () => {
-    let component: SignupComponent;
-    let fixture: ComponentFixture<SignupComponent>;
 
     beforeEach(async(() => {
       TestBed.configureTestingModule({
@@ -75,17 +74,15 @@ describe('SignupComponent', () => {
         .compileComponents();
     }));
 
-    beforeEach(() => {
-      fixture = TestBed.createComponent(SignupComponent);
-      component = fixture.componentInstance;
-      fixture.detectChanges();
-    });
-
     it('should create', () => {
-      expect(component).toBeTruthy();
-      expect(fixture.nativeElement.querySelector('form input[formGroupName=email]')).not.toBeNull();
-      expect(fixture.nativeElement.querySelector('form input[formGroupName=password]')).not.toBeNull();
-      expect(fixture.nativeElement.querySelector('form input[formGroupName=passwordAgain]')).not.toBeNull();
+
+      const fixture = TestBed.createComponent(SignupComponent);
+      fixture.detectChanges();
+
+      expect(fixture.componentInstance).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('#email')).not.toBeNull();
+      expect(fixture.nativeElement.querySelector('#password')).not.toBeNull();
+      expect(fixture.nativeElement.querySelector('#password-again')).not.toBeNull();
       expect(fixture.nativeElement.querySelector('#submit-button').innerText).toBe('Заполните все поля');
     });
   });

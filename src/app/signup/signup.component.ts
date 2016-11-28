@@ -3,9 +3,9 @@ import { Validators, FormGroup, FormControl, FormBuilder } from '@angular/forms'
 import { Store } from '@ngrx/store';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { AppState } from '../app-state';
-import * as mapValues from 'lodash/mapValues';
-import * as property from 'lodash/property';
-import * as values from 'lodash/values';
+import { composeChildrenValidators } from '../shared/compose-children-validators.validator';
+import { ifEmptyObject, firstProperty } from '../shared/helpers';
+import { validateEmail } from '../shared/email.validator';
 
 interface SignupForm extends FormGroup {
   controls: {
@@ -66,40 +66,26 @@ export class SignupComponent implements OnInit {
     this.store.dispatch(action);
   }
 
+  // noinspection JSUnusedGlobalSymbols
   get submitButtonTitle() {
 
     if (this.form.errors === null) {
       return 'Зарегистрироваться';
     }
 
-    const firstError = Object.keys(this.form.errors)[0];
+    const firstErrorKey = firstProperty(this.form.errors);
 
-    return this.errorMessages[firstError];
+    return this.errorMessages[firstErrorKey];
   }
 }
 
 function validateSignupForm(form: SignupForm) {
 
-  const errors = values(mapValues(form.controls, property('errors')));
-  const mergedErrors = Object.assign({}, ...errors);
+  const errors = Object.assign({}, composeChildrenValidators(form));
 
   if (form.controls.password.value !== form.controls.passwordAgain.value) {
-    mergedErrors.passwordsNotEqual = true;
+    errors['passwordsNotEqual'] = true;
   }
 
-  if (Object.keys(mergedErrors).length === 0) {
-    return null;
-  }
-
-  return mergedErrors;
-
-}
-
-function validateEmail(control: FormControl): null | { incorrectEmail: true } {
-  const valueAsString = String(control.value);
-  if (valueAsString.match(/^.+@.+\..+$/) === null) {
-    return { incorrectEmail: true };
-  } else {
-    return null;
-  }
+  return ifEmptyObject(errors, null);
 }

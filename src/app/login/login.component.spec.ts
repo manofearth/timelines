@@ -1,7 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { async, TestBed } from '@angular/core/testing';
 import { LoginComponent } from './login.component';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { LoginAction } from '../reducers';
 import { Store } from '@ngrx/store';
 
@@ -12,15 +11,16 @@ describe('LoginComponent', () => {
     it('should dispatch LOGIN event on submit', () => {
 
       const mockStore: any = {
-        next: () => { }
+        dispatch: () => {
+        }
       };
-      spyOn(mockStore, 'next');
+      spyOn(mockStore, 'dispatch');
 
       const component = new LoginComponent(new FormBuilder(), mockStore);
       component.ngOnInit();
 
       component.form.controls.email.setValue('test@test.ru');
-      component.form.controls.password.setValue('abcd');
+      component.form.controls.password.setValue('some password');
 
       component.submit();
 
@@ -28,23 +28,21 @@ describe('LoginComponent', () => {
         type: 'ACTION_LOGIN',
         payload: {
           email: 'test@test.ru',
-          password: 'abcd',
+          password: 'some password',
         }
       };
 
-      expect(mockStore.next).toHaveBeenCalledWith(expectedAction);
+      expect(mockStore.dispatch).toHaveBeenCalledWith(expectedAction);
     });
 
   });
 
   describe('Shallow', () => {
 
-    let component: LoginComponent;
-    let fixture: ComponentFixture<LoginComponent>;
-
     beforeEach(async(() => {
       TestBed.configureTestingModule({
         declarations: [LoginComponent],
+        imports: [ReactiveFormsModule],
         providers: [
           FormBuilder,
           { provide: Store, useValue: {} },
@@ -53,14 +51,15 @@ describe('LoginComponent', () => {
         .compileComponents();
     }));
 
-    beforeEach(() => {
-      fixture = TestBed.createComponent(LoginComponent);
-      component = fixture.componentInstance;
-      fixture.detectChanges();
-    });
-
     it('should create', () => {
-      expect(component).toBeTruthy();
+
+      const fixture = TestBed.createComponent(LoginComponent);
+      fixture.detectChanges();
+
+      expect(fixture.componentInstance).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('#email')).not.toBeNull();
+      expect(fixture.nativeElement.querySelector('#password')).not.toBeNull();
+      expect(fixture.nativeElement.querySelector('#submit-button').innerText).toBe('Заполните все поля');
     });
 
   });
