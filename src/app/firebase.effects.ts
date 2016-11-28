@@ -12,11 +12,13 @@ export class FirebaseEffects {
 
   @Effect() signup: Observable<FirebaseAuthState> = this.actions
     .ofType('ACTION_SIGNUP')
-    .switchMap((action: SignupAction) => PromiseObservable.create<FirebaseAuthState>(
-      <Promise<FirebaseAuthState>>this.fire.auth.createUser({
+    .flatMap((action: SignupAction) => <Promise<FirebaseAuthState>>this.fire.auth.createUser({
         email: action.payload.email,
         password: action.payload.password,
       })
-    ));
+    )
+    .flatMap((authState: FirebaseAuthState) => this.fire.database.object('/users/' + authState.uid).set({
+
+    }));
 
 }
