@@ -9,3 +9,7 @@ export function ifEmptyObject(obj: Object, ifEmpty: any): any {
 export function firstProperty(obj: {}) {
   return Object.keys(obj)[0];
 }
+
+export function coalesce(value: any, ifNull: any): any {
+  return value === null ? ifNull : value;
+}

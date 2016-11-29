@@ -15,7 +15,11 @@ describe('SignupComponent', () => {
     beforeEach(() => {
       mockStore = {
         dispatch: () => {
-        }
+        },
+        select: () => ({
+          subscribe: () => {
+          },
+        }),
       };
 
       component = new SignupComponent(fb, mockStore);
@@ -68,8 +72,16 @@ describe('SignupComponent', () => {
         imports: [ReactiveFormsModule],
         providers: [
           FormBuilder,
-          { provide: Store, useValue: {} }
-        ]
+          {
+            provide: Store,
+            useValue: {
+              select: () => ({
+                subscribe: () => {
+                },
+              }),
+            },
+          },
+        ],
       })
         .compileComponents();
     }));

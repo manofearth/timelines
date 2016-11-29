@@ -1,11 +1,15 @@
 import { SignupAction } from '../reducers';
 import { Validators, FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { AppState } from '../app-state';
 import { composeChildrenValidators } from '../shared/compose-children-validators.validator';
-import { ifEmptyObject, firstProperty } from '../shared/helpers';
+import { ifEmptyObject, firstProperty, coalesce } from '../shared/helpers';
 import { validateEmail } from '../shared/email.validator';
+import { AuthState } from '../reducers/auth.reducer';
+import { Subscription } from 'rxjs';
+
+const MIN_PASSWORD_LENGTH = 6;
 
 interface SignupForm extends FormGroup {
   controls: {
@@ -28,19 +32,20 @@ export interface SignupFormData {
   styleUrls: ['./signup.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SignupComponent implements OnInit {
+export class SignupComponent implements OnInit, OnDestroy {
 
   form: SignupForm;
+  error: Error;
+  appStateSubscription: Subscription;
 
   private readonly errorMessages: { [key: string]: string } = {
-    required: 'Заполните все поля',
-    passwordsNotEqual: 'Пароли не совпадают',
     incorrectEmail: 'Введите правильный email',
+    passwordsNotEqual: 'Пароли не совпадают',
+    required: 'Заполните все поля',
+    shortPassword: 'Введите пароль от ' + MIN_PASSWORD_LENGTH + ' симоволов',
   };
 
-  constructor(private fb: FormBuilder, private store: Store<AppState>) {
-
-  }
+  constructor(private fb: FormBuilder, private store: Store<AppState>, private changeDetector: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.form = <SignupForm>this.fb.group({
@@ -52,6 +57,15 @@ export class SignupComponent implements OnInit {
       passwordAgain: [null, Validators.required],
     }, { validator: validateSignupForm });
 
+    this.appStateSubscription = this.store.select('auth').subscribe((auth: AuthState) => {
+      this.error = auth.error;
+      this.changeDetector.markForCheck();
+    });
+
+  }
+
+  ngOnDestroy(): void {
+    this.appStateSubscription.unsubscribe();
   }
 
   submit() {
@@ -83,6 +97,9 @@ function validateSignupForm(form: SignupForm) {
 
   const errors = Object.assign({}, composeChildrenValidators(form));
 
+  if (coalesce(form.controls.password.value, '').length < MIN_PASSWORD_LENGTH) {
+    errors['shortPassword'] = true;
+  }
   if (form.controls.password.value !== form.controls.passwordAgain.value) {
     errors['passwordsNotEqual'] = true;
   }

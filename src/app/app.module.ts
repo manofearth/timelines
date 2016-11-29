@@ -11,6 +11,8 @@ import { AngularFireModule } from 'angularfire2';
 import { firebaseConfig } from '../environments/firebase.config';
 import { EffectsModule } from '@ngrx/effects';
 import { FirebaseEffects } from './firebase.effects';
+import { authReducer } from './reducers/auth.reducer';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 const routes: Routes = [
   {
@@ -34,7 +36,11 @@ const routes: Routes = [
     ReactiveFormsModule,
     HttpModule,
     RouterModule.forRoot(routes),
-    StoreModule.provideStore({}),
+    StoreModule.provideStore(
+      { auth: authReducer },
+      { auth: { error: null, user: null } }
+    ),
+    StoreDevtoolsModule.instrumentOnlyWithExtension(),
     AngularFireModule.initializeApp(firebaseConfig),
     EffectsModule.run(FirebaseEffects),
   ],

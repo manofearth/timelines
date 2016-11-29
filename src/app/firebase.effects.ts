@@ -1,24 +1,42 @@
 import { Injectable } from '@angular/core';
 import { AngularFire, FirebaseAuthState } from 'angularfire2';
 import { Effect, Actions } from '@ngrx/effects';
-import { Observable } from 'rxjs';
-import { SignupAction } from './reducers';
-import { PromiseObservable } from 'rxjs/observable/PromiseObservable';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/of';
+import 'rxjs/add/observable/fromPromise';
+import 'rxjs/add/operator/mergeMap';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/catch';
+import { SignupAction, SignupSuccessAction, SignupErrorAction } from './reducers';
 
 @Injectable()
 export class FirebaseEffects {
 
-  @Effect() signup: Observable<FirebaseAuthState> = this.actions
+  @Effect() signup: Observable<SignupSuccessAction|SignupErrorAction> = this.actions
     .ofType('ACTION_SIGNUP')
-    .flatMap((action: SignupAction) => <Promise<FirebaseAuthState>>this.fire.auth.createUser({
-      email: action.payload.email,
-      password: action.payload.password,
-    }));
+    .flatMap((action: SignupAction) =>
+      Observable.fromPromise(
+        <Promise<FirebaseAuthState>>this.fire.auth.createUser({
+          email: action.payload.email,
+          password: action.payload.password,
+        }))
+        .map((authState: FirebaseAuthState): SignupSuccessAction => ({
+          type: 'ACTION_SIGNUP_SUCCESS',
+          payload: { success: true },
+        }))
+        .catch((error: Error): Observable<SignupErrorAction> => Observable.of({
+          type: <'ACTION_SIGNUP_ERROR'>'ACTION_SIGNUP_ERROR',
+          payload: error,
+        }))
+    );
 
-  @Effect() loggedIn: Observable<FirebaseAuthState> = this.fire.auth
-    .do(val => { console.log(val); })
-    .filter(() => false);
+  /*@Effect() loggedIn: Observable<FirebaseAuthState> = this.fire.auth
+   .do(val => {
+   console.log(val);
+   })
+   .filter(() => false); todo */
 
-  constructor(private actions: Actions, private fire: AngularFire) { }
+  constructor(private actions: Actions, private fire: AngularFire) {
+  }
 
 }

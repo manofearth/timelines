@@ -1,8 +1,8 @@
 import { FirebaseEffects } from './firebase.effects';
 import { EffectsRunner } from '@ngrx/effects/testing';
 import { Actions } from '@ngrx/effects';
-import { AngularFire, FirebaseObjectObservable } from 'angularfire2';
-import { SignupAction } from './reducers';
+import { AngularFire } from 'angularfire2';
+import { SignupAction, SignupSuccessAction, SignupErrorAction } from './reducers';
 
 describe('FirebaseEffects', () => {
 
@@ -23,9 +23,6 @@ describe('FirebaseEffects', () => {
 
     effects = new FirebaseEffects(new Actions(runner), firebase);
 
-  });
-  describe('on ACTION_SIGNUP', () => {
-
     const action: SignupAction = {
       type: 'ACTION_SIGNUP',
       payload: {
@@ -35,12 +32,14 @@ describe('FirebaseEffects', () => {
       },
     };
 
+    runner.queue(action);
+  });
+  describe('on ACTION_SIGNUP', () => {
+
     it('should create firebase user', () => {
 
       spyOn(firebase.auth, 'createUser').and.returnValue(new Promise(() => {
       }));
-
-      runner.queue(action);
 
       effects.signup.subscribe();
 
@@ -51,14 +50,25 @@ describe('FirebaseEffects', () => {
 
     });
 
-    it('should emit successful SIGNUP_RESULT', () => {
+    it('should emit ACTION_SIGNUP_SUCCESS', done => {
 
       spyOn(firebase.auth, 'createUser').and.returnValue(Promise.resolve('some response'));
 
-      runner.queue(action);
+      effects.signup.subscribe((result: SignupSuccessAction) => {
+        expect(result.type).toBe('ACTION_SIGNUP_SUCCESS');
+        done();
+      });
 
-      effects.signup.subscribe((result: SignupResultAction) => {
+    });
 
+    it('should emit ACTION_SIGNUP_ERROR', done => {
+
+      spyOn(firebase.auth, 'createUser').and.returnValue(Promise.reject(new Error('some error')));
+
+      effects.signup.subscribe((result: SignupErrorAction) => {
+        expect(result.type).toBe('ACTION_SIGNUP_ERROR');
+        expect(result.payload).toEqual(new Error('some error'));
+        done();
       });
 
     });

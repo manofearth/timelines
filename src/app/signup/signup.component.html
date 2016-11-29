@@ -18,5 +18,8 @@
         <a href="/login">я уже зарегистрирован</a>
       </div>
     </form>
+    <div class="alert alert-danger" *ngIf="error">
+      {{error.message}}
+    </div>
   </div>
 </div>
