@@ -9,22 +9,15 @@ describe('FirebaseEffects', () => {
   let effects: FirebaseEffects;
   let runner: EffectsRunner;
   let firebase: AngularFire;
-  let firebaseObject: FirebaseObjectObservable<any/*todo*/>;
 
   beforeEach(() => {
 
     runner = new EffectsRunner();
-    firebaseObject = <any>{
-      set: () => {
-      }
-    };
+
     firebase = <any> {
       auth: {
         createUser: () => {
         }
-      },
-      database: {
-        object: () => firebaseObject
       }
     };
 
@@ -58,22 +51,16 @@ describe('FirebaseEffects', () => {
 
     });
 
-    it('should create record in database if firebase auth created', () => {
+    it('should emit successful SIGNUP_RESULT', () => {
 
-      spyOn(firebase.auth, 'createUser').and.returnValue(Promise.resolve({
-        uid: 'test_uid',
-      }));
-      spyOn(firebase.database, 'object').and.callThrough();
-      spyOn(firebaseObject, 'set');
+      spyOn(firebase.auth, 'createUser').and.returnValue(Promise.resolve('some response'));
 
       runner.queue(action);
 
-      effects.signup.subscribe();
+      effects.signup.subscribe((result: SignupResultAction) => {
 
-      expect(firebase.database.object).toHaveBeenCalledWith('/users/test_uid');
-      expect(firebaseObject.set).toHaveBeenCalledWith({
-        email: 'test@test.ru'
       });
+
     });
 
   });

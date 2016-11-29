@@ -8,17 +8,17 @@ import { PromiseObservable } from 'rxjs/observable/PromiseObservable';
 @Injectable()
 export class FirebaseEffects {
 
-  constructor(private actions: Actions, private fire: AngularFire) { }
-
   @Effect() signup: Observable<FirebaseAuthState> = this.actions
     .ofType('ACTION_SIGNUP')
     .flatMap((action: SignupAction) => <Promise<FirebaseAuthState>>this.fire.auth.createUser({
-        email: action.payload.email,
-        password: action.payload.password,
-      })
-    )
-    .flatMap((authState: FirebaseAuthState) => this.fire.database.object('/users/' + authState.uid).set({
-
+      email: action.payload.email,
+      password: action.payload.password,
     }));
+
+  @Effect() loggedIn: Observable<FirebaseAuthState> = this.fire.auth
+    .do(val => { console.log(val); })
+    .filter(() => false);
+
+  constructor(private actions: Actions, private fire: AngularFire) { }
 
 }

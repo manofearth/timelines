@@ -13,6 +13,11 @@ export interface SignupAction extends TimelinesAction {
     payload: SignupFormData;
 };
 
+export interface SignupResultAction extends TimelinesAction {
+    type: 'ACTION_SIGNUP_RESULT';
+    payload: ;
+};
+
 export interface LoginAction extends TimelinesAction {
     type: 'ACTION_LOGIN';
     payload: LoginFormData;
