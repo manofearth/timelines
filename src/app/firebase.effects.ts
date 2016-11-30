@@ -7,7 +7,8 @@ import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-import { SignupAction, SignupSuccessAction, SignupErrorAction } from './reducers';
+import { SignupAction, SignupSuccessAction, SignupErrorAction } from './reducers/auth.reducer';
+import { LoginSuccessAction } from './reducers/auth.reducer';
 
 @Injectable()
 export class FirebaseEffects {
@@ -30,11 +31,11 @@ export class FirebaseEffects {
         }))
     );
 
-  /*@Effect() loggedIn: Observable<FirebaseAuthState> = this.fire.auth
-   .do(val => {
-   console.log(val);
-   })
-   .filter(() => false); todo */
+  @Effect() login: Observable<LoginSuccessAction> = this.fire.auth
+    .map((auth: FirebaseAuthState) => ({
+      type: <'ACTION_LOGIN_SUCCESS'>'ACTION_LOGIN_SUCCESS',
+      payload: auth,
+    }));
 
   constructor(private actions: Actions, private fire: AngularFire) {
   }

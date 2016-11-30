@@ -1,28 +1,26 @@
-import { SignupFormData } from '../signup/signup.component';
-import { Action } from '@ngrx/store';
-import { LoginFormData } from '../login/login.component';
+import { ActionReducer, combineReducers } from '@ngrx/store';
+import { authReducer, AuthState } from './auth.reducer';
+import { compose } from '@ngrx/core/compose';
+import { storeFreeze } from 'ngrx-store-freeze';
 
-export type ActionType = 'ACTION_SIGNUP' | 'ACTION_LOGIN' | 'ACTION_SIGNUP_SUCCESS' | 'ACTION_SIGNUP_ERROR';
-
-export interface TimelinesAction extends Action {
-  type: ActionType;
+export interface AppState {
+  auth: AuthState,
 }
 
-export interface SignupAction extends TimelinesAction {
-  type: 'ACTION_SIGNUP';
-  payload: SignupFormData;
+export const initialState: AppState = {
+  auth: {
+    error: null,
+    user: null,
+  }
+};
+
+interface AppReducers {
+  auth: ActionReducer<AuthState>;
 }
 
-export interface SignupSuccessAction extends TimelinesAction {
-  type: 'ACTION_SIGNUP_SUCCESS';
-}
+const reducers: AppReducers = {
+  auth: authReducer,
+};
 
-export interface SignupErrorAction extends TimelinesAction {
-  type: 'ACTION_SIGNUP_ERROR';
-  payload: Error;
-}
-
-export interface LoginAction extends TimelinesAction {
-  type: 'ACTION_LOGIN';
-  payload: LoginFormData;
-}
+export const developmentReducer: ActionReducer<AppState> = compose(storeFreeze, combineReducers)(reducers);
+export const productionReducer: ActionReducer<AppState> = combineReducers(reducers);

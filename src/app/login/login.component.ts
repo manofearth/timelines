@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { AppState } from '../app-state';
-import { LoginAction } from '../reducers';
+import { AppState } from '../reducers';
+import { LoginAction } from '../reducers/auth.reducer';
 import { composeChildrenValidators } from '../shared/compose-children-validators.validator';
 import { firstProperty } from '../shared/helpers';
 import { validateEmail } from '../shared/email.validator';

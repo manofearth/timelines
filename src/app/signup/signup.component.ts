@@ -1,13 +1,13 @@
-import { SignupAction } from '../reducers';
+import { AppState } from '../reducers';
 import { Validators, FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { AppState } from '../app-state';
 import { composeChildrenValidators } from '../shared/compose-children-validators.validator';
 import { ifEmptyObject, firstProperty, coalesce, notEmpty } from '../shared/helpers';
 import { validateEmail } from '../shared/email.validator';
-import { AuthState } from '../reducers/auth.reducer';
+import { AuthState, SignupAction } from '../reducers/auth.reducer';
 import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 const MIN_PASSWORD_LENGTH = 6;
 
@@ -45,7 +45,13 @@ export class SignupComponent implements OnInit, OnDestroy {
     shortPassword: 'Введите пароль от ' + MIN_PASSWORD_LENGTH + ' символов',
   };
 
-  constructor(private fb: FormBuilder, private store: Store<AppState>, private changeDetector: ChangeDetectorRef) { }
+  constructor(
+    private fb: FormBuilder,
+    private store: Store<AppState>,
+    private router: Router,
+    private changeDetector: ChangeDetectorRef,
+  ) {
+  }
 
   ngOnInit() {
     this.form = <SignupForm>this.fb.group({
@@ -60,6 +66,9 @@ export class SignupComponent implements OnInit, OnDestroy {
     this.appStateSubscription = this.store.select('auth').subscribe((auth: AuthState) => {
       this.error = auth.error;
       this.changeDetector.markForCheck();
+      if(auth.user && !auth.error) {
+        this.router.navigate(['/timelines']);
+      }
     });
 
   }

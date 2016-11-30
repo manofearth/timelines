@@ -1,8 +1,13 @@
 import { FirebaseEffects } from './firebase.effects';
 import { EffectsRunner } from '@ngrx/effects/testing';
 import { Actions } from '@ngrx/effects';
-import { AngularFire } from 'angularfire2';
-import { SignupAction, SignupSuccessAction, SignupErrorAction } from './reducers';
+import { AngularFire, FirebaseAuthState } from 'angularfire2';
+import { SignupAction, SignupSuccessAction, SignupErrorAction, LoginSuccessAction } from './reducers/auth.reducer';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
+
+class MockFireAuth extends ReplaySubject<FirebaseAuthState> {
+  createUser() {}
+}
 
 describe('FirebaseEffects', () => {
 
@@ -15,10 +20,7 @@ describe('FirebaseEffects', () => {
     runner = new EffectsRunner();
 
     firebase = <any> {
-      auth: {
-        createUser: () => {
-        }
-      }
+      auth: new MockFireAuth(),
     };
 
     effects = new FirebaseEffects(new Actions(runner), firebase);
@@ -34,6 +36,7 @@ describe('FirebaseEffects', () => {
 
     runner.queue(action);
   });
+
   describe('on ACTION_SIGNUP', () => {
 
     it('should create firebase user', () => {
@@ -71,6 +74,21 @@ describe('FirebaseEffects', () => {
         done();
       });
 
+    });
+
+  });
+
+  describe('on firebase auth state change', () => {
+
+    it('should emit ACTION_LOGIN_SUCCESS', done => {
+
+      firebase.auth.next(<any>'firebase auth state');
+
+      effects.login.subscribe((action: LoginSuccessAction) => {
+        expect(action.type).toBe('ACTION_LOGIN_SUCCESS');
+        expect(action.payload).toBe('firebase auth state');
+        done();
+      })
     });
 
   });

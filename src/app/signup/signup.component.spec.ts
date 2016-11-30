@@ -1,8 +1,10 @@
 import { Store } from '@ngrx/store';
-import { SignupAction } from '../reducers';
+import { SignupAction, AuthState } from '../reducers/auth.reducer';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { async, TestBed } from '@angular/core/testing';
 import { SignupComponent } from './signup.component';
+import { ReplaySubject } from 'rxjs';
+import { Router } from '@angular/router';
 
 describe('SignupComponent', () => {
 
@@ -11,22 +13,31 @@ describe('SignupComponent', () => {
     let mockStore: any;
     const fb = new FormBuilder();
     let component: SignupComponent;
+    let mockRouter: any;
+    let stateChanges: ReplaySubject<AuthState>;
 
     beforeEach(() => {
+
+      stateChanges = new ReplaySubject<AuthState>();
+
       mockStore = {
         dispatch: () => {
         },
-        select: () => ({
-          subscribe: () => {
-          },
-        }),
+        select: () => stateChanges,
       };
 
+      mockRouter = {
+        navigate: () => {
+        }
+      };
+
+      // noinspection JSUnusedGlobalSymbols
       const mockChangeDetector: any = {
-        markForChanges: () => { }
+        markForCheck: () => {
+        }
       };
 
-      component = new SignupComponent(fb, mockStore, mockChangeDetector);
+      component = new SignupComponent(fb, mockStore, mockRouter, mockChangeDetector);
       component.ngOnInit();
 
     });
@@ -88,6 +99,20 @@ describe('SignupComponent', () => {
       expect(component.submitButtonTitle).toBe('Зарегистрироваться');
     });
 
+    it('should navigate to protected area if user authorized w/o error', () => {
+
+      spyOn(mockRouter, 'navigate');
+
+      stateChanges.next({ error: null, user: null });
+      stateChanges.next({ error: <any>'some error', user: null });
+      stateChanges.next({ error: <any>'some error', user: <any>'some user' });
+      expect(mockRouter.navigate).not.toHaveBeenCalled();
+
+      stateChanges.next({ error: null, user: <any>'some user' });
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/timelines']);
+
+    });
+
   });
 
 
@@ -107,7 +132,10 @@ describe('SignupComponent', () => {
                 },
               }),
             },
-          },
+          }, {
+            provide: Router,
+            useValue: {},
+          }
         ],
       })
         .compileComponents();

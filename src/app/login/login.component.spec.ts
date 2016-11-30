@@ -1,7 +1,7 @@
 import { async, TestBed } from '@angular/core/testing';
 import { LoginComponent } from './login.component';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { LoginAction } from '../reducers';
+import { LoginAction } from '../reducers/auth.reducer';
 import { Store } from '@ngrx/store';
 
 describe('LoginComponent', () => {
