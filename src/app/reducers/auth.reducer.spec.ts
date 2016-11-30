@@ -20,18 +20,19 @@ describe('signup-errors reducer', () => {
 
   });
 
-  it('on ACTION_SIGNUP_SUCCESS should erase error from state', () => {
+  it('on ACTION_SIGNUP_SUCCESS should push user in state and erase error', () => {
 
     const action: SignupSuccessAction = {
       type: 'ACTION_SIGNUP_SUCCESS',
+      payload: <any>'firebase auth state'
     };
 
-    const state: any = Object.freeze({ error: 'some error' });
+    const state: any = Object.freeze({ error: 'some error', user: null });
 
     const newState = authReducer(state, action);
 
     expect(newState).not.toBe(state);
-    expect(newState).toEqual({ error: null });
+    expect(newState).toEqual({ error: null, user: 'firebase auth state' });
 
   });
 
@@ -39,7 +40,7 @@ describe('signup-errors reducer', () => {
 
     const action: LoginSuccessAction = {
       type: 'ACTION_LOGIN_SUCCESS',
-      payload: <any>'some user',
+      payload: <any>'firebase auth state',
     };
 
     const state: any = Object.freeze({ error: 'some error'});
@@ -49,7 +50,7 @@ describe('signup-errors reducer', () => {
     expect(newState).not.toBe(state);
     expect(newState).toEqual({
       error: null,
-      user: 'some user',
+      user: 'firebase auth state',
     });
 
   });

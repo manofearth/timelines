@@ -9,7 +9,7 @@ export interface AuthState {
 }
 
 export type AuthActionType = 'ACTION_SIGNUP' | 'ACTION_LOGIN' | 'ACTION_SIGNUP_SUCCESS' | 'ACTION_SIGNUP_ERROR'
-  | 'ACTION_LOGIN_SUCCESS';
+  | 'ACTION_LOGIN_SUCCESS' | 'ACTION_LOGIN_ERROR';
 
 export interface AuthAction extends Action {
   type: AuthActionType;
@@ -22,6 +22,7 @@ export interface SignupAction extends AuthAction {
 
 export interface SignupSuccessAction extends AuthAction {
   type: 'ACTION_SIGNUP_SUCCESS';
+  payload: FirebaseAuthState;
 }
 
 export interface SignupErrorAction extends AuthAction {
@@ -39,17 +40,21 @@ export interface LoginSuccessAction extends AuthAction {
   payload: FirebaseAuthState;
 }
 
+export interface LoginErrorAction extends AuthAction {
+  type: 'ACTION_LOGIN_ERROR';
+  payload: Error;
+}
+
 export function authReducer(state: AuthState, action: AuthAction): AuthState {
   switch (action.type) {
     case 'ACTION_SIGNUP_SUCCESS':
-      return Object.assign({}, state, { error: null });
-    case 'ACTION_SIGNUP_ERROR':
-      return Object.assign({}, state, { error: action.payload });
     case 'ACTION_LOGIN_SUCCESS':
       return {
         error: null,
         user: action.payload,
       };
+    case 'ACTION_SIGNUP_ERROR':
+      return Object.assign({}, state, { error: action.payload });
     default:
       return state;
   }

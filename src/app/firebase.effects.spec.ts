@@ -1,13 +1,8 @@
 import { FirebaseEffects } from './firebase.effects';
 import { EffectsRunner } from '@ngrx/effects/testing';
 import { Actions } from '@ngrx/effects';
-import { AngularFire, FirebaseAuthState } from 'angularfire2';
-import { SignupAction, SignupSuccessAction, SignupErrorAction, LoginSuccessAction } from './reducers/auth.reducer';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
-
-class MockFireAuth extends ReplaySubject<FirebaseAuthState> {
-  createUser() {}
-}
+import { AngularFire } from 'angularfire2';
+import { SignupAction, SignupSuccessAction, SignupErrorAction, LoginAction } from './reducers/auth.reducer';
 
 describe('FirebaseEffects', () => {
 
@@ -20,29 +15,38 @@ describe('FirebaseEffects', () => {
     runner = new EffectsRunner();
 
     firebase = <any> {
-      auth: new MockFireAuth(),
+      auth: {
+        createUser: () => {
+        },
+        login: () => {
+        },
+      },
     };
 
     effects = new FirebaseEffects(new Actions(runner), firebase);
 
-    const action: SignupAction = {
-      type: 'ACTION_SIGNUP',
-      payload: {
-        email: 'test@test.ru',
-        password: '123456',
-        passwordAgain: '123456',
-      },
-    };
-
-    runner.queue(action);
   });
 
   describe('on ACTION_SIGNUP', () => {
 
+    beforeEach(() => {
+
+      const action: SignupAction = {
+        type: 'ACTION_SIGNUP',
+        payload: {
+          email: 'test@test.ru',
+          password: '123456',
+          passwordAgain: '123456',
+        },
+      };
+
+      runner.queue(action);
+
+    });
+
     it('should create firebase user', () => {
 
-      spyOn(firebase.auth, 'createUser').and.returnValue(new Promise(() => {
-      }));
+      spyOn(firebase.auth, 'createUser').and.returnValue(Promise.resolve());
 
       effects.signup.subscribe();
 
@@ -55,10 +59,11 @@ describe('FirebaseEffects', () => {
 
     it('should emit ACTION_SIGNUP_SUCCESS', done => {
 
-      spyOn(firebase.auth, 'createUser').and.returnValue(Promise.resolve('some response'));
+      spyOn(firebase.auth, 'createUser').and.returnValue(Promise.resolve('firebase auth state'));
 
       effects.signup.subscribe((result: SignupSuccessAction) => {
         expect(result.type).toBe('ACTION_SIGNUP_SUCCESS');
+        expect(result.payload).toBe('firebase auth state');
         done();
       });
 
@@ -78,18 +83,35 @@ describe('FirebaseEffects', () => {
 
   });
 
-  describe('on firebase auth state change', () => {
+  describe('on ACTION_LOGIN', () => {
 
-    it('should emit ACTION_LOGIN_SUCCESS', done => {
+    beforeEach(() => {
 
-      firebase.auth.next(<any>'firebase auth state');
+      const action: LoginAction = {
+        type: 'ACTION_LOGIN',
+        payload: {
+          email: 'test@test.ru',
+          password: '123456',
+        },
+      };
 
-      effects.login.subscribe((action: LoginSuccessAction) => {
-        expect(action.type).toBe('ACTION_LOGIN_SUCCESS');
-        expect(action.payload).toBe('firebase auth state');
-        done();
-      })
+      runner.queue(action);
+
     });
+
+    it('should login firebase user', () => {
+
+      spyOn(firebase.auth, 'login').and.returnValue(Promise.resolve());
+
+      effects.login.subscribe();
+
+      expect(firebase.auth.login).toHaveBeenCalledWith({
+        email: 'test@test.ru',
+        password: '123456',
+      });
+
+    });
+
 
   });
 
