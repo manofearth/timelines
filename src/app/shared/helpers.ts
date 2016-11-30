@@ -13,3 +13,11 @@ export function firstProperty(obj: {}) {
 export function coalesce(value: any, ifNull: any): any {
   return value === null ? ifNull : value;
 }
+
+export function empty(value: any): boolean {
+  return value === null || value === undefined || value === '';
+}
+
+export function notEmpty(value: any): boolean {
+  return !empty(value);
+}

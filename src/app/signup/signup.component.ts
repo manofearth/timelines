@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { AppState } from '../app-state';
 import { composeChildrenValidators } from '../shared/compose-children-validators.validator';
-import { ifEmptyObject, firstProperty, coalesce } from '../shared/helpers';
+import { ifEmptyObject, firstProperty, coalesce, notEmpty } from '../shared/helpers';
 import { validateEmail } from '../shared/email.validator';
 import { AuthState } from '../reducers/auth.reducer';
 import { Subscription } from 'rxjs';
@@ -42,10 +42,10 @@ export class SignupComponent implements OnInit, OnDestroy {
     incorrectEmail: 'Введите правильный email',
     passwordsNotEqual: 'Пароли не совпадают',
     required: 'Заполните все поля',
-    shortPassword: 'Введите пароль от ' + MIN_PASSWORD_LENGTH + ' симоволов',
+    shortPassword: 'Введите пароль от ' + MIN_PASSWORD_LENGTH + ' символов',
   };
 
-  constructor(private fb: FormBuilder, private store: Store<AppState>, private changeDetector: ChangeDetectorRef) {}
+  constructor(private fb: FormBuilder, private store: Store<AppState>, private changeDetector: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.form = <SignupForm>this.fb.group({
@@ -85,6 +85,10 @@ export class SignupComponent implements OnInit, OnDestroy {
 
     if (this.form.errors === null) {
       return 'Зарегистрироваться';
+    }
+
+    if (this.form.errors['shortPassword'] && notEmpty(this.form.controls.password.value)) {
+      return this.errorMessages['shortPassword'];
     }
 
     const firstErrorKey = firstProperty(this.form.errors);

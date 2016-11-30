@@ -22,7 +22,11 @@ describe('SignupComponent', () => {
         }),
       };
 
-      component = new SignupComponent(fb, mockStore);
+      const mockChangeDetector: any = {
+        markForChanges: () => { }
+      };
+
+      component = new SignupComponent(fb, mockStore, mockChangeDetector);
       component.ngOnInit();
 
     });
@@ -59,6 +63,29 @@ describe('SignupComponent', () => {
       component.submit();
 
       expect(mockStore.dispatch).not.toHaveBeenCalled();
+    });
+
+    it('should compose tooltip title', () => {
+
+      expect(component.submitButtonTitle).toBe('Заполните все поля');
+
+      component.form.controls.email.setValue('test');
+      expect(component.submitButtonTitle).toBe('Введите правильный email');
+
+      component.form.controls.email.setValue('test@test.tt');
+      expect(component.submitButtonTitle).toBe('Заполните все поля');
+
+      component.form.controls.password.setValue('1');
+      expect(component.submitButtonTitle).toBe('Введите пароль от 6 символов');
+
+      component.form.controls.password.setValue('123456');
+      expect(component.submitButtonTitle).toBe('Заполните все поля');
+
+      component.form.controls.passwordAgain.setValue('1');
+      expect(component.submitButtonTitle).toBe('Пароли не совпадают');
+
+      component.form.controls.passwordAgain.setValue('123456');
+      expect(component.submitButtonTitle).toBe('Зарегистрироваться');
     });
 
   });
