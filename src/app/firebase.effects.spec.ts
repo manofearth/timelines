@@ -2,7 +2,10 @@ import { FirebaseEffects } from './firebase.effects';
 import { EffectsRunner } from '@ngrx/effects/testing';
 import { Actions } from '@ngrx/effects';
 import { AngularFire } from 'angularfire2';
-import { SignupAction, SignupSuccessAction, SignupErrorAction, LoginAction } from './reducers/auth.reducer';
+import {
+  SignupAction, SignupSuccessAction, SignupErrorAction, LoginAction,
+  LoginSuccessAction, LoginErrorAction
+} from './reducers/auth.reducer';
 
 describe('FirebaseEffects', () => {
 
@@ -112,6 +115,29 @@ describe('FirebaseEffects', () => {
 
     });
 
+    it('should emit ACTION_LOGIN_SUCCESS', done => {
+
+      spyOn(firebase.auth, 'login').and.returnValue(Promise.resolve('firebase auth state'));
+
+      effects.login.subscribe((result: LoginSuccessAction) => {
+        expect(result.type).toBe('ACTION_LOGIN_SUCCESS');
+        expect(result.payload).toBe('firebase auth state');
+        done();
+      });
+
+    });
+
+    it('should emit ACTION_LOGIN_ERROR', done => {
+
+      spyOn(firebase.auth, 'login').and.returnValue(Promise.reject(new Error('some error')));
+
+      effects.login.subscribe((result: LoginErrorAction) => {
+        expect(result.type).toBe('ACTION_LOGIN_ERROR');
+        expect(result.payload).toEqual(new Error('some error'));
+        done();
+      });
+
+    });
 
   });
 

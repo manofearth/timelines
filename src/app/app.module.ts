@@ -14,8 +14,15 @@ import { FirebaseEffects } from './firebase.effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { developmentReducer, productionReducer, initialState } from './reducers/index';
+import { TimelinesComponent } from './timelines/timelines.component';
+import { AuthGuard } from './auth/auth-guard.service';
 
 const routes: Routes = [
+  {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: '/timelines',
+  },
   {
     path: 'signup',
     component: SignupComponent,
@@ -24,13 +31,19 @@ const routes: Routes = [
     path: 'login',
     component: LoginComponent,
   },
+  {
+    path: 'timelines',
+    component: TimelinesComponent,
+    canActivate: [AuthGuard],
+  },
 ];
 
 @NgModule({
   declarations: [
     AppComponent,
     SignupComponent,
-    LoginComponent
+    LoginComponent,
+    TimelinesComponent
   ],
   imports: [
     BrowserModule,
@@ -45,7 +58,7 @@ const routes: Routes = [
     AngularFireModule.initializeApp(firebaseConfig),
     EffectsModule.run(FirebaseEffects),
   ],
-  providers: [],
+  providers: [AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule {

@@ -128,8 +128,10 @@ describe('SignupComponent', () => {
             provide: Store,
             useValue: {
               select: () => ({
-                subscribe: () => {
-                },
+                subscribe: () => ({
+                  unsubscribe: () => {
+                  },
+                }),
               }),
             },
           }, {
@@ -144,6 +146,7 @@ describe('SignupComponent', () => {
     it('should create', () => {
 
       const fixture = TestBed.createComponent(SignupComponent);
+      //fixture.componentInstance.ngOnInit();
       fixture.detectChanges();
 
       expect(fixture.componentInstance).toBeTruthy();

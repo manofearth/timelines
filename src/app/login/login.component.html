@@ -6,6 +6,7 @@
              required>
       <input id="password" type="password" class="form-control" formControlName="password"
              placeholder="Введите пароль" required>
+      <!--suppress QuirksModeInspectionTool -->
       <button
           id="submit-button"
           type="submit" (click)="submit()"
@@ -16,5 +17,8 @@
         <a href="/signup">зарегистрироваться</a>
       </div>
     </form>
+    <div class="alert alert-danger" *ngIf="error">
+      {{error.message}}
+    </div>
   </div>
 </div>

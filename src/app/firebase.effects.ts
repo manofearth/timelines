@@ -4,7 +4,7 @@ import { Effect, Actions } from '@ngrx/effects';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/fromPromise';
-import 'rxjs/add/operator/mergeMap';
+import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import {
@@ -18,7 +18,7 @@ export class FirebaseEffects {
 
   @Effect() signup: Observable<SignupSuccessAction|SignupErrorAction> = this.actions
     .ofType('ACTION_SIGNUP')
-    .flatMap((action: SignupAction) =>
+    .switchMap((action: SignupAction) =>
       Observable.fromPromise(
         <Promise<FirebaseAuthState>>this.fire.auth.createUser({
           email: action.payload.email,
@@ -36,7 +36,7 @@ export class FirebaseEffects {
 
   @Effect() login: Observable<LoginSuccessAction|LoginErrorAction> = this.actions
     .ofType('ACTION_LOGIN')
-    .flatMap((action: LoginAction) =>
+    .switchMap((action: LoginAction) =>
       Observable.fromPromise(
         <Promise<FirebaseAuthState>>this.fire.auth.login({
           email: action.payload.email,
