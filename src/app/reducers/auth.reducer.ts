@@ -5,11 +5,11 @@ import { Action } from '@ngrx/store';
 
 export interface AuthState {
   error: Error;
-  user: FirebaseAuthState;
+  user: User;
 }
 
 export type AuthActionType = 'ACTION_SIGNUP' | 'ACTION_LOGIN' | 'ACTION_SIGNUP_SUCCESS' | 'ACTION_SIGNUP_ERROR'
-  | 'ACTION_LOGIN_SUCCESS' | 'ACTION_LOGIN_ERROR';
+  | 'ACTION_LOGIN_SUCCESS' | 'ACTION_LOGIN_ERROR' | 'ACTION_AUTH_STATE_CHANGED';
 
 export interface AuthAction extends Action {
   type: AuthActionType;
@@ -22,7 +22,7 @@ export interface SignupAction extends AuthAction {
 
 export interface SignupSuccessAction extends AuthAction {
   type: 'ACTION_SIGNUP_SUCCESS';
-  payload: FirebaseAuthState;
+  payload: User;
 }
 
 export interface SignupErrorAction extends AuthAction {
@@ -37,12 +37,21 @@ export interface LoginAction extends AuthAction {
 
 export interface LoginSuccessAction extends AuthAction {
   type: 'ACTION_LOGIN_SUCCESS';
-  payload: FirebaseAuthState;
+  payload: User;
 }
 
 export interface LoginErrorAction extends AuthAction {
   type: 'ACTION_LOGIN_ERROR';
   payload: Error;
+}
+
+export interface AuthStateChangedAction extends AuthAction {
+  type: 'ACTION_AUTH_STATE_CHANGED';
+  payload: User;
+}
+
+export interface User {
+  email: string;
 }
 
 export function authReducer(state: AuthState, action: AuthAction): AuthState {

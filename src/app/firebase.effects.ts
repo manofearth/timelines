@@ -7,11 +7,13 @@ import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/do';
 import {
   SignupAction, SignupSuccessAction, SignupErrorAction, LoginAction,
   LoginErrorAction
 } from './reducers/auth.reducer';
-import { LoginSuccessAction } from './reducers/auth.reducer';
+import { LoginSuccessAction, User, AuthStateChangedAction } from './reducers/auth.reducer';
 
 @Injectable()
 export class FirebaseEffects {
@@ -26,7 +28,7 @@ export class FirebaseEffects {
         }))
         .map((authState: FirebaseAuthState): SignupSuccessAction => ({
           type: 'ACTION_SIGNUP_SUCCESS',
-          payload: authState,
+          payload: toUser(authState),
         }))
         .catch((error: Error): Observable<SignupErrorAction> => Observable.of({
           type: <'ACTION_SIGNUP_ERROR'>'ACTION_SIGNUP_ERROR',
@@ -44,7 +46,7 @@ export class FirebaseEffects {
         }))
         .map((authState: FirebaseAuthState): LoginSuccessAction => ({
           type: 'ACTION_LOGIN_SUCCESS',
-          payload: authState,
+          payload: toUser(authState),
         }))
         .catch((error: Error): Observable<LoginErrorAction> => Observable.of({
           type: <'ACTION_LOGIN_ERROR'>'ACTION_LOGIN_ERROR',
@@ -52,7 +54,20 @@ export class FirebaseEffects {
         }))
     );
 
+    @Effect() auth: Observable<AuthStateChangedAction> = this.fire.auth
+      .map((authState: FirebaseAuthState): AuthStateChangedAction => ({
+        type: 'ACTION_AUTH_STATE_CHANGED',
+        payload: toUser(authState),
+      }));
+
+
   constructor(private actions: Actions, private fire: AngularFire) {
   }
 
+}
+
+function toUser(authState: FirebaseAuthState): User {
+  return {
+    email: authState.auth.email,
+  }
 }
