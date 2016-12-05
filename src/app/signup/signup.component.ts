@@ -1,13 +1,13 @@
 import { AppState } from '../reducers';
 import { Validators, FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { composeChildrenValidators } from '../shared/compose-children-validators.validator';
 import { ifEmptyObject, firstProperty, coalesce, notEmpty } from '../shared/helpers';
 import { validateEmail } from '../shared/email.validator';
-import { AuthState, SignupAction } from '../reducers/auth.reducer';
-import { Subscription } from 'rxjs';
+import { SignupAction } from '../reducers/auth.reducer';
 import { Router } from '@angular/router';
+import { AuthComponent } from '../login/auth.component';
 
 const MIN_PASSWORD_LENGTH = 6;
 
@@ -32,11 +32,8 @@ export interface SignupFormData {
   styleUrls: ['./signup.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SignupComponent implements OnInit, OnDestroy {
+export class SignupComponent extends AuthComponent<SignupForm, SignupAction> {
 
-  form: SignupForm;
-  error: Error;
-  appStateSubscription: Subscription;
 
   private readonly errorMessages: { [key: string]: string } = {
     incorrectEmail: 'Введите правильный email',
@@ -45,48 +42,11 @@ export class SignupComponent implements OnInit, OnDestroy {
     shortPassword: 'Введите пароль от ' + MIN_PASSWORD_LENGTH + ' символов',
   };
 
-  constructor(
-    private fb: FormBuilder,
-    private store: Store<AppState>,
-    private router: Router,
-    private changeDetector: ChangeDetectorRef,
-  ) {
-  }
-
-  ngOnInit() {
-    this.form = <SignupForm>this.fb.group({
-      email: [null, Validators.compose([
-        Validators.required,
-        validateEmail,
-      ])],
-      password: [null, Validators.required],
-      passwordAgain: [null, Validators.required],
-    }, { validator: validateSignupForm });
-
-    this.appStateSubscription = this.store.select('auth').subscribe((auth: AuthState) => {
-      this.error = auth.error;
-      this.changeDetector.markForCheck();
-      if(auth.user && !auth.error) {
-        this.router.navigate(['/timelines']);
-      }
-    });
-
-  }
-
-  ngOnDestroy(): void {
-    this.appStateSubscription.unsubscribe();
-  }
-
-  submit() {
-    if (this.form.invalid) {
-      return;
-    }
-
-    const action: SignupAction = {
-      type: 'ACTION_SIGNUP',
-      payload: this.form.value
-    };
-    this.store.dispatch(action);
+  constructor(fb: FormBuilder,
+              store: Store<AppState>,
+              router: Router,
+              changeDetector: ChangeDetectorRef,) {
+    super(fb, store, router, changeDetector);
   }
 
   // noinspection JSUnusedGlobalSymbols
@@ -104,6 +64,27 @@ export class SignupComponent implements OnInit, OnDestroy {
 
     return this.errorMessages[firstErrorKey];
   }
+
+  protected createForm(): SignupForm {
+
+    return <SignupForm>this.fb.group({
+      email: [null, Validators.compose([
+        Validators.required,
+        validateEmail,
+      ])],
+      password: [null, Validators.required],
+      passwordAgain: [null, Validators.required],
+    }, { validator: validateSignupForm });
+
+  }
+
+  protected createAction(): SignupAction {
+    return {
+      type: 'ACTION_SIGNUP',
+      payload: this.form.value
+    };
+  }
+
 }
 
 function validateSignupForm(form: SignupForm) {

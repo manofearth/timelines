@@ -9,6 +9,7 @@ export interface AppState {
 
 export const initialState: AppState = {
   auth: {
+    isLoading: true,
     error: null,
     user: null,
   }
