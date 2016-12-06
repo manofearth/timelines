@@ -4,7 +4,7 @@ import { AppState } from '../reducers/index';
 import { Store } from '@ngrx/store';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { AuthState, AuthAction } from '../reducers/auth.reducer';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 export abstract class AuthComponent<TForm extends FormGroup, TAction extends AuthAction> implements OnInit, OnDestroy {
 
@@ -21,7 +21,7 @@ export abstract class AuthComponent<TForm extends FormGroup, TAction extends Aut
   ngOnInit() {
     this.form = this.createForm();
 
-    this.appStateSubscription = this.store.select('auth').subscribe((auth: AuthState) => {
+    this.appStateSubscription = this.store.select<AuthState>('auth').subscribe((auth: AuthState) => {
       this.error = auth.error;
       this.changeDetector.markForCheck();
       if (auth.user && !auth.error) {

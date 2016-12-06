@@ -3,7 +3,7 @@ import { SignupAction, AuthState } from '../reducers/auth.reducer';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { async, TestBed } from '@angular/core/testing';
 import { SignupComponent } from './signup.component';
-import { ReplaySubject } from 'rxjs';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Router } from '@angular/router';
 
 describe('SignupComponent', () => {
@@ -31,7 +31,6 @@ describe('SignupComponent', () => {
         }
       };
 
-      // noinspection JSUnusedGlobalSymbols
       const mockChangeDetector: any = {
         markForCheck: () => {
         }
@@ -103,12 +102,12 @@ describe('SignupComponent', () => {
 
       spyOn(mockRouter, 'navigate');
 
-      stateChanges.next({ error: null, user: null });
-      stateChanges.next({ error: <any>'some error', user: null });
-      stateChanges.next({ error: <any>'some error', user: <any>'some user' });
+      stateChanges.next({ isLoading: false, error: null, user: null });
+      stateChanges.next({ isLoading: false, error: <any>'some error', user: null });
+      stateChanges.next({ isLoading: false, error: <any>'some error', user: <any>'some user' });
       expect(mockRouter.navigate).not.toHaveBeenCalled();
 
-      stateChanges.next({ error: null, user: <any>'some user' });
+      stateChanges.next({ isLoading: false, error: null, user: <any>'some user' });
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/timelines']);
 
     });

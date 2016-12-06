@@ -3,6 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/take';
+import 'rxjs/add/operator/filter';
 import { Store } from '@ngrx/store';
 import { AppState } from '../reducers/index';
 import { AuthState } from '../reducers/auth.reducer';
@@ -16,7 +17,8 @@ export class AuthGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
 
-    return this.store.select('auth')
+    return this.store.select<AuthState>('auth')
+      .filter((auth: AuthState): boolean => !auth.isLoading)
       .map((auth: AuthState) =>
         (auth.user !== null) && (auth.error === null)
       )

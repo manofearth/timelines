@@ -1,23 +1,51 @@
 import { async, TestBed } from '@angular/core/testing';
 import { LoginComponent } from './login.component';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { LoginAction } from '../reducers/auth.reducer';
+import { LoginAction, AuthState } from '../reducers/auth.reducer';
 import { Store } from '@ngrx/store';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { Router } from '@angular/router';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/of';
 
 describe('LoginComponent', () => {
 
   describe('Isolated', () => {
 
-    it('should dispatch LOGIN event on submit', () => {
+    let mockStore: any;
+    const fb = new FormBuilder();
+    let component: LoginComponent;
+    let mockRouter: any;
+    let stateChanges: ReplaySubject<AuthState>;
 
-      const mockStore: any = {
+    beforeEach(() => {
+
+      stateChanges = new ReplaySubject<AuthState>();
+
+      mockStore = {
         dispatch: () => {
+        },
+        select: () => stateChanges,
+      };
+
+      mockRouter = {
+        navigate: () => {
         }
       };
-      spyOn(mockStore, 'dispatch');
 
-      const component = new LoginComponent(new FormBuilder(), mockStore);
+      const mockChangeDetector: any = {
+        markForCheck: () => {
+        }
+      };
+
+      component = new LoginComponent(fb, mockStore, mockRouter, mockChangeDetector);
       component.ngOnInit();
+
+    });
+
+    it('should dispatch LOGIN event on submit', () => {
+
+      spyOn(mockStore, 'dispatch');
 
       component.form.controls.email.setValue('test@test.ru');
       component.form.controls.password.setValue('some password');
@@ -35,6 +63,31 @@ describe('LoginComponent', () => {
       expect(mockStore.dispatch).toHaveBeenCalledWith(expectedAction);
     });
 
+    it('should not emit actions on submit if form not valid', () => {
+
+      spyOn(mockStore, 'dispatch');
+
+      component.form.setErrors({ someError: true });
+
+      component.submit();
+
+      expect(mockStore.dispatch).not.toHaveBeenCalled();
+    });
+
+    it('should navigate to protected area if user authorized w/o error', () => {
+
+      spyOn(mockRouter, 'navigate');
+
+      stateChanges.next({ isLoading: false, error: null, user: null });
+      stateChanges.next({ isLoading: false, error: <any>'some error', user: null });
+      stateChanges.next({ isLoading: false, error: <any>'some error', user: <any>'some user' });
+      expect(mockRouter.navigate).not.toHaveBeenCalled();
+
+      stateChanges.next({ isLoading: false, error: null, user: <any>'some user' });
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/timelines']);
+
+    });
+
   });
 
   describe('Shallow', () => {
@@ -45,7 +98,13 @@ describe('LoginComponent', () => {
         imports: [ReactiveFormsModule],
         providers: [
           FormBuilder,
-          { provide: Store, useValue: {} },
+          {
+            provide: Store,
+            useValue: {
+              select: () => Observable.of({}),
+            },
+          },
+          { provide: Router, useValue: {} },
         ]
       })
         .compileComponents();

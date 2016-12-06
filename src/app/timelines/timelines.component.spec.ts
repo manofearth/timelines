@@ -1,5 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { TimelinesComponent } from './timelines.component';
+import { Observable } from 'rxjs/Observable';
+import { Store } from '@ngrx/store';
+import { Router } from '@angular/router';
 
 describe('TimelinesComponent', () => {
   let component: TimelinesComponent;
@@ -7,7 +10,16 @@ describe('TimelinesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [TimelinesComponent]
+      declarations: [TimelinesComponent],
+      providers: [
+        {
+          provide: Store,
+          useValue: {
+            select: () => Observable.of({}),
+          },
+        },
+        { provide: Router, useValue: {} },
+      ]
     })
       .compileComponents();
   }));

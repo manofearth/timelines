@@ -75,7 +75,6 @@ export class FirebaseEffects {
       payload: toUser(authState),
     }));
 
-
   constructor(private actions: Actions, private fire: AngularFire) {
   }
 

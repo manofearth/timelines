@@ -1,5 +1,5 @@
 import { AuthGuard } from './auth-guard.service';
-import { ReplaySubject } from 'rxjs';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { AuthState } from '../reducers/auth.reducer';
 import { Router } from '@angular/router';
 
@@ -25,9 +25,24 @@ describe('AuthGuard', () => {
     guard = new AuthGuard(mockStore, mockRouter);
   });
 
+  it('should wait while auth is loading', () => {
+
+    mockStateChanges.next({
+      isLoading: true,
+      user: null,
+      error: null,
+    });
+
+    guard.canActivate(null, null).subscribe(() => {
+      fail('should wait while auth is loading');
+    });
+
+  });
+
   it('should return true if user authenticated with no error', done => {
 
     mockStateChanges.next({
+      isLoading: false,
       user: <any>'firebase auth state',
       error: null,
     });
@@ -42,6 +57,7 @@ describe('AuthGuard', () => {
   it('should return false and navigate to login page if user not authenticated', done => {
 
     mockStateChanges.next({
+      isLoading: false,
       user: null,
       error: null,
     });
@@ -57,6 +73,7 @@ describe('AuthGuard', () => {
   it('should return false and navigate to login page on authentication error', done => {
 
     mockStateChanges.next({
+      isLoading: false,
       user: null,
       error: <any>'some error',
     });
