@@ -1,13 +1,13 @@
-import { AppState } from '../reducers';
 import { Validators, FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { composeChildrenValidators } from '../shared/compose-children-validators.validator';
-import { ifEmptyObject, firstProperty, coalesce, notEmpty } from '../shared/helpers';
-import { validateEmail } from '../shared/email.validator';
-import { SignupAction } from '../reducers/auth.reducer';
 import { Router } from '@angular/router';
-import { AuthComponent } from '../login/auth.component';
+import { AuthComponent } from '../auth.component';
+import { SignupAction } from '../../reducers/auth.reducer';
+import { AppState } from '../../reducers/index';
+import { notEmpty, firstProperty, ifEmptyObject, coalesce } from '../../shared/helpers';
+import { validateEmail } from '../../shared/email.validator';
+import { composeChildrenValidators } from '../../shared/compose-children-validators.validator';
 
 const MIN_PASSWORD_LENGTH = 6;
 
@@ -28,8 +28,8 @@ export interface SignupFormData {
 
 @Component({
   selector: 'app-signup',
-  templateUrl: './signup.component.html',
-  styleUrls: ['./signup.component.css'],
+  templateUrl: 'signup.component.html',
+  styleUrls: ['signup.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignupComponent extends AuthComponent<SignupForm, SignupAction> {

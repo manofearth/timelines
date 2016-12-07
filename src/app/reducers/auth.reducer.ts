@@ -1,5 +1,5 @@
-import { LoginFormData } from '../login/login.component';
-import { SignupFormData } from '../signup/signup.component';
+import { LoginFormData } from '../auth/login/login.component';
+import { SignupFormData } from '../auth/signup/signup.component';
 import { Action } from '@ngrx/store';
 
 export interface AuthState {

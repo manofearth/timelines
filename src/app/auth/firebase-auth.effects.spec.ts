@@ -1,4 +1,4 @@
-import { FirebaseEffects } from './firebase.effects';
+import { FirebaseAuthEffects } from './firebase-auth.effects';
 import { EffectsRunner } from '@ngrx/effects/testing';
 import { Actions } from '@ngrx/effects';
 import { AngularFire, FirebaseAuthState, AuthMethods } from 'angularfire2';
@@ -11,7 +11,7 @@ import {
   LoginErrorAction,
   LogoutAction,
   AuthStateChangedAction
-} from './reducers/auth.reducer';
+} from '../reducers/auth.reducer';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 
 class MockFireAuth extends ReplaySubject<FirebaseAuthState> {
@@ -25,9 +25,9 @@ class MockFireAuth extends ReplaySubject<FirebaseAuthState> {
   }
 }
 
-describe('FirebaseEffects', () => {
+describe('FirebaseAuthEffects', () => {
 
-  let effects: FirebaseEffects;
+  let effects: FirebaseAuthEffects;
   let runner: EffectsRunner;
   let firebase: AngularFire;
 
@@ -39,7 +39,7 @@ describe('FirebaseEffects', () => {
       auth: new MockFireAuth(),
     };
 
-    effects = new FirebaseEffects(new Actions(runner), firebase);
+    effects = new FirebaseAuthEffects(new Actions(runner), firebase);
 
   });
 

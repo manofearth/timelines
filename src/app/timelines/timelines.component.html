@@ -1,4 +1,8 @@
-<p>
-  timelines works!
-</p>
 <button (click)="logout()">Logout</button>
+<h1>Мои ленты времени</h1>
+<table class="table table-hover">
+
+  <tr *ngFor="let timeline of (timelines | async)">
+    <td>{{timeline.title}}</td>
+  </tr>
+</table>

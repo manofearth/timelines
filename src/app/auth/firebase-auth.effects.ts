@@ -19,10 +19,10 @@ import {
   User,
   AuthStateChangedAction,
   LogoutSuccessAction
-} from './reducers/auth.reducer';
+} from '../reducers/auth.reducer';
 
 @Injectable()
-export class FirebaseEffects {
+export class FirebaseAuthEffects {
 
   @Effect() signup: Observable<SignupSuccessAction|SignupErrorAction> = this.actions
     .ofType('ACTION_SIGNUP')
@@ -99,4 +99,3 @@ function toError(error: Error|string): Error {
     return new Error(error);
   }
 }
-

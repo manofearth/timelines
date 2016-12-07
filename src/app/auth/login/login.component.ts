@@ -1,18 +1,18 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { AppState } from '../reducers';
-import { LoginAction } from '../reducers/auth.reducer';
-import { composeChildrenValidators } from '../shared/compose-children-validators.validator';
-import { firstProperty } from '../shared/helpers';
-import { validateEmail } from '../shared/email.validator';
-import { AuthComponent } from './auth.component';
 import { Router } from '@angular/router';
+import { AuthComponent } from '../auth.component';
+import { LoginAction } from '../../reducers/auth.reducer';
+import { AppState } from '../../reducers/index';
+import { firstProperty } from '../../shared/helpers';
+import { composeChildrenValidators } from '../../shared/compose-children-validators.validator';
+import { validateEmail } from '../../shared/email.validator';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  templateUrl: 'login.component.html',
+  styleUrls: ['login.component.css']
 })
 export class LoginComponent extends AuthComponent<LoginForm, LoginAction> {
 
