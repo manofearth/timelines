@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { AppState } from '../reducers/index';
-import { AuthState } from '../reducers/auth.reducer';
 import { Router } from '@angular/router';
-import { TimelinesGetAction, Timeline } from '../reducers/timelines.reducer';
 import { Observable } from 'rxjs/Observable';
+import { Timeline, TimelinesGetAction } from '../../reducers/timelines.reducer';
+import { AppState } from '../../reducers/index';
+import { AuthState } from '../../reducers/auth.reducer';
 
 @Component({
   selector: 'app-timelines',
-  templateUrl: './timelines.component.html',
-  styleUrls: ['./timelines.component.css']
+  templateUrl: 'timelines.component.html',
+  styleUrls: ['timelines.component.css']
 })
 export class TimelinesComponent implements OnInit {
 
