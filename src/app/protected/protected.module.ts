@@ -5,6 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { TimelinesComponent } from './timelines/timelines.component';
 import { FirebaseTimelinesEffects } from './timelines/firebase-timelines.effects';
 import { EffectsModule } from '@ngrx/effects';
+import { LogoutComponent } from './logout/logout.component';
 
 const routes: Routes = [
   {
@@ -29,6 +30,7 @@ const routes: Routes = [
   declarations: [
     TimelinesComponent,
     ProtectedComponent,
+    LogoutComponent,
   ],
 })
 export default class ProtectedModule {

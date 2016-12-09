@@ -1,8 +1,13 @@
-<button (click)="logout()">Logout</button>
-<h1>Мои ленты времени</h1>
-<table class="table table-hover">
-
-  <tr *ngFor="let timeline of (timelines | async)">
-    <td>{{timeline.title}}</td>
-  </tr>
-</table>
+<!--suppress QuirksModeInspectionTool -->
+<div class="container-fluid">
+  <h3 class="grid-row">Мои ленты времени</h3>
+  <div class="grid-row">
+  <table class="table table-hover">
+    <tbody>
+    <tr *ngFor="let timeline of (timelines | async)">
+      <td>{{timeline.title}}</td>
+    </tr>
+    </tbody>
+  </table>
+  </div>
+</div>

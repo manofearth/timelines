@@ -1,0 +1,44 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
+import { Store } from '@ngrx/store';
+import { AuthState, LogoutAction, User } from '../../reducers/auth.reducer';
+import { AppState } from '../../reducers/index';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'tl-logout',
+  template: `<span class="logged-in-user">{{user?.email}}</span><a href="javascript:void(0)" (click)="logout()">Выйти</a>`,
+  styles: [`
+    .logged-in-user {
+        padding-right: 10px;
+    }
+  `]
+})
+export class LogoutComponent implements OnInit, OnDestroy {
+
+  user: User;
+  private auth: Observable<AuthState>;
+  private authSubscription: Subscription;
+
+  constructor(private store: Store<AppState>, private router: Router) { }
+
+  ngOnInit(): void {
+    this.authSubscription = this.store.select<AuthState>('auth').subscribe((auth: AuthState) => {
+      this.user = auth.user;
+      if(this.user === null) {
+        this.router.navigate(['/login']);
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+  }
+
+  logout() {
+    this.store.dispatch(<LogoutAction>{
+      type: 'ACTION_LOGOUT',
+    });
+  }
+
+}

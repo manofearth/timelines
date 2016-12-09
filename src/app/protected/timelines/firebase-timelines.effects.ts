@@ -5,6 +5,8 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/distinctUntilChanged';
 import {
   TimelinesGetSuccessAction,
   TimelinesGetAction,
@@ -15,25 +17,30 @@ import {
 @Injectable()
 export class FirebaseTimelinesEffects {
 
+
   @Effect() timelinesGet: Observable<TimelinesGetSuccessAction> = this.actions
     .ofType('ACTION_TIMELINES_GET')
-    .switchMap((action: TimelinesGetAction) => this.fire.auth)
-    .filter((auth: FirebaseAuthState) => auth !== null)
-    .switchMap((auth: FirebaseAuthState) => this.fire.database
-      .list('/private/' + auth.uid + '/timelines')
+    .filter((action: TimelinesGetAction) => this.auth !== null)
+    .switchMap((action: TimelinesGetAction) => this.fire.database
+      .list('/private/' + this.auth.uid + '/timelines')
       .map((firebaseTimelines: FirebaseTimeline[]): TimelinesGetSuccessAction => {
         return {
           type: 'ACTION_TIMELINES_GET_SUCCESS',
           payload: firebaseTimelines.map(toTimeline),
         }
       })
-      .catch((error: Error): Observable<TimelinesGetErrorAction> => Observable.of({
+      .catch((error: Error): Observable<TimelinesGetErrorAction> => Observable.of<TimelinesGetErrorAction>({
         type: 'ACTION_TIMELINES_GET_ERROR',
         payload: error,
       }))
     );
 
+  private auth: FirebaseAuthState = null;
+
   constructor(private actions: Actions, private fire: AngularFire) {
+    this.fire.auth.subscribe((auth: FirebaseAuthState) => {
+      this.auth = auth;
+    })
   }
 }
 
