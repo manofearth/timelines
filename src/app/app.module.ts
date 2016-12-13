@@ -1,4 +1,3 @@
-import { StoreModule } from '@ngrx/store';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -12,9 +11,9 @@ import { firebaseConfig } from '../environments/firebase.config';
 import { EffectsModule } from '@ngrx/effects';
 import { FirebaseAuthEffects } from './auth/firebase-auth.effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { environment } from '../environments/environment';
-import { developmentReducer, productionReducer, initialState } from './reducers/index';
+import { reducer, initialState } from './reducers/index';
 import { AuthGuard } from './auth/auth-guard.service';
+import { StoreModule } from '@ngrx/store';
 
 const routes: Routes = [
   {
@@ -33,7 +32,7 @@ const routes: Routes = [
   {
     path: '',
     canActivate: [AuthGuard],
-    loadChildren: 'app/protected/protected.module#default',
+    loadChildren: 'app/protected/protected.module#ProtectedModule',
   },
   {
     path: '**',
@@ -52,10 +51,7 @@ const routes: Routes = [
     ReactiveFormsModule,
     HttpModule,
     RouterModule.forRoot(routes),
-    StoreModule.provideStore(
-      environment.production ? productionReducer : developmentReducer,
-      initialState,
-    ),
+    StoreModule.provideStore(reducer, initialState),
     StoreDevtoolsModule.instrumentOnlyWithExtension(),
     AngularFireModule.initializeApp(firebaseConfig),
     EffectsModule.run(FirebaseAuthEffects),

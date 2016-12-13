@@ -3,9 +3,11 @@ import { AngularFire, FirebaseAuthState } from 'angularfire2';
 import { Actions, Effect } from '@ngrx/effects';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/distinctUntilChanged';
 import {
   TimelinesGetSuccessAction,
@@ -21,7 +23,8 @@ export class FirebaseTimelinesEffects {
   @Effect() timelinesGet: Observable<TimelinesGetSuccessAction> = this.actions
     .ofType('ACTION_TIMELINES_GET')
     .filter((action: TimelinesGetAction) => this.auth !== null)
-    .switchMap((action: TimelinesGetAction) => this.fire.database
+    .take(1)
+    .mergeMap((action: TimelinesGetAction) => this.fire.database
       .list('/private/' + this.auth.uid + '/timelines')
       .map((firebaseTimelines: FirebaseTimeline[]): TimelinesGetSuccessAction => {
         return {

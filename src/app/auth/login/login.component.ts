@@ -64,7 +64,7 @@ export interface LoginFormData {
   password: string;
 }
 
-interface LoginForm extends FormGroup {
+export interface LoginForm extends FormGroup {
   controls: {
     email: FormControl;
     password: FormControl;

@@ -33,5 +33,5 @@ const routes: Routes = [
     LogoutComponent,
   ],
 })
-export default class ProtectedModule {
+export class ProtectedModule {
 }

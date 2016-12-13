@@ -5,7 +5,8 @@ export interface Timeline {
   title: string;
 }
 
-type TimelinesActionType = 'ACTION_TIMELINES_GET' | 'ACTION_TIMELINES_GET_SUCCESS' | 'ACTION_TIMELINES_GET_ERROR';
+export  type TimelinesActionType = 'ACTION_TIMELINES_GET' | 'ACTION_TIMELINES_GET_SUCCESS'
+  | 'ACTION_TIMELINES_GET_ERROR';
 
 export interface TimelinesAction extends Action {
     type: TimelinesActionType;

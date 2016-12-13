@@ -11,7 +11,7 @@ import { composeChildrenValidators } from '../../shared/compose-children-validat
 
 const MIN_PASSWORD_LENGTH = 6;
 
-interface SignupForm extends FormGroup {
+export interface SignupForm extends FormGroup {
   controls: {
     email: FormControl;
     password: FormControl;

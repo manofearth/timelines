@@ -1,8 +1,9 @@
-import { ActionReducer, combineReducers } from '@ngrx/store';
+import { ActionReducer, combineReducers, Action } from '@ngrx/store';
 import { authReducer, AuthState } from './auth.reducer';
 import { compose } from '@ngrx/core/compose';
 import { storeFreeze } from 'ngrx-store-freeze';
 import { Timeline, timelinesReducer } from './timelines.reducer';
+import { environment } from '../../environments/environment';
 
 export interface AppState {
   auth: AuthState,
@@ -28,5 +29,14 @@ const reducers: AppReducers = {
   timelines: timelinesReducer,
 };
 
-export const developmentReducer: ActionReducer<AppState> = compose(storeFreeze, combineReducers)(reducers);
-export const productionReducer: ActionReducer<AppState> = combineReducers(reducers);
+const developmentReducer: ActionReducer<AppState> = compose(storeFreeze, combineReducers)(reducers);
+const productionReducer: ActionReducer<AppState> = combineReducers(reducers);
+
+export function reducer(state: AppState, action: Action) {
+  if (environment.production) {
+    return productionReducer(state, action);
+  }
+  else {
+    return developmentReducer(state, action);
+  }
+}

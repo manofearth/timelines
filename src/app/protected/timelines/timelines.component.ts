@@ -6,8 +6,8 @@ import { AppState } from '../../reducers/index';
 
 @Component({
   selector: 'app-timelines',
-  templateUrl: 'timelines.component.html',
-  styleUrls: ['timelines.component.css']
+  templateUrl: './timelines.component.html',
+  styleUrls: ['./timelines.component.css']
 })
 export class TimelinesComponent implements OnInit {
 
