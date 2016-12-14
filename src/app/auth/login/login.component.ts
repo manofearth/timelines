@@ -11,8 +11,8 @@ import { validateEmail } from '../../shared/email.validator';
 
 @Component({
   selector: 'app-login',
-  templateUrl: 'login.component.html',
-  styleUrls: ['login.component.css']
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent extends AuthComponent<LoginForm, LoginAction> {
 

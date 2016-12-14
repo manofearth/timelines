@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "@angular/compiler-cli": "2.2.3",
+    "@ngrx/store-devtools": "^3.2.2",
     "@types/jasmine": "2.5.38",
     "@types/node": "^6.0.42",
     "angular-cli": "1.0.0-beta.22-1",
@@ -44,12 +45,11 @@
     "karma-cli": "^1.0.1",
     "karma-jasmine": "^1.0.2",
     "karma-remap-istanbul": "^0.2.1",
+    "ngrx-store-freeze": "^0.1.4",
     "protractor": "4.0.9",
     "ts-node": "1.2.1",
     "tslint": "^4.0.2",
     "typescript": "~2.0.3",
-    "webdriver-manager": "10.2.5",
-    "@ngrx/store-devtools": "^3.2.2",
-    "ngrx-store-freeze": "^0.1.4"
+    "webdriver-manager": "10.2.5"
   }
 }

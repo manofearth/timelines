@@ -28,8 +28,8 @@ export interface SignupFormData {
 
 @Component({
   selector: 'app-signup',
-  templateUrl: 'signup.component.html',
-  styleUrls: ['signup.component.css'],
+  templateUrl: './signup.component.html',
+  styleUrls: ['./signup.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignupComponent extends AuthComponent<SignupForm, SignupAction> {
