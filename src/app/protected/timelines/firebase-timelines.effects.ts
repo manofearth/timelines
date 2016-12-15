@@ -43,8 +43,9 @@ export class FirebaseTimelinesEffects {
   constructor(private actions: Actions, private fire: AngularFire) {
     this.fire.auth.subscribe((auth: FirebaseAuthState) => {
       this.auth = auth;
-    })
+    });
   }
+
 }
 
 function toTimeline(firebaseTimeline: FirebaseTimeline): Timeline {
