@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { TimelinesGetAction, TimelinesState, Timeline } from '../../reducers/timelines.reducer';
+import { TimelinesGetAction, TimelinesState, Timeline, TimelinesCreateAction } from '../../reducers/timelines.reducer';
 import { AppState } from '../../reducers/index';
 //noinspection TypeScriptPreferShortImport
 import { Subscription } from '../../shared/rxjs';
@@ -35,7 +35,14 @@ export class TimelinesComponent implements OnInit, OnDestroy {
     })
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     this.timelinesSubscription.unsubscribe();
   }
+
+  create() {
+    this.store.dispatch(<TimelinesCreateAction>{
+      type: 'ACTION_TIMELINES_CREATE',
+    });
+  }
+
 }

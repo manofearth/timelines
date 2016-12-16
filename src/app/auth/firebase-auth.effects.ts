@@ -93,7 +93,7 @@ function toUser(authState: FirebaseAuthState): User {
 
 function toError(error: Error|string): Error {
 
-  if(error instanceof Error) {
+  if (error instanceof Error) {
     return error;
   } else {
     return new Error(error);
