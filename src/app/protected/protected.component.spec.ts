@@ -1,5 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ProtectedComponent } from './protected.component';
+import { RouterModule } from '@angular/router';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { APP_BASE_HREF } from '@angular/common';
 
 describe('ProtectedComponent', () => {
   let component: ProtectedComponent;
@@ -7,9 +10,15 @@ describe('ProtectedComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ProtectedComponent]
-    })
-      .compileComponents();
+      declarations: [ProtectedComponent],
+      imports: [
+        RouterModule.forRoot([]),
+      ],
+      providers: [
+        { provide: APP_BASE_HREF, useValue: '/' },
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

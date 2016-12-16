@@ -20,7 +20,7 @@ import {
 export class FirebaseTimelinesEffects {
 
 
-  @Effect() timelinesGet: Observable<TimelinesGetSuccessAction> = this.actions
+  @Effect() timelinesGet: Observable<TimelinesGetSuccessAction|TimelinesGetErrorAction> = this.actions
     .ofType('ACTION_TIMELINES_GET')
     .filter((action: TimelinesGetAction) => this.auth !== null)
     .take(1)

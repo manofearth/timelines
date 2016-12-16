@@ -9,11 +9,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'tl-logout',
   template: `<span class="logged-in-user">{{user?.email}}</span><a href="javascript:void(0)" (click)="logout()">Выйти</a>`,
-  styles: [`
-    .logged-in-user {
-        padding-right: 10px;
-    }
-  `]
+  styleUrls: ['./logout.component.css'],
 })
 export class LogoutComponent implements OnInit, OnDestroy {
 
@@ -21,18 +17,20 @@ export class LogoutComponent implements OnInit, OnDestroy {
   private auth: Observable<AuthState>;
   private authSubscription: Subscription;
 
-  constructor(private store: Store<AppState>, private router: Router) { }
+  constructor(private store: Store<AppState>, private router: Router) {
+  }
 
   ngOnInit(): void {
     this.authSubscription = this.store.select<AuthState>('auth').subscribe((auth: AuthState) => {
       this.user = auth.user;
-      if(this.user === null) {
+      if (this.user === null) {
         this.router.navigate(['/login']);
       }
     });
   }
 
   ngOnDestroy(): void {
+    this.authSubscription.unsubscribe();
   }
 
   logout() {

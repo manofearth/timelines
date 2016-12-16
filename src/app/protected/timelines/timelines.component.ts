@@ -25,8 +25,4 @@ export class TimelinesComponent implements OnInit {
     })
   }
 
-  logout() {
-    this.store.dispatch({ type: 'ACTION_LOGOUT' });
-  }
-
 }
