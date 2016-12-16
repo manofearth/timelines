@@ -1,24 +1,26 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TimelinesGetAction, TimelinesState, Timeline, TimelinesCreateAction } from '../../reducers/timelines.reducer';
 import { AppState } from '../../reducers/index';
 //noinspection TypeScriptPreferShortImport
 import { Subscription } from '../../shared/rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-timelines',
   templateUrl: './timelines.component.html',
-  styleUrls: ['./timelines.component.css']
+  styleUrls: ['./timelines.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimelinesComponent implements OnInit, OnDestroy {
 
-  timelinesSubscription: Subscription;
-  timelines: Timeline[];
-  error: Error;
-  isLoading: boolean;
-  newTimelineId: string;
+  private timelinesSubscription: Subscription;
+  private timelines: Timeline[];
+  private error: Error;
+  private isLoading: boolean;
+  private modeOpenNew: boolean = false;
 
-  constructor(private store: Store<AppState>) {
+  constructor(private store: Store<AppState>, private router: Router) {
   }
 
   ngOnInit() {
@@ -27,7 +29,12 @@ export class TimelinesComponent implements OnInit, OnDestroy {
       this.timelines = state.timelines;
       this.error = state.error;
       this.isLoading = state.isLoading;
-      this.newTimelineId = state.newTimelineId;
+
+      if (this.modeOpenNew && state.newTimelineId) {
+        this.modeOpenNew = false;
+        this.router.navigate(['/timeline/' + state.newTimelineId]);
+      }
+
     });
 
     this.store.dispatch(<TimelinesGetAction>{
@@ -40,6 +47,7 @@ export class TimelinesComponent implements OnInit, OnDestroy {
   }
 
   create() {
+    this.modeOpenNew = true;
     this.store.dispatch(<TimelinesCreateAction>{
       type: 'ACTION_TIMELINES_CREATE',
     });

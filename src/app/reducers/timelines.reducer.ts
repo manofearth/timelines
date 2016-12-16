@@ -67,6 +67,20 @@ export function timelinesReducer(state: TimelinesState, action: TimelinesAction)
         newTimelineId: null,
         timelines: state.timelines,
       };
+    case 'ACTION_TIMELINES_CREATE_SUCCESS':
+      return {
+        isLoading: false,
+        error: null,
+        newTimelineId: action.payload,
+        timelines: state.timelines,
+      };
+    case 'ACTION_TIMELINES_CREATE_ERROR':
+      return {
+        isLoading: false,
+        error: action.payload,
+        newTimelineId: null,
+        timelines: state.timelines,
+      };
     default:
       return state;
   }
