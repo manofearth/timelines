@@ -1,10 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { TimelinesComponent } from './timelines.component';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from '../../shared/rxjs';
 import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
 import { AppState } from '../../reducers/index';
-import { TimelinesGetAction } from '../../reducers/timelines.reducer';
+import { TimelinesGetAction, TimelinesState } from '../../reducers/timelines.reducer';
 
 describe('TimelinesComponent', () => {
 
@@ -17,8 +17,7 @@ describe('TimelinesComponent', () => {
       store = <any> {
         dispatch: () => {
         },
-        select: () => {
-        },
+        select: () => Observable.of({}),
       };
       component = new TimelinesComponent(store);
     });
@@ -44,10 +43,15 @@ describe('TimelinesComponent', () => {
           {
             provide: Store,
             useValue: {
-              select: () => Observable.of([
-                { title: 'Timeline 1' },
-                { title: 'Timeline 2' },
-              ]),
+              select: () => Observable.of(<TimelinesState>{
+                isLoading: true,
+                error: new Error('some error'),
+                newTimelineId: null,
+                timelines: [
+                  { title: 'Timeline 1' },
+                  { title: 'Timeline 2' },
+                ],
+              }),
               dispatch: () => {
               },
             },
@@ -65,6 +69,8 @@ describe('TimelinesComponent', () => {
     });
 
     it('should create', () => {
+      expect(fixture.nativeElement.textContent).toContain('some error');
+      expect(fixture.nativeElement.textContent).toContain('загружаются...');
       const rows: HTMLTableRowElement[] = fixture.nativeElement.querySelectorAll('tr');
       expect(rows[0].textContent).toContain('Timeline 1');
       expect(rows[1].textContent).toContain('Timeline 2');

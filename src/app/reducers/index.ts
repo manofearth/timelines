@@ -2,12 +2,12 @@ import { ActionReducer, combineReducers, Action } from '@ngrx/store';
 import { authReducer, AuthState } from './auth.reducer';
 import { compose } from '@ngrx/core/compose';
 import { storeFreeze } from 'ngrx-store-freeze';
-import { Timeline, timelinesReducer } from './timelines.reducer';
+import { timelinesReducer, TimelinesState } from './timelines.reducer';
 import { environment } from '../../environments/environment';
 
 export interface AppState {
   auth: AuthState,
-  timelines: Timeline[],
+  timelines: TimelinesState,
 }
 
 export const initialState: AppState = {
@@ -16,12 +16,17 @@ export const initialState: AppState = {
     error: null,
     user: null,
   },
-  timelines: null,
+  timelines: {
+    isLoading: true,
+    error: null,
+    newTimelineId: null,
+    timelines: null,
+  },
 };
 
 interface AppReducers {
   auth: ActionReducer<AuthState>;
-  timelines: ActionReducer<Timeline[]>;
+  timelines: ActionReducer<TimelinesState>;
 }
 
 const reducers: AppReducers = {
