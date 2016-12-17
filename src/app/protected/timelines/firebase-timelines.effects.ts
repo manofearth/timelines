@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { AngularFire, FirebaseAuthState, FirebaseListObservable } from 'angularfire2';
 import { Actions, Effect } from '@ngrx/effects';
 import { Observable } from '../../shared/rxjs';
+import { Timeline } from '../../reducers/timeline.reducer';
+import { FirebaseTimeline, toTimeline } from '../timeline/firebase-timeline.effects';
 import {
   TimelinesGetSuccessAction,
   TimelinesGetAction,
-  Timeline,
   TimelinesGetErrorAction, TimelinesActionType, TimelinesCreateErrorAction, TimelinesCreateSuccessAction,
   TimelinesCreateAction, TimelinesAction
 } from '../../reducers/timelines.reducer';
@@ -57,7 +58,7 @@ export class FirebaseTimelinesEffects {
   private authorizedActionsOfType(type: TimelinesActionType): Observable<TimelinesAction> {
     return this.actions
       .ofType(type)
-      .filter((action: TimelinesGetAction) => this.auth !== null);
+      .filter((action: TimelinesAction) => this.auth !== null);
   }
 
   private getTimelinesList(): FirebaseListObservable<FirebaseTimeline[]> {
@@ -66,18 +67,6 @@ export class FirebaseTimelinesEffects {
     }
     return this.list;
   }
-}
-
-function toTimeline(firebaseTimeline: FirebaseTimeline): Timeline {
-  return {
-    id: firebaseTimeline.$key,
-    title: firebaseTimeline.title,
-  };
-}
-
-interface FirebaseTimeline {
-  $key: string;
-  title: string;
 }
 
 function toError(error: Error|string): Error {

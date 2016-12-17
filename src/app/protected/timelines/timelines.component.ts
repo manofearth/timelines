@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TimelinesGetAction, TimelinesState, Timeline, TimelinesCreateAction } from '../../reducers/timelines.reducer';
 import { AppState } from '../../reducers/index';
@@ -20,7 +20,7 @@ export class TimelinesComponent implements OnInit, OnDestroy {
   private isLoading: boolean;
   private modeOpenNew: boolean = false;
 
-  constructor(private store: Store<AppState>, private router: Router) {
+  constructor(private store: Store<AppState>, private router: Router, private changeDetector: ChangeDetectorRef) {
   }
 
   ngOnInit() {
@@ -35,11 +35,13 @@ export class TimelinesComponent implements OnInit, OnDestroy {
         this.router.navigate(['/timeline/' + state.newTimelineId]);
       }
 
+      this.changeDetector.markForCheck();
+
     });
 
     this.store.dispatch(<TimelinesGetAction>{
       type: 'ACTION_TIMELINES_GET'
-    })
+    });
   }
 
   ngOnDestroy() {

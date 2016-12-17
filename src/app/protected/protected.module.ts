@@ -4,6 +4,7 @@ import { ProtectedComponent } from './protected.component';
 import { Routes, RouterModule } from '@angular/router';
 import { TimelinesComponent } from './timelines/timelines.component';
 import { LogoutComponent } from './logout/logout.component';
+import { TimelineComponent } from './timeline/timeline.component';
 
 const routes: Routes = [
   {
@@ -13,6 +14,10 @@ const routes: Routes = [
       {
         path: 'timelines',
         component: TimelinesComponent,
+      },
+      {
+        path: 'timeline/:id',
+        component: TimelineComponent,
       },
     ],
   },
@@ -26,6 +31,7 @@ const routes: Routes = [
   ],
   declarations: [
     TimelinesComponent,
+    TimelineComponent,
     ProtectedComponent,
     LogoutComponent,
   ],

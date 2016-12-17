@@ -1,15 +1,11 @@
 import { Action } from '@ngrx/store';
+import { Timeline } from './timeline.reducer';
 
 export interface TimelinesState {
   isLoading: boolean;
   error: Error;
   newTimelineId: string;
   timelines: Timeline[];
-}
-
-export interface Timeline {
-  id: string;
-  title: string;
 }
 
 export type TimelinesActionType = 'ACTION_TIMELINES_GET' | 'ACTION_TIMELINES_GET_SUCCESS'
