@@ -3,7 +3,7 @@ import { LogoutComponent } from './logout.component';
 import { AppState } from '../../reducers/index';
 import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
-import { LogoutAction, AuthState } from '../../reducers/auth.reducer';
+import { LogoutAction, AuthState } from '../../auth/auth.reducer';
 import { ReplaySubject, Observable } from '../../shared/rxjs';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 

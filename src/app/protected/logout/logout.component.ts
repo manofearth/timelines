@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { Store } from '@ngrx/store';
-import { AuthState, LogoutAction, User } from '../../reducers/auth.reducer';
+import { AuthState, LogoutAction, User } from '../../auth/auth.reducer';
 import { AppState } from '../../reducers/index';
 import { Router } from '@angular/router';
 

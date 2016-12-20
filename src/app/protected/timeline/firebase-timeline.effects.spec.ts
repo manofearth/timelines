@@ -1,4 +1,4 @@
-import { TimelineGetAction, TimelineGetSuccessAction } from '../../reducers/timeline.reducer';
+import { TimelineGetAction, TimelineGetSuccessAction } from './timeline.reducer';
 import { Actions } from '@ngrx/effects';
 import { FirebaseTimelineEffects } from './firebase-timeline.effects';
 import { EffectsRunner } from '@ngrx/effects/testing';

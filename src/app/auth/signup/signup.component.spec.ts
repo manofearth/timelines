@@ -1,5 +1,5 @@
 import { Store } from '@ngrx/store';
-import { SignupAction, AuthState } from '../../reducers/auth.reducer';
+import { SignupAction, AuthState } from '../auth.reducer';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { async, TestBed } from '@angular/core/testing';
 import { SignupComponent } from './signup.component';

@@ -11,7 +11,7 @@ import { firebaseConfig } from '../environments/firebase.config';
 import { EffectsModule } from '@ngrx/effects';
 import { FirebaseAuthEffects } from './auth/firebase-auth.effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { reducer, initialState } from './reducers/index';
+import { reducer, initialState } from './reducers';
 import { AuthGuard } from './auth/auth-guard.service';
 import { StoreModule } from '@ngrx/store';
 import { FirebaseTimelinesEffects } from './protected/timelines/firebase-timelines.effects';

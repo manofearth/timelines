@@ -2,10 +2,10 @@
 import { Subscription } from '../../shared/rxjs';
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { TimelinesGetAction, TimelinesState, TimelinesCreateAction } from '../../reducers/timelines.reducer';
+import { TimelinesGetAction, TimelinesState, TimelinesCreateAction } from './timelines.reducer';
 import { AppState } from '../../reducers/index';
 import { Router } from '@angular/router';
-import { Timeline } from '../../reducers/timeline.reducer';
+import { Timeline } from '../timeline/timeline.reducer';
 
 @Component({
   selector: 'app-timelines',

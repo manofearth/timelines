@@ -12,7 +12,7 @@ import {
   TimelinesCreateSuccessAction,
   TimelinesCreateAction,
   TimelinesAction
-} from '../../reducers/timelines.reducer';
+} from './timelines.reducer';
 
 @Injectable()
 export class FirebaseTimelinesEffects {

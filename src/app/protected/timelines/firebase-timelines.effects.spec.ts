@@ -8,7 +8,7 @@ import {
   TimelinesGetSuccessAction,
   TimelinesCreateAction,
   TimelinesCreateSuccessAction
-} from '../../reducers/timelines.reducer';
+} from './timelines.reducer';
 
 class MockFirebaseDatabase {
   list() {

@@ -19,7 +19,7 @@ import {
   User,
   AuthStateChangedAction,
   LogoutSuccessAction
-} from '../reducers/auth.reducer';
+} from './auth.reducer';
 
 @Injectable()
 export class FirebaseAuthEffects {

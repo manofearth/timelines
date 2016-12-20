@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms'
 import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
 import { AuthComponent } from '../auth.component';
-import { LoginAction } from '../../reducers/auth.reducer';
+import { LoginAction } from '../auth.reducer';
 import { AppState } from '../../reducers/index';
 import { firstProperty } from '../../shared/helpers';
 import { composeChildrenValidators } from '../../shared/compose-children-validators.validator';

@@ -1,7 +1,7 @@
 import { async, TestBed } from '@angular/core/testing';
 import { LoginComponent } from './login.component';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { LoginAction, AuthState } from '../../reducers/auth.reducer';
+import { LoginAction, AuthState } from '../auth.reducer';
 import { Store } from '@ngrx/store';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Router } from '@angular/router';

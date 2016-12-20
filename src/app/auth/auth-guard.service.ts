@@ -6,7 +6,7 @@ import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/filter';
 import { Store } from '@ngrx/store';
 import { AppState } from '../reducers/index';
-import { AuthState } from '../reducers/auth.reducer';
+import { AuthState } from './auth.reducer';
 import { Injectable } from '@angular/core';
 
 @Injectable()

@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthComponent } from '../auth.component';
-import { SignupAction } from '../../reducers/auth.reducer';
+import { SignupAction } from '../auth.reducer';
 import { AppState } from '../../reducers/index';
 import { notEmpty, firstProperty, ifEmptyObject, coalesce } from '../../shared/helpers';
 import { validateEmail } from '../../shared/email.validator';

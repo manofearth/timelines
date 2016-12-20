@@ -1,6 +1,6 @@
 import { AuthGuard } from './auth-guard.service';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { AuthState } from '../reducers/auth.reducer';
+import { AuthState } from './auth.reducer';
 import { Router } from '@angular/router';
 
 

@@ -11,7 +11,7 @@ import {
   LoginErrorAction,
   LogoutAction,
   AuthStateChangedAction
-} from '../reducers/auth.reducer';
+} from './auth.reducer';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 
 class MockFireAuth extends ReplaySubject<FirebaseAuthState> {

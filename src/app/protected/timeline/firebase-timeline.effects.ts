@@ -9,7 +9,7 @@ import {
   TimelineAction,
   TimelineGetAction,
   Timeline,
-} from '../../reducers/timeline.reducer';
+} from './timeline.reducer';
 
 @Injectable()
 export class FirebaseTimelineEffects {

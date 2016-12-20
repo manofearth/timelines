@@ -5,7 +5,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { APP_BASE_HREF } from '@angular/common';
-import { TimelineState, TimelineGetAction } from '../../reducers/timeline.reducer';
+import { TimelineState, TimelineGetAction } from './timeline.reducer';
 import { AppState } from '../../reducers/index';
 
 describe('TimelineComponent', () => {

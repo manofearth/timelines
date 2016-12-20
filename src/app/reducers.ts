@@ -1,10 +1,10 @@
 import { ActionReducer, combineReducers, Action } from '@ngrx/store';
-import { authReducer, AuthState } from './auth.reducer';
+import { authReducer, AuthState } from './auth/auth.reducer';
 import { compose } from '@ngrx/core/compose';
 import { storeFreeze } from 'ngrx-store-freeze';
-import { timelinesReducer, TimelinesState } from './timelines.reducer';
-import { environment } from '../../environments/environment';
-import { TimelineState, timelineReducer } from './timeline.reducer';
+import { timelinesReducer, TimelinesState } from './protected/timelines/timelines.reducer';
+import { environment } from '../environments/environment';
+import { TimelineState, timelineReducer } from './protected/timeline/timeline.reducer';
 
 export interface AppState {
   auth: AuthState,
