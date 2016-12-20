@@ -18,7 +18,7 @@ import {
 export class FirebaseTimelinesEffects {
 
 
-  @Effect() timelinesGet: Observable<TimelinesGetSuccessAction|TimelinesGetErrorAction> =
+  @Effect() get: Observable<TimelinesGetSuccessAction|TimelinesGetErrorAction> =
     this.authorizedActionsOfType('ACTION_TIMELINES_GET')
       .take(1)
       .mergeMap((action: TimelinesGetAction) => this
@@ -35,7 +35,7 @@ export class FirebaseTimelinesEffects {
         }))
       );
 
-  @Effect() create/*todo test*/: Observable<TimelinesCreateSuccessAction|TimelinesCreateErrorAction> =
+  @Effect() create: Observable<TimelinesCreateSuccessAction|TimelinesCreateErrorAction> =
     this.authorizedActionsOfType('ACTION_TIMELINES_CREATE')
       .switchMap((action: TimelinesCreateAction) =>
         Observable.fromPromise(<any>this.getTimelinesList().push({ title: 'Новая лента' }))
