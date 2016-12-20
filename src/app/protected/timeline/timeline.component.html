@@ -1,3 +1,5 @@
-<p>
-  timeline works!
-</p>
+<div *ngIf="isLoading" class="alert alert-info">Загружается...</div>
+<div *ngIf="error" class="alert alert-danger">{{ error.message }}</div>
+<div *ngIf="timeline">
+  {{timeline.title}}
+</div>

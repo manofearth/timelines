@@ -5,9 +5,9 @@ export interface Timeline {
 }
 
 export interface TimelineState {
-   isLoading: boolean;
-   error: Error;
-   timeline: Timeline;
+  isLoading: boolean;
+  error: Error;
+  timeline: Timeline;
 }
 
 export type TimelineActionType = 'ACTION_TIMELINE_GET' | 'ACTION_TIMELINE_GET_SUCCESS' | 'ACTION_TIMELINE_GET_ERROR';
@@ -32,3 +32,16 @@ export interface TimelineGetErrorAction extends TimelineActionBase {
 }
 
 export type TimelineAction = TimelineGetAction | TimelineGetSuccessAction | TimelineGetErrorAction;
+
+export function timelineReducer(state: TimelineState, action: TimelineAction): TimelineState {
+  switch (action.type) {
+    case 'ACTION_TIMELINE_GET_SUCCESS':
+      return {
+        isLoading: false,
+        error: null,
+        timeline: action.payload,
+      };
+    default:
+      return state;
+  }
+}

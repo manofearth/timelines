@@ -1,9 +1,10 @@
+//noinspection TypeScriptPreferShortImport
+import { Subscription } from '../../shared/rxjs';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers/index';
-import { TimelineGetAction } from '../../reducers/timeline.reducer';
-import { ActivatedRouteSnapshot, ActivatedRoute, Params } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
+import { TimelineGetAction, TimelineState, Timeline } from '../../reducers/timeline.reducer';
+import { ActivatedRoute, Params } from '@angular/router';
 
 @Component({
   selector: 'app-timeline',
@@ -13,8 +14,13 @@ import { Subscription } from 'rxjs/Subscription';
 export class TimelineComponent implements OnInit, OnDestroy {
 
   private routeParamsSubscription: Subscription;
+  private stateSubscription: Subscription;
+  private timeline: Timeline;
+  private isLoading: boolean;
+  private error: Error;
 
-  constructor(private store: Store<AppState>, private route: ActivatedRoute) { }
+  constructor(private store: Store<AppState>, private route: ActivatedRoute) {
+  }
 
   ngOnInit() {
     this.routeParamsSubscription = this.route.params.subscribe((params: Params) => {
@@ -23,9 +29,16 @@ export class TimelineComponent implements OnInit, OnDestroy {
         payload: params['id'],
       });
     });
+
+    this.stateSubscription = this.store.select('timeline').subscribe((timeline: TimelineState) => {
+      this.isLoading = timeline.isLoading;
+      this.error = timeline.error;
+      this.timeline = timeline.timeline;
+    });
   }
 
   ngOnDestroy() {
     this.routeParamsSubscription.unsubscribe();
+    this.stateSubscription.unsubscribe();
   }
 }
