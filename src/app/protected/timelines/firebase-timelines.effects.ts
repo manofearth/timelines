@@ -35,7 +35,7 @@ export class FirebaseTimelinesEffects {
         }))
       );
 
-  @Effect() create: Observable<TimelinesCreateSuccessAction|TimelinesCreateErrorAction> =
+  @Effect() create/*todo test*/: Observable<TimelinesCreateSuccessAction|TimelinesCreateErrorAction> =
     this.authorizedActionsOfType('ACTION_TIMELINES_CREATE')
       .switchMap((action: TimelinesCreateAction) =>
         Observable.fromPromise(<any>this.getTimelinesList().push({ title: 'Новая лента' }))
@@ -47,7 +47,9 @@ export class FirebaseTimelinesEffects {
             Observable.of<TimelinesCreateErrorAction>({
               type: 'ACTION_TIMELINES_CREATE_ERROR',
               payload: toError(error),
-            })));
+            })
+          )
+      );
 
   private auth: FirebaseAuthState = null;
   private list: FirebaseListObservable<FirebaseTimeline[]>;

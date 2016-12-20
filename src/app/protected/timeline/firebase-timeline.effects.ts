@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
-import { AngularFire, FirebaseAuthState, FirebaseObjectObservable } from 'angularfire2';
+import { AngularFire, FirebaseAuthState } from 'angularfire2';
 import { Observable } from 'rxjs/Observable';
 import {
   TimelineGetSuccessAction,
@@ -16,13 +16,19 @@ export class FirebaseTimelineEffects {
 
   @Effect() get: Observable<TimelineGetSuccessAction | TimelineGetErrorAction> = this
     .authorizedActionsOfType('ACTION_TIMELINE_GET')
-    .switchMap((action: TimelineGetAction) => this.fire.database.object('/private/' + this.auth.uid + '/timelines/' + action.payload))
+    .switchMap((action: TimelineGetAction) => this.fire.database
+      .object('/private/' + this.auth.uid + '/timelines/' + action.payload)
       .map((firebaseTimeline: FirebaseTimeline): TimelineGetSuccessAction => ({
         type: 'ACTION_TIMELINE_GET_SUCCESS',
         payload: toTimeline(firebaseTimeline),
-      }));
+      }))
+      .catch((error: Error): Observable<TimelineGetErrorAction> => Observable.of<TimelineGetErrorAction>({
+        type: 'ACTION_TIMELINE_GET_ERROR',
+        payload: error,
+      }))
+    );
 
-  private auth: FirebaseAuthState;
+  private auth: FirebaseAuthState = null;
 
   constructor(private actions: Actions, private fire: AngularFire) {
     this.fire.auth.subscribe((auth: FirebaseAuthState) => {

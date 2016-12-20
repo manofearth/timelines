@@ -2,34 +2,63 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { TimelinesComponent } from './timelines.component';
 import { Observable } from '../../shared/rxjs';
 import { Store } from '@ngrx/store';
-import { Router } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { AppState } from '../../reducers/index';
-import { TimelinesGetAction, TimelinesState } from '../../reducers/timelines.reducer';
+import { TimelinesGetAction, TimelinesState, TimelinesCreateAction } from '../../reducers/timelines.reducer';
+import { APP_BASE_HREF } from '@angular/common';
+import { ChangeDetectorRef } from '@angular/core';
 
 describe('TimelinesComponent', () => {
 
   describe('Isolated', () => {
 
-    let store: Store<AppState>;
+    let mockStore: Store<AppState>;
     let component: TimelinesComponent;
+    let mockRouter: Router;
 
     beforeEach(() => {
-      store = <any> {
+      mockStore = <any> {
         dispatch: () => {
         },
         select: () => Observable.of({}),
       };
-      component = new TimelinesComponent(store);
+      mockRouter = <any> {
+        navigate: () => {
+        },
+      };
+      const mockChangeDetector: ChangeDetectorRef = <any> {
+        markForCheck: () => {
+        }
+      };
+      component = new TimelinesComponent(mockStore, mockRouter, mockChangeDetector);
     });
 
     it('ngOnInit() should dispatch ACTION_TIMELINES_GET', () => {
-      spyOn(store, 'dispatch');
+      spyOn(mockStore, 'dispatch');
       component.ngOnInit();
-      expect(store.dispatch).toHaveBeenCalledWith(<TimelinesGetAction>{
+      expect(mockStore.dispatch).toHaveBeenCalledWith(<TimelinesGetAction>{
         type: 'ACTION_TIMELINES_GET',
       });
     });
 
+    it('create() should dispatch ACTION_TIMELINES_CREATE and set "open new" mode', () => {
+      spyOn(mockStore, 'dispatch');
+      component.create();
+      expect(mockStore.dispatch).toHaveBeenCalledWith(<TimelinesCreateAction>{
+        type: 'ACTION_TIMELINES_CREATE',
+      });
+      expect(component.modeOpenNew).toBe(true);
+    });
+
+    it('should navigate to new timeline when it ID acquired in "open new" mode', () => {
+      spyOn(mockRouter, 'navigate');
+      mockStore.select = () => Observable.of({
+        newTimelineId: 'new-timeline-id',
+      });
+      component.modeOpenNew = true;
+      component.ngOnInit();
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/timeline/new-timeline-id']);
+    });
   });
 
   describe('Shallow', () => {
@@ -38,6 +67,7 @@ describe('TimelinesComponent', () => {
 
     beforeEach(async(() => {
       TestBed.configureTestingModule({
+        imports: [RouterModule.forRoot([])],
         declarations: [TimelinesComponent],
         providers: [
           {
@@ -56,7 +86,10 @@ describe('TimelinesComponent', () => {
               },
             },
           },
-          { provide: Router, useValue: {} },
+          {
+            provide: APP_BASE_HREF,
+            useValue: '/',
+          }
         ]
       })
         .compileComponents();

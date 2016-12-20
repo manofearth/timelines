@@ -15,11 +15,12 @@ import { Timeline } from '../../reducers/timeline.reducer';
 })
 export class TimelinesComponent implements OnInit, OnDestroy {
 
+  modeOpenNew: boolean = false;
+
   private timelinesSubscription: Subscription;
   private timelines: Timeline[];
   private error: Error;
   private isLoading: boolean;
-  private modeOpenNew: boolean = false;
 
   constructor(private store: Store<AppState>, private router: Router, private changeDetector: ChangeDetectorRef) {
   }

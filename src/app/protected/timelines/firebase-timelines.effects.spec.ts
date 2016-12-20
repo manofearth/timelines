@@ -34,17 +34,17 @@ describe('FirebaseTimelinesEffects', () => {
 
   describe('when not logged in', () => {
 
-    it('should not query firebase database', () => {
-
-      spyOn(firebase.database, 'list');
+    beforeEach(() => {
       runner.next(<TimelinesGetAction>{ type: 'ACTION_TIMELINES_GET' });
+    });
+
+    it('should not query firebase database', () => {
+      spyOn(firebase.database, 'list');
       effects.timelinesGet.subscribe();
       expect(firebase.database.list).not.toHaveBeenCalled();
-
     });
 
     it('should not emit actions', () => {
-      runner.next(<TimelinesGetAction>{ type: 'ACTION_TIMELINES_GET' });
       effects.timelinesGet.subscribe(() => {
         fail('should not emit actions');
       });
