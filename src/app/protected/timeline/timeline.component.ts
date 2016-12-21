@@ -2,7 +2,7 @@
 import { Subscription } from '../../shared/rxjs';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { AppState } from '../../reducers/index';
+import { AppState } from '../../reducers';
 import { TimelineGetAction, TimelineState, Timeline } from './timeline.reducer';
 import { ActivatedRoute, Params } from '@angular/router';
 

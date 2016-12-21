@@ -5,7 +5,7 @@ import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/filter';
 import { Store } from '@ngrx/store';
-import { AppState } from '../reducers/index';
+import { AppState } from '../reducers';
 import { AuthState } from './auth.reducer';
 import { Injectable } from '@angular/core';
 

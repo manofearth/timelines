@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { APP_BASE_HREF } from '@angular/common';
 import { TimelineState, TimelineGetAction } from './timeline.reducer';
-import { AppState } from '../../reducers/index';
+import { AppState } from '../../reducers';
 
 describe('TimelineComponent', () => {
   describe('Isolated', () => {

@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
 import { AuthComponent } from '../auth.component';
 import { LoginAction } from '../auth.reducer';
-import { AppState } from '../../reducers/index';
+import { AppState } from '../../reducers';
 import { firstProperty } from '../../shared/helpers';
 import { composeChildrenValidators } from '../../shared/compose-children-validators.validator';
 import { validateEmail } from '../../shared/email.validator';

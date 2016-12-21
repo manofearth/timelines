@@ -1,6 +1,6 @@
 import { OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { AppState } from '../reducers/index';
+import { AppState } from '../reducers';
 import { Store } from '@ngrx/store';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { AuthState, AuthAction } from './auth.reducer';

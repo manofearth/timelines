@@ -2,8 +2,8 @@
 import { Subscription } from '../../shared/rxjs';
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { TimelinesGetAction, TimelinesState, TimelinesCreateAction } from './timelines.reducer';
-import { AppState } from '../../reducers/index';
+import { TimelinesGetAction, TimelinesState, TimelinesCreateAction, TimelinesDeleteAction } from './timelines.reducer';
+import { AppState } from '../../reducers';
 import { Router } from '@angular/router';
 import { Timeline } from '../timeline/timeline.reducer';
 
@@ -57,4 +57,10 @@ export class TimelinesComponent implements OnInit, OnDestroy {
     });
   }
 
+  deleteTimeline(timeline: Timeline) {
+    this.store.dispatch(<TimelinesDeleteAction> {
+      type: 'ACTION_TIMELINES_DELETE',
+      payload: timeline,
+    });
+  }
 }

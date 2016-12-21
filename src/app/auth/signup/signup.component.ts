@@ -4,7 +4,7 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/
 import { Router } from '@angular/router';
 import { AuthComponent } from '../auth.component';
 import { SignupAction } from '../auth.reducer';
-import { AppState } from '../../reducers/index';
+import { AppState } from '../../reducers';
 import { notEmpty, firstProperty, ifEmptyObject, coalesce } from '../../shared/helpers';
 import { validateEmail } from '../../shared/email.validator';
 import { composeChildrenValidators } from '../../shared/compose-children-validators.validator';

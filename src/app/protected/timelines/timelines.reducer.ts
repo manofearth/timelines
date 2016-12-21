@@ -10,7 +10,8 @@ export interface TimelinesState {
 
 export type TimelinesActionType = 'ACTION_TIMELINES_GET' | 'ACTION_TIMELINES_GET_SUCCESS'
   | 'ACTION_TIMELINES_GET_ERROR' | 'ACTION_TIMELINES_CREATE' | 'ACTION_TIMELINES_CREATE_SUCCESS'
-  | 'ACTION_TIMELINES_CREATE_ERROR';
+  | 'ACTION_TIMELINES_CREATE_ERROR' | 'ACTION_TIMELINES_DELETE' | 'ACTION_TIMELINES_DELETE_SUCCESS'
+  | 'ACTION_TIMELINES_DELETE_ERROR';
 
 export interface TimelinesActionBase extends Action {
   type: TimelinesActionType;
@@ -44,8 +45,23 @@ export interface TimelinesCreateErrorAction extends TimelinesActionBase {
   payload: Error;
 }
 
+export interface TimelinesDeleteAction extends TimelinesActionBase {
+  type: 'ACTION_TIMELINES_DELETE';
+  payload: Timeline;
+}
+
+export interface TimelinesDeleteSuccessAction extends TimelinesActionBase {
+  type: 'ACTION_TIMELINES_DELETE_SUCCESS';
+}
+
+export interface TimelinesDeleteErrorAction extends TimelinesActionBase {
+  type: 'ACTION_TIMELINES_DELETE_ERROR';
+  payload: Error;
+}
+
 export type TimelinesAction = TimelinesGetAction | TimelinesGetSuccessAction | TimelinesGetErrorAction
-  | TimelinesGetAction | TimelinesCreateAction | TimelinesCreateSuccessAction | TimelinesCreateErrorAction;
+  | TimelinesGetAction | TimelinesCreateAction | TimelinesCreateSuccessAction | TimelinesCreateErrorAction
+  | TimelinesDeleteAction | TimelinesDeleteSuccessAction | TimelinesDeleteErrorAction;
 
 export function timelinesReducer(state: TimelinesState, action: TimelinesAction): TimelinesState {
   switch (action.type) {
@@ -71,6 +87,20 @@ export function timelinesReducer(state: TimelinesState, action: TimelinesAction)
         timelines: state.timelines,
       };
     case 'ACTION_TIMELINES_CREATE_ERROR':
+      return {
+        isLoading: false,
+        error: action.payload,
+        newTimelineId: null,
+        timelines: state.timelines,
+      };
+    case 'ACTION_TIMELINES_DELETE_SUCCESS':
+      return {
+        isLoading: false,
+        error: null,
+        newTimelineId: null,
+        timelines: state.timelines,
+      };
+    case 'ACTION_TIMELINES_DELETE_ERROR':
       return {
         isLoading: false,
         error: action.payload,

@@ -3,7 +3,7 @@ import { TimelinesComponent } from './timelines.component';
 import { Observable } from '../../shared/rxjs';
 import { Store } from '@ngrx/store';
 import { RouterModule, Router } from '@angular/router';
-import { AppState } from '../../reducers/index';
+import { AppState } from '../../reducers';
 import { TimelinesGetAction, TimelinesState, TimelinesCreateAction } from './timelines.reducer';
 import { APP_BASE_HREF } from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';

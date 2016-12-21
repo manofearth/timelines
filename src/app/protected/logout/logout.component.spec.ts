@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { LogoutComponent } from './logout.component';
-import { AppState } from '../../reducers/index';
+import { AppState } from '../../reducers';
 import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
 import { LogoutAction, AuthState } from '../../auth/auth.reducer';

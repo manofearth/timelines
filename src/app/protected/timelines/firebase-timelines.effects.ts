@@ -11,7 +11,10 @@ import {
   TimelinesCreateErrorAction,
   TimelinesCreateSuccessAction,
   TimelinesCreateAction,
-  TimelinesAction
+  TimelinesAction,
+  TimelinesDeleteSuccessAction,
+  TimelinesDeleteErrorAction,
+  TimelinesDeleteAction
 } from './timelines.reducer';
 
 @Injectable()
@@ -46,6 +49,21 @@ export class FirebaseTimelinesEffects {
           .catch((error: Error|string): Observable<TimelinesCreateErrorAction> =>
             Observable.of<TimelinesCreateErrorAction>({
               type: 'ACTION_TIMELINES_CREATE_ERROR',
+              payload: toError(error),
+            })
+          )
+      );
+
+  @Effect() deleteTimeline: Observable<TimelinesDeleteSuccessAction|TimelinesDeleteErrorAction> =
+    this.authorizedActionsOfType('ACTION_TIMELINES_DELETE')
+      .switchMap((action: TimelinesDeleteAction) =>
+        Observable.fromPromise(<Promise<any>>this.getTimelinesList().remove(action.payload.id))
+          .map((): TimelinesDeleteSuccessAction => ({
+            type: 'ACTION_TIMELINES_DELETE_SUCCESS',
+          }))
+          .catch((error: Error|string): Observable<TimelinesDeleteErrorAction> =>
+            Observable.of<TimelinesDeleteErrorAction>({
+              type: 'ACTION_TIMELINES_DELETE_ERROR',
               payload: toError(error),
             })
           )

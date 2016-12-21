@@ -1,4 +1,4 @@
-<!--suppress QuirksModeInspectionTool -->
+<!--suppress QuirksModeInspectionTool, VoidExpressionJS -->
 <div class="container-fluid">
   <div *ngIf="error" class="alert alert-danger">{{ error.message }}</div>
   <h3 class="grid-row">Мои ленты времени</h3>
@@ -8,6 +8,7 @@
       <tbody>
       <tr *ngFor="let timeline of timelines">
         <td><a [routerLink]="['/timeline', timeline.id]">{{ timeline.title }}</a></td>
+        <td class="text-sm-right"><a class="delete-link" href="javascript:void(0)" (click)="deleteTimeline(timeline)">удалить</a></td>
       </tr>
       </tbody>
     </table>
