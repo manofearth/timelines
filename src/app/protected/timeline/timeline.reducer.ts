@@ -41,6 +41,12 @@ export function timelineReducer(state: TimelineState, action: TimelineAction): T
         error: null,
         timeline: action.payload,
       };
+    case 'ACTION_TIMELINE_GET_ERROR':
+      return {
+        isLoading: false,
+        error: action.payload,
+        timeline: state.timeline,
+      };
     default:
       return state;
   }
