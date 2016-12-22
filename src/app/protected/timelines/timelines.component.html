@@ -8,7 +8,9 @@
       <tbody>
       <tr *ngFor="let timeline of timelines">
         <td><a [routerLink]="['/timeline', timeline.id]">{{ timeline.title }}</a></td>
-        <td class="text-sm-right"><a class="delete-link" href="javascript:void(0)" (click)="deleteTimeline(timeline)">удалить</a></td>
+        <td class="text-sm-right">
+          <a class="delete-link" href="javascript:void(0)" (click)="confirmDeletion(timeline, deleteDialogTemplate)">удалить</a>
+        </td>
       </tr>
       </tbody>
     </table>
@@ -17,3 +19,22 @@
     <button class="btn btn-primary" (click)="create()">Создать</button>
   </div>
 </div>
+
+<!--suppress HtmlUnknownAttribute -->
+<template #deleteDialogTemplate let-close="close">
+  <div class="modal-header">
+    <button type="button" class="close" aria-label="Close" (click)="close(false)">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h5 class="modal-title">Подтвердите удаление</h5>
+  </div>
+  <div class="modal-body">
+    Вы уверены, что хотите удалить ленту "{{timelineToDelete.title}}"?
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="close(true)">Да</button>
+    <button type="button" class="btn btn-secondary" (click)="close(false)">Нет</button>
+  </div>
+</template>
+
+<template ngbModalContainer></template>

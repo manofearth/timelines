@@ -5,6 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { TimelinesComponent } from './timelines/timelines.component';
 import { LogoutComponent } from './logout/logout.component';
 import { TimelineComponent } from './timeline/timeline.component';
+import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 
 const routes: Routes = [
   {
@@ -24,9 +25,11 @@ const routes: Routes = [
 
 ];
 
+// noinspection JSUnusedGlobalSymbols
 @NgModule({
   imports: [
     CommonModule,
+    NgbModalModule,
     RouterModule.forChild(routes),
   ],
   declarations: [

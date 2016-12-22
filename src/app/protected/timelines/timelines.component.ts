@@ -1,11 +1,12 @@
 //noinspection TypeScriptPreferShortImport
 import { Subscription } from '../../shared/rxjs';
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, TemplateRef } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TimelinesGetAction, TimelinesState, TimelinesCreateAction, TimelinesDeleteAction } from './timelines.reducer';
 import { AppState } from '../../reducers';
 import { Router } from '@angular/router';
 import { Timeline } from '../timeline/timeline.reducer';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-timelines',
@@ -21,8 +22,9 @@ export class TimelinesComponent implements OnInit, OnDestroy {
   private timelines: Timeline[];
   private error: Error;
   private isLoading: boolean;
+  private timelineToDelete: Timeline;
 
-  constructor(private store: Store<AppState>, private router: Router, private changeDetector: ChangeDetectorRef) {
+  constructor(private store: Store<AppState>, private router: Router, private changeDetector: ChangeDetectorRef, private ngbModal: NgbModal) {
   }
 
   ngOnInit() {
@@ -57,10 +59,21 @@ export class TimelinesComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteTimeline(timeline: Timeline) {
-    this.store.dispatch(<TimelinesDeleteAction> {
-      type: 'ACTION_TIMELINES_DELETE',
-      payload: timeline,
+  confirmDeletion(timeline: Timeline, deleteDialogTemplate: TemplateRef<any>) {
+
+    this.timelineToDelete = timeline;
+
+    this.ngbModal.open(deleteDialogTemplate).result.then((confirmed: boolean) => {
+      if (confirmed === false) {
+        return;
+      }
+      
+      this.store.dispatch(<TimelinesDeleteAction> {
+        type: 'ACTION_TIMELINES_DELETE',
+        payload: timeline,
+      });
+
+      this.timelineToDelete = null;
     });
   }
 }

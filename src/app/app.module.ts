@@ -16,6 +16,7 @@ import { AuthGuard } from './auth/auth-guard.service';
 import { StoreModule } from '@ngrx/store';
 import { FirebaseTimelinesEffects } from './protected/timelines/firebase-timelines.effects';
 import { FirebaseTimelineEffects } from './protected/timeline/firebase-timeline.effects';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 const routes: Routes = [
   {
@@ -52,6 +53,7 @@ const routes: Routes = [
     BrowserModule,
     ReactiveFormsModule,
     HttpModule,
+    NgbModule.forRoot(),
     RouterModule.forRoot(routes),
     StoreModule.provideStore(reducer, initialState),
     StoreDevtoolsModule.instrumentOnlyWithExtension(),
