@@ -7,6 +7,7 @@ import { AppState } from '../../reducers';
 import { TimelinesGetAction, TimelinesState, TimelinesCreateAction } from './timelines.reducer';
 import { APP_BASE_HREF } from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 describe('TimelinesComponent', () => {
 
@@ -15,22 +16,32 @@ describe('TimelinesComponent', () => {
     let mockStore: Store<AppState>;
     let component: TimelinesComponent;
     let mockRouter: Router;
+    let mockBootstrapModal: NgbModal;
 
     beforeEach(() => {
-      mockStore = <any> {
+      mockStore = <any>{
         dispatch: () => {
         },
         select: () => Observable.of({}),
       };
-      mockRouter = <any> {
+      mockRouter = <any>{
         navigate: () => {
         },
       };
-      const mockChangeDetector: ChangeDetectorRef = <any> {
+      mockBootstrapModal = <any>{
+        open: () => ({
+          result: {
+            then: () => { },
+          },
+        }),
+      };
+
+      const mockChangeDetector: ChangeDetectorRef = <any>{
         markForCheck: () => {
         }
       };
-      component = new TimelinesComponent(mockStore, mockRouter, mockChangeDetector);
+
+      component = new TimelinesComponent(mockStore, mockRouter, mockChangeDetector, mockBootstrapModal);
     });
 
     it('ngOnInit() should dispatch ACTION_TIMELINES_GET', () => {
@@ -58,6 +69,12 @@ describe('TimelinesComponent', () => {
       component.modeOpenNew = true;
       component.ngOnInit();
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/timeline/new-timeline-id']);
+    });
+
+    it('confirmDeletion() should open modal', () => {
+      spyOn(mockBootstrapModal, 'open').and.callThrough();
+      component.confirmDeletion(<any>'some timeline', <any>'some modal template');
+      expect(mockBootstrapModal.open).toHaveBeenCalledWith('some modal template');
     });
   });
 
@@ -89,6 +106,10 @@ describe('TimelinesComponent', () => {
           {
             provide: APP_BASE_HREF,
             useValue: '/',
+          },
+          {
+            provide: NgbModal,
+            useValue: {},
           }
         ]
       })

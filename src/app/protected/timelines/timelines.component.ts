@@ -17,14 +17,19 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 export class TimelinesComponent implements OnInit, OnDestroy {
 
   modeOpenNew: boolean = false;
+  timelines: Timeline[];
+  error: Error;
+  isLoading: boolean;
+  timelineToDelete: Timeline;
 
   private timelinesSubscription: Subscription;
-  private timelines: Timeline[];
-  private error: Error;
-  private isLoading: boolean;
-  private timelineToDelete: Timeline;
 
-  constructor(private store: Store<AppState>, private router: Router, private changeDetector: ChangeDetectorRef, private ngbModal: NgbModal) {
+  constructor(
+    private store: Store<AppState>,
+    private router: Router,
+    private changeDetector: ChangeDetectorRef,
+    private ngbModal: NgbModal,
+  ) {
   }
 
   ngOnInit() {
@@ -67,8 +72,8 @@ export class TimelinesComponent implements OnInit, OnDestroy {
       if (confirmed === false) {
         return;
       }
-      
-      this.store.dispatch(<TimelinesDeleteAction> {
+
+      this.store.dispatch(<TimelinesDeleteAction>{
         type: 'ACTION_TIMELINES_DELETE',
         payload: timeline,
       });
