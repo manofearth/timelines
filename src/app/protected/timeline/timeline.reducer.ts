@@ -1,4 +1,5 @@
 import { Action } from '@ngrx/store';
+import { TimelineFormValue } from './timeline.component';
 export interface Timeline {
   id: string;
   title: string;
@@ -10,7 +11,8 @@ export interface TimelineState {
   timeline: Timeline;
 }
 
-export type TimelineActionType = 'ACTION_TIMELINE_GET' | 'ACTION_TIMELINE_GET_SUCCESS' | 'ACTION_TIMELINE_GET_ERROR';
+export type TimelineActionType = 'ACTION_TIMELINE_GET' | 'ACTION_TIMELINE_GET_SUCCESS' | 'ACTION_TIMELINE_GET_ERROR'
+  | 'ACTION_TIMELINE_CHANGED';
 
 export interface TimelineActionBase extends Action {
   type: TimelineActionType;
@@ -31,7 +33,13 @@ export interface TimelineGetErrorAction extends TimelineActionBase {
   payload: Error;
 }
 
-export type TimelineAction = TimelineGetAction | TimelineGetSuccessAction | TimelineGetErrorAction;
+export interface TimelineChangedAction extends TimelineActionBase {
+  type: 'ACTION_TIMELINE_CHANGED';
+  payload: TimelineFormValue;
+}
+
+export type TimelineAction = TimelineGetAction | TimelineGetSuccessAction | TimelineGetErrorAction
+  | TimelineChangedAction;
 
 export function timelineReducer(state: TimelineState, action: TimelineAction): TimelineState {
   switch (action.type) {

@@ -1,5 +1,9 @@
 <div *ngIf="isLoading" class="alert alert-info">Загружается...</div>
 <div *ngIf="error" class="alert alert-danger">{{ error.message }}</div>
-<div *ngIf="timeline">
-  {{timeline.title}}
+<div *ngIf="timeline" class="container-fluid">
+  <form [formGroup]="form">
+    <div class="row">
+      <input class="form-control title" id="input-title" type="text" title="Название" formControlName="title">
+    </div>
+  </form>
 </div>

@@ -6,6 +6,7 @@ import { TimelinesComponent } from './timelines/timelines.component';
 import { LogoutComponent } from './logout/logout.component';
 import { TimelineComponent } from './timeline/timeline.component';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { ReactiveFormsModule } from '@angular/forms';
 
 const routes: Routes = [
   {
@@ -30,6 +31,7 @@ const routes: Routes = [
   imports: [
     CommonModule,
     NgbModalModule,
+    ReactiveFormsModule,
     RouterModule.forChild(routes),
   ],
   declarations: [

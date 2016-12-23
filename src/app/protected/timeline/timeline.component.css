@@ -1,0 +1,9 @@
+input.title {
+    font-size: larger;
+    font-weight: bolder;
+    border-color: transparent;
+}
+
+input.title:hover {
+    border-color: rgba(0, 0, 0, 0.15);
+}
