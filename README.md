@@ -39,3 +39,4 @@
 - [ ] Info sources list
 - [ ] Info sources list. Create new
 - [ ] Info sources list. Delete
+- [ ] Internationalization
