@@ -12,7 +12,7 @@
 - [x] Create timeline
 - [x] Open timeline
 - [x] Delete timeline
-- [ ] Delete timeline confirmation dialog
+- [x] Delete timeline confirmation dialog
 - [ ] Edit timeline title
 - [ ] Edit timeline. Add event
 - [ ] Edit event dialog

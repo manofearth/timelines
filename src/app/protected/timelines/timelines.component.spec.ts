@@ -1,10 +1,10 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { TimelinesComponent } from './timelines.component';
 import { Observable } from '../../shared/rxjs';
 import { Store } from '@ngrx/store';
 import { RouterModule, Router } from '@angular/router';
 import { AppState } from '../../reducers';
-import { TimelinesGetAction, TimelinesState, TimelinesCreateAction } from './timelines.reducer';
+import { TimelinesGetAction, TimelinesState, TimelinesCreateAction, TimelinesDeleteAction } from './timelines.reducer';
 import { APP_BASE_HREF } from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -31,7 +31,8 @@ describe('TimelinesComponent', () => {
       mockBootstrapModal = <any>{
         open: () => ({
           result: {
-            then: () => { },
+            then: () => {
+            },
           },
         }),
       };
@@ -73,9 +74,28 @@ describe('TimelinesComponent', () => {
 
     it('confirmDeletion() should open modal', () => {
       spyOn(mockBootstrapModal, 'open').and.callThrough();
-      component.confirmDeletion(<any>'some timeline', <any>'some modal template');
-      expect(mockBootstrapModal.open).toHaveBeenCalledWith('some modal template');
+      component.confirmDeletion(<any>'some timeline');
+      expect(mockBootstrapModal.open).toHaveBeenCalled();
     });
+
+    it('confirmDeletion() should not dispatch ACTION_TIMELINES_DELETE if user not confirmed it', fakeAsync(() => {
+      spyOn(mockStore, 'dispatch');
+      mockBootstrapModal.open = <any> (() => ({ result: Promise.resolve(false) }));
+      component.confirmDeletion(<any>'some timeline');
+      tick();
+      expect(mockStore.dispatch).not.toHaveBeenCalled();
+    }));
+
+    it('confirmDeletion() should dispatch ACTION_TIMELINES_DELETE if user confirmed it', fakeAsync(() => {
+      spyOn(mockStore, 'dispatch');
+      mockBootstrapModal.open = <any> (() => ({ result: Promise.resolve(true) }));
+      component.confirmDeletion(<any>'some timeline');
+      tick();
+      expect(mockStore.dispatch).toHaveBeenCalledWith(<TimelinesDeleteAction> {
+        type: 'ACTION_TIMELINES_DELETE',
+        payload: <any> 'some timeline',
+      });
+    }));
   });
 
   describe('Shallow', () => {

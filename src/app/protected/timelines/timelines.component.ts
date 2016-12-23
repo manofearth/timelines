@@ -1,6 +1,9 @@
 //noinspection TypeScriptPreferShortImport
 import { Subscription } from '../../shared/rxjs';
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, TemplateRef } from '@angular/core';
+import {
+  Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, TemplateRef,
+  ViewChild
+} from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TimelinesGetAction, TimelinesState, TimelinesCreateAction, TimelinesDeleteAction } from './timelines.reducer';
 import { AppState } from '../../reducers';
@@ -21,6 +24,8 @@ export class TimelinesComponent implements OnInit, OnDestroy {
   error: Error;
   isLoading: boolean;
   timelineToDelete: Timeline;
+
+  @ViewChild('deleteDialogTemplate') deleteDialogTemplate: TemplateRef<any>;
 
   private timelinesSubscription: Subscription;
 
@@ -64,11 +69,11 @@ export class TimelinesComponent implements OnInit, OnDestroy {
     });
   }
 
-  confirmDeletion(timeline: Timeline, deleteDialogTemplate: TemplateRef<any>) {
+  confirmDeletion(timeline: Timeline) {
 
     this.timelineToDelete = timeline;
 
-    this.ngbModal.open(deleteDialogTemplate).result.then((confirmed: boolean) => {
+    this.ngbModal.open(this.deleteDialogTemplate).result.then((confirmed: boolean) => {
       if (confirmed === false) {
         return;
       }

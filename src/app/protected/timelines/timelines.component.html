@@ -9,7 +9,7 @@
       <tr *ngFor="let timeline of timelines">
         <td><a [routerLink]="['/timeline', timeline.id]">{{ timeline.title }}</a></td>
         <td class="text-sm-right">
-          <a class="delete-link" href="javascript:void(0)" (click)="confirmDeletion(timeline, deleteDialogTemplate)">удалить</a>
+          <a class="delete-link" href="javascript:void(0)" (click)="confirmDeletion(timeline)">удалить</a>
         </td>
       </tr>
       </tbody>

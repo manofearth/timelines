@@ -7,7 +7,8 @@ import {
   TimelinesGetAction,
   TimelinesGetSuccessAction,
   TimelinesCreateAction,
-  TimelinesCreateSuccessAction
+  TimelinesCreateSuccessAction,
+  TimelinesDeleteAction, TimelinesDeleteSuccessAction
 } from './timelines.reducer';
 
 class MockFirebaseDatabase {
@@ -111,7 +112,7 @@ describe('FirebaseTimelinesEffects', () => {
 
     describe('create effect', () => {
 
-      let mockListObservable: FirebaseListObservable<{ key: string}>;
+      let mockListObservable: FirebaseListObservable<{ key: string }>;
 
       beforeEach(() => {
         runner.next(<TimelinesCreateAction>{ type: 'ACTION_TIMELINES_CREATE' });
@@ -150,7 +151,49 @@ describe('FirebaseTimelinesEffects', () => {
           done();
         });
       });
+    });
 
+    describe('deleteTimeline effect', () => {
+
+      let mockListObservable: FirebaseListObservable<{ key: string }>;
+
+      beforeEach(() => {
+        runner.next(<TimelinesDeleteAction>{
+          type: 'ACTION_TIMELINES_DELETE',
+          payload: { id: 'some timeline id' },
+        });
+        mockListObservable = <any> {
+          remove: () => Promise.resolve(),
+        };
+        firebase.database.list = <any> (() => mockListObservable);
+      });
+
+      it('should query firebase database', () => {
+        spyOn(firebase.database, 'list').and.callThrough();
+        spyOn(mockListObservable, 'remove').and.callThrough();
+        effects.deleteTimeline.subscribe();
+        expect(firebase.database.list).toHaveBeenCalledWith('/private/some uid/timelines');
+        expect(mockListObservable.remove).toHaveBeenCalledWith('some timeline id');
+      });
+
+      it('should emit ACTION_TIMELINES_DELETE_SUCCESS', (done: DoneFn) => {
+        effects.deleteTimeline.subscribe((action: TimelinesDeleteSuccessAction) => {
+          expect(action.type).toBe('ACTION_TIMELINES_DELETE_SUCCESS');
+          expect(action.payload).toBeUndefined();
+          done();
+        });
+      });
+
+      it('should emit ACTION_TIMELINES_DELETE_ERROR', (done: DoneFn) => {
+
+        mockListObservable.remove = <any> (() => Promise.reject('some error'));
+
+        effects.deleteTimeline.subscribe((action: TimelinesDeleteSuccessAction) => {
+          expect(action.type).toBe('ACTION_TIMELINES_DELETE_ERROR');
+          expect(action.payload).toEqual(new Error('some error'));
+          done();
+        });
+      });
     });
 
   });
