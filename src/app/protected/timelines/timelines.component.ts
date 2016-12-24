@@ -10,6 +10,7 @@ import { AppState } from '../../reducers';
 import { Router } from '@angular/router';
 import { Timeline } from '../timeline/timeline.reducer';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-timelines',
@@ -34,10 +35,13 @@ export class TimelinesComponent implements OnInit, OnDestroy {
     private router: Router,
     private changeDetector: ChangeDetectorRef,
     private ngbModal: NgbModal,
+    private titleService: Title,
   ) {
   }
 
   ngOnInit() {
+
+    this.titleService.setTitle('Timelines');
 
     this.timelinesSubscription = this.store.select<TimelinesState>('timelines').subscribe((state: TimelinesState) => {
       this.timelines = state.timelines;

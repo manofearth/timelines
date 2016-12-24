@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
-import { AngularFire, FirebaseAuthState } from 'angularfire2';
-import { Observable } from 'rxjs/Observable';
+import { AngularFire, FirebaseAuthState, FirebaseObjectObservable } from 'angularfire2';
+import { Observable } from '../../shared/rxjs';
 import {
   TimelineGetSuccessAction,
   TimelineGetErrorAction,
@@ -9,15 +9,19 @@ import {
   TimelineAction,
   TimelineGetAction,
   Timeline,
+  TimelineSaveSuccessAction,
+  TimelineSaveErrorAction,
+  TimelineChangedAction,
 } from './timeline.reducer';
+
+const SAVE_DEBOUNCE_TIME = 1000;
 
 @Injectable()
 export class FirebaseTimelineEffects {
 
   @Effect() get: Observable<TimelineGetSuccessAction | TimelineGetErrorAction> = this
     .authorizedActionsOfType('ACTION_TIMELINE_GET')
-    .switchMap((action: TimelineGetAction) => this.fire.database
-      .object('/private/' + this.auth.uid + '/timelines/' + action.payload)
+    .switchMap((action: TimelineGetAction) => this.getFirebaseObject(this.auth.uid, action.payload)
       .map((firebaseTimeline: FirebaseTimeline): TimelineGetSuccessAction => ({
         type: 'ACTION_TIMELINE_GET_SUCCESS',
         payload: toTimeline(firebaseTimeline),
@@ -28,7 +32,26 @@ export class FirebaseTimelineEffects {
       }))
     );
 
+  @Effect() save: Observable<TimelineSaveSuccessAction> = this
+    .authorizedActionsOfType('ACTION_TIMELINE_CHANGED')
+    .debounceTime(SAVE_DEBOUNCE_TIME)
+    .switchMap((action: TimelineChangedAction) =>
+      Observable
+        .fromPromise(
+        <Promise<void>>this.getFirebaseObject(this.auth.uid, action.payload.id)
+          .update(toFirebaseTimelineUpdateObject(action.payload))
+        )
+        .map((): TimelineSaveSuccessAction => ({
+          type: 'ACTION_TIMELINE_SAVE_SUCCESS',
+        }))
+        .catch((error: Error): Observable<TimelineSaveErrorAction> => Observable.of<TimelineSaveErrorAction>({
+          type: 'ACTION_TIMELINE_SAVE_ERROR',
+          payload: error,
+        }))
+    );
+
   private auth: FirebaseAuthState = null;
+  private firebaseObject: FirebaseObjectObservable<FirebaseTimeline>;
 
   constructor(private actions: Actions, private fire: AngularFire) {
     this.fire.auth.subscribe((auth: FirebaseAuthState) => {
@@ -36,10 +59,17 @@ export class FirebaseTimelineEffects {
     });
   }
 
-  private authorizedActionsOfType(type: TimelineActionType): Observable<TimelineAction> {
+  private authorizedActionsOfType(...types: TimelineActionType[]): Observable<TimelineAction> {
     return this.actions
-      .ofType(type)
+      .ofType(...types)
       .filter((action: TimelineAction) => this.auth !== null);
+  }
+
+  private getFirebaseObject(userUid: string, key: string): FirebaseObjectObservable<FirebaseTimeline> {
+    if (!this.firebaseObject || this.firebaseObject.$ref.key !== key) {
+      this.firebaseObject = this.fire.database.object('/private/' + this.auth.uid + '/timelines/' + key);
+    }
+    return this.firebaseObject;
   }
 }
 
@@ -48,9 +78,19 @@ export interface FirebaseTimeline {
   title: string;
 }
 
+export interface FirebaseTimelineUpdateObject {
+  title: string;
+}
+
 export function toTimeline(firebaseTimeline: FirebaseTimeline): Timeline {
   return {
     id: firebaseTimeline.$key,
     title: firebaseTimeline.title,
+  };
+}
+
+function toFirebaseTimelineUpdateObject(timeline: Timeline): FirebaseTimelineUpdateObject {
+  return {
+    title: timeline.title,
   };
 }

@@ -26,6 +26,7 @@ export const initialState: AppState = {
   },
   timeline: {
     isLoading: true,
+    isSaving: false,
     error: null,
     timeline: null,
   }

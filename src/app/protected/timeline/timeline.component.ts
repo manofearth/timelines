@@ -6,6 +6,8 @@ import { AppState } from '../../reducers';
 import { TimelineGetAction, TimelineState, Timeline, TimelineChangedAction } from './timeline.reducer';
 import { ActivatedRoute, Params } from '@angular/router';
 import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
+import { areEqual } from '../../shared/helpers';
 
 @Component({
   selector: 'app-timeline',
@@ -17,6 +19,7 @@ export class TimelineComponent implements OnInit, OnDestroy {
 
   timeline: Timeline;
   isLoading: boolean;
+  isSaving: boolean;
   error: Error;
   form: TimelineForm;
 
@@ -24,13 +27,12 @@ export class TimelineComponent implements OnInit, OnDestroy {
   private stateSubscription: Subscription;
   private formChangesSubscription: Subscription;
 
-  private readonly FORM_VALUE_CHANGES_DEBOUNCE_TIME: number = 1000;
-
-  constructor(private store: Store<AppState>,
-              private route: ActivatedRoute,
-              private fb: FormBuilder,
-              private changeDetector: ChangeDetectorRef,) {
-  }
+  constructor(
+    private store: Store<AppState>,
+    private route: ActivatedRoute,
+    private fb: FormBuilder,
+    private changeDetector: ChangeDetectorRef,
+    private titleService: Title) { }
 
   ngOnInit() {
 
@@ -45,11 +47,13 @@ export class TimelineComponent implements OnInit, OnDestroy {
 
     this.stateSubscription = this.store.select('timeline').subscribe((timeline: TimelineState) => {
       this.isLoading = timeline.isLoading;
+      this.isSaving = timeline.isSaving;
       this.error = timeline.error;
       this.timeline = timeline.timeline;
 
       if (timeline.timeline) {
-        this.form.setValue(toFormValue(timeline.timeline), { emitEvent: false });
+        this.updateForm();
+        this.updateTitle();
       }
 
       this.changeDetector.markForCheck();
@@ -64,19 +68,30 @@ export class TimelineComponent implements OnInit, OnDestroy {
   }
 
   private initForm() {
-    this.form = <TimelineForm> this.fb.group({
+    this.form = <TimelineForm>this.fb.group({
       title: null,
     });
 
     this.formChangesSubscription = this.form.valueChanges
-      .debounceTime(this.FORM_VALUE_CHANGES_DEBOUNCE_TIME)
-      .distinctUntilChanged()
       .subscribe((value: TimelineFormValue) => {
-        this.store.dispatch(<TimelineChangedAction> {
+        this.store.dispatch(<TimelineChangedAction>{
           type: 'ACTION_TIMELINE_CHANGED',
-          payload: value,
+          payload: toTimeline(this.timeline, value),
         });
       });
+  }
+
+  private updateForm() {
+
+    const newFormValue: TimelineFormValue = toFormValue(this.timeline);
+
+    if (!areEqual(this.form.value, newFormValue)) {
+      this.form.setValue(newFormValue, { emitEvent: false });
+    }
+  }
+
+  private updateTitle() {
+    this.titleService.setTitle((this.isSaving ? '*' : '') + this.timeline.title);
   }
 
 }
@@ -94,5 +109,12 @@ export interface TimelineFormValue {
 function toFormValue(timeline: Timeline): TimelineFormValue {
   return {
     title: timeline.title,
+  };
+}
+
+function toTimeline(oldTimeline: Timeline, formValue: TimelineFormValue): Timeline {
+  return {
+    id: oldTimeline.id,
+    title: formValue.title,
   };
 }

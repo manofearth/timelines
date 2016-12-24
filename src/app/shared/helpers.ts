@@ -21,3 +21,7 @@ export function empty(value: any): boolean {
 export function notEmpty(value: any): boolean {
   return !empty(value);
 }
+
+export function areEqual(val1: any, val2: any): boolean {
+  return JSON.stringify(val1) === JSON.stringify(val2);
+}
