@@ -36,8 +36,6 @@ export class TimelineComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    this.initForm();
-
     this.routeParamsSubscription = this.route.params.subscribe((params: Params) => {
       this.store.dispatch(<TimelineGetAction>{
         type: 'ACTION_TIMELINE_GET',
@@ -45,20 +43,24 @@ export class TimelineComponent implements OnInit, OnDestroy {
       });
     });
 
-    this.stateSubscription = this.store.select('timeline').subscribe((timeline: TimelineState) => {
-      this.isLoading = timeline.isLoading;
-      this.isSaving = timeline.isSaving;
-      this.error = timeline.error;
-      this.timeline = timeline.timeline;
+    this.stateSubscription = this.store
+      .select('timeline')
+      .filter((timeline: TimelineState): boolean => timeline.timeline !== null)
+      .subscribe((timeline: TimelineState) => {
+        this.isLoading = timeline.isLoading;
+        this.isSaving = timeline.isSaving;
+        this.error = timeline.error;
+        this.timeline = timeline.timeline;
 
-      if (timeline.timeline) {
-        this.updateForm();
         this.updateTitle();
-      }
 
-      this.changeDetector.markForCheck();
+        if (!this.form) {
+          this.initForm(timeline.timeline);
+        }
 
-    });
+        this.changeDetector.markForCheck();
+
+      });
 
   }
 
@@ -67,9 +69,9 @@ export class TimelineComponent implements OnInit, OnDestroy {
     this.stateSubscription.unsubscribe();
   }
 
-  private initForm() {
+  private initForm(timeline: Timeline) {
     this.form = <TimelineForm>this.fb.group({
-      title: null,
+      title: timeline.title,
     });
 
     this.formChangesSubscription = this.form.valueChanges
@@ -79,15 +81,6 @@ export class TimelineComponent implements OnInit, OnDestroy {
           payload: toTimeline(this.timeline, value),
         });
       });
-  }
-
-  private updateForm() {
-
-    const newFormValue: TimelineFormValue = toFormValue(this.timeline);
-
-    if (!areEqual(this.form.value, newFormValue)) {
-      this.form.setValue(newFormValue, { emitEvent: false });
-    }
   }
 
   private updateTitle() {
