@@ -8,6 +8,7 @@ import { TimelinesGetAction, TimelinesState, TimelinesCreateAction, TimelinesDel
 import { APP_BASE_HREF } from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Title } from '@angular/platform-browser';
 
 describe('TimelinesComponent', () => {
 
@@ -42,7 +43,17 @@ describe('TimelinesComponent', () => {
         }
       };
 
-      component = new TimelinesComponent(mockStore, mockRouter, mockChangeDetector, mockBootstrapModal);
+      const mockTitleService: Title = <any>{
+        setTitle: () => { },
+      };
+
+      component = new TimelinesComponent(
+        mockStore,
+        mockRouter,
+        mockChangeDetector,
+        mockBootstrapModal,
+        mockTitleService
+      );
     });
 
     it('ngOnInit() should dispatch ACTION_TIMELINES_GET', () => {
@@ -80,7 +91,7 @@ describe('TimelinesComponent', () => {
 
     it('confirmDeletion() should not dispatch ACTION_TIMELINES_DELETE if user not confirmed it', fakeAsync(() => {
       spyOn(mockStore, 'dispatch');
-      mockBootstrapModal.open = <any> (() => ({ result: Promise.resolve(false) }));
+      mockBootstrapModal.open = <any>(() => ({ result: Promise.resolve(false) }));
       component.confirmDeletion(<any>'some timeline');
       tick();
       expect(mockStore.dispatch).not.toHaveBeenCalled();
@@ -88,12 +99,12 @@ describe('TimelinesComponent', () => {
 
     it('confirmDeletion() should dispatch ACTION_TIMELINES_DELETE if user confirmed it', fakeAsync(() => {
       spyOn(mockStore, 'dispatch');
-      mockBootstrapModal.open = <any> (() => ({ result: Promise.resolve(true) }));
+      mockBootstrapModal.open = <any>(() => ({ result: Promise.resolve(true) }));
       component.confirmDeletion(<any>'some timeline');
       tick();
-      expect(mockStore.dispatch).toHaveBeenCalledWith(<TimelinesDeleteAction> {
+      expect(mockStore.dispatch).toHaveBeenCalledWith(<TimelinesDeleteAction>{
         type: 'ACTION_TIMELINES_DELETE',
-        payload: <any> 'some timeline',
+        payload: <any>'some timeline',
       });
     }));
   });

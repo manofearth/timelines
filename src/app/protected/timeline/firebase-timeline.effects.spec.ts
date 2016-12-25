@@ -3,7 +3,7 @@ import { Actions } from '@ngrx/effects';
 import { FirebaseTimelineEffects } from './firebase-timeline.effects';
 import { EffectsRunner } from '@ngrx/effects/testing';
 import { FirebaseAuthState, AngularFire } from 'angularfire2';
-import { Observable, ReplaySubject } from '../../shared/rxjs';
+import { Observable, ReplaySubject, Subject } from '../../shared/rxjs';
 
 class MockFirebaseDatabase {
   object() {
@@ -23,7 +23,7 @@ describe('FirebaseTimelineEffects', () => {
 
     runner = new EffectsRunner();
 
-    firebase = <any> {
+    firebase = <any>{
       auth: authStateChanges,
       database: new MockFirebaseDatabase(),
     };
@@ -79,8 +79,9 @@ describe('FirebaseTimelineEffects', () => {
     });
 
     it('should emit ACTION_TIMELINE_GET_ERROR', (done: DoneFn) => {
-
-      firebase.database.object = <any>(() => Observable.throw('some error'));
+      const mockFirebaseObject: any = Observable.throw('some error');
+      mockFirebaseObject.$ref = { key: 'some object key' };
+      firebase.database.object = <any>(() => mockFirebaseObject);
       runner.next(<TimelineGetAction>{ type: 'ACTION_TIMELINE_GET' });
 
       effects.get.subscribe((action: TimelineGetSuccessAction) => {

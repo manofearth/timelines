@@ -1,38 +1,92 @@
-import { Observable } from '../../shared/rxjs';
+import { Observable, Subject } from '../../shared/rxjs';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { TimelineComponent } from './timeline.component';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { NO_ERRORS_SCHEMA, ChangeDetectorRef } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { APP_BASE_HREF } from '@angular/common';
 import { TimelineState, TimelineGetAction } from './timeline.reducer';
 import { AppState } from '../../reducers';
+import { Title } from '@angular/platform-browser';
+import { FormBuilder } from '@angular/forms';
 
 describe('TimelineComponent', () => {
+
   describe('Isolated', () => {
     let mockStore: Store<AppState>;
     let component: TimelineComponent;
     let mockRoute: ActivatedRoute;
+    let mockTitleService: Title;
+    let stateChanges = new Subject();
 
     beforeEach(() => {
-      mockStore = <any> {
+      stateChanges = new Subject();
+      mockStore = <any>{
         dispatch: () => {
         },
-        select: () => Observable.of({}),
+        select: () => stateChanges,
       };
-      mockRoute = <any> {
+      mockRoute = <any>{
         params: Observable.of({}),
       };
-      component = new TimelineComponent(mockStore, mockRoute);
+      mockTitleService = <any>{
+        setTitle: () => { },
+      };
+      const mockChangeDetector: ChangeDetectorRef = <any>{
+        markForCheck: () => { },
+      };
+      const formBuilder: FormBuilder = new FormBuilder();
+
+      component = new TimelineComponent(mockStore, mockRoute, formBuilder, mockChangeDetector, mockTitleService);
     });
 
     it('ngOnInit() should dispatch ACTION_TIMELINE_GET', () => {
       spyOn(mockStore, 'dispatch');
-      mockRoute.params = Observable.of({ id: 'some id'});
+      mockRoute.params = Observable.of({ id: 'some id' });
       component.ngOnInit();
       expect(mockStore.dispatch).toHaveBeenCalledWith(<TimelineGetAction>{
         type: 'ACTION_TIMELINE_GET',
         payload: 'some id',
+      });
+    });
+
+    it('should update title', () => {
+      const spySetTitle: jasmine.Spy = spyOn(mockTitleService, 'setTitle');
+      component.ngOnInit();
+
+      stateChanges.next({
+        timeline: { title: 'some timeline name' },
+      });
+
+      stateChanges.next({
+        isSaving: true,
+        timeline: { title: 'some timeline name' },
+      });
+
+      expect(spySetTitle.calls.allArgs()).toEqual([
+        ['some timeline name'],
+        ['*some timeline name'],
+      ]);
+    });
+
+    it('should dispatch ACTION_TIMELINE_CHANGED on form value changes', () => {
+      spyOn(mockStore, 'dispatch');
+      component.ngOnInit();
+      stateChanges.next({
+        timeline: {
+          id: 'some id',
+          title: 'some timelilne name',
+        }
+      });
+
+      component.form.controls.title.setValue('some new title');
+
+      expect(mockStore.dispatch).toHaveBeenCalledWith({
+        type: 'ACTION_TIMELINE_CHANGED',
+        payload: {
+          id: 'some id',
+          title: 'some new title',
+        }
       });
     });
   });
@@ -46,6 +100,7 @@ describe('TimelineComponent', () => {
         imports: [RouterModule.forRoot([])],
         declarations: [TimelineComponent],
         providers: [
+          FormBuilder,
           {
             provide: Store,
             useValue: {

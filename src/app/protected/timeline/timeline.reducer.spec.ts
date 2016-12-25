@@ -6,6 +6,7 @@ describe('timeline reducer', () => {
 
     const state: TimelineState = Object.freeze({
       isLoading: true,
+      isSaving: false,
       error: new Error('some error'),
       timeline: null
     });
@@ -20,6 +21,7 @@ describe('timeline reducer', () => {
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<TimelineState>{
       isLoading: false,
+      isSaving: false,
       error: null,
       timeline: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'Second World War' },
     });
@@ -29,6 +31,7 @@ describe('timeline reducer', () => {
 
     const state: TimelineState = Object.freeze({
       isLoading: true,
+      isSaving: false,
       error: new Error('some error'),
       timeline: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'Second World War' },
     });
@@ -43,6 +46,7 @@ describe('timeline reducer', () => {
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<TimelineState>{
       isLoading: false,
+      isSaving: false,
       error: new Error('some error'),
       timeline: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'Second World War' },
     });
