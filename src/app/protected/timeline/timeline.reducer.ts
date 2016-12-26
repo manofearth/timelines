@@ -69,21 +69,21 @@ export function timelineReducer(state: TimelineState, action: TimelineAction): T
       };
     case 'ACTION_TIMELINE_CHANGED':
       return {
-        isLoading: false,
+        isLoading: state.isLoading,
         isSaving: true,
         error: null,
         timeline: action.payload,
       };
     case 'ACTION_TIMELINE_SAVE_SUCCESS':
       return {
-        isLoading: false,
+        isLoading: state.isLoading,
         isSaving: false,
         error: null,
         timeline: state.timeline,
       };
     case 'ACTION_TIMELINE_SAVE_ERROR':
       return {
-        isLoading: false,
+        isLoading: state.isLoading,
         isSaving: false,
         error: action.payload,
         timeline: state.timeline,

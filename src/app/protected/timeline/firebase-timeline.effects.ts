@@ -21,7 +21,7 @@ export class FirebaseTimelineEffects {
 
   @Effect() get: Observable<TimelineGetSuccessAction | TimelineGetErrorAction> = this
     .authorizedActionsOfType('ACTION_TIMELINE_GET')
-    .switchMap((action: TimelineGetAction) => this.getFirebaseObject(this.auth.uid, action.payload)
+    .switchMap((action: TimelineGetAction) => this.getFirebaseObject(action.payload)
       .map((firebaseTimeline: FirebaseTimeline): TimelineGetSuccessAction => ({
         type: 'ACTION_TIMELINE_GET_SUCCESS',
         payload: toTimeline(firebaseTimeline),
@@ -38,7 +38,7 @@ export class FirebaseTimelineEffects {
     .switchMap((action: TimelineChangedAction) =>
       Observable
         .fromPromise(
-        <Promise<void>>this.getFirebaseObject(this.auth.uid, action.payload.id)
+        <Promise<void>>this.getFirebaseObject(action.payload.id)
           .update(toFirebaseTimelineUpdateObject(action.payload))
         )
         .map((): TimelineSaveSuccessAction => ({
@@ -51,7 +51,8 @@ export class FirebaseTimelineEffects {
     );
 
   private auth: FirebaseAuthState = null;
-  private firebaseObject: FirebaseObjectObservable<FirebaseTimeline>;
+  private firebaseObject: FirebaseObjectObservable<FirebaseTimeline> = null;
+  private firebaseObjectKey: string = null;
 
   constructor(private actions: Actions, private fire: AngularFire) {
     this.fire.auth.subscribe((auth: FirebaseAuthState) => {
@@ -65,9 +66,10 @@ export class FirebaseTimelineEffects {
       .filter((action: TimelineAction) => this.auth !== null);
   }
 
-  private getFirebaseObject(userUid: string, key: string): FirebaseObjectObservable<FirebaseTimeline> {
-    if (!this.firebaseObject || this.firebaseObject.$ref.key !== key) {
+  private getFirebaseObject(key: string): FirebaseObjectObservable<FirebaseTimeline> {
+    if (this.firebaseObjectKey !== key) {
       this.firebaseObject = this.fire.database.object('/private/' + this.auth.uid + '/timelines/' + key);
+      this.firebaseObjectKey = key;
     }
     return this.firebaseObject;
   }
