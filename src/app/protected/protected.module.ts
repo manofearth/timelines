@@ -7,6 +7,7 @@ import { LogoutComponent } from './logout/logout.component';
 import { TimelineComponent } from './timeline/timeline.component';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule } from '@angular/forms';
+import {TimelineCanDeactivateService} from './timeline/timeline-can-deactivate.service';
 
 const routes: Routes = [
   {
@@ -20,6 +21,7 @@ const routes: Routes = [
       {
         path: 'timeline/:id',
         component: TimelineComponent,
+        canDeactivate: [TimelineCanDeactivateService],
       },
     ],
   },
@@ -39,6 +41,9 @@ const routes: Routes = [
     TimelineComponent,
     ProtectedComponent,
     LogoutComponent,
+  ],
+  providers: [
+    TimelineCanDeactivateService,
   ],
 })
 export class ProtectedModule {

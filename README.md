@@ -13,7 +13,7 @@
 - [x] Open timeline
 - [x] Delete timeline
 - [x] Delete timeline confirmation dialog
-- [ ] Edit timeline title
+- [x] Edit timeline title
 - [ ] Edit timeline. Add event
 - [ ] Edit event dialog
 - [ ] Edit event. Date field
