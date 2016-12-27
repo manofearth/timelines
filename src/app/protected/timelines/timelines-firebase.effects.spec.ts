@@ -1,6 +1,6 @@
 //noinspection TypeScriptPreferShortImport
 import { ReplaySubject } from '../../shared/rxjs';
-import { FirebaseTimelinesEffects } from './firebase-timelines.effects';
+import { TimelinesFirebaseEffects } from './timelines-firebase.effects';
 import { EffectsRunner } from '@ngrx/effects/testing';
 import { AngularFire, FirebaseAuthState } from 'angularfire2';
 import { Actions } from '@ngrx/effects';
@@ -12,7 +12,7 @@ import {
   TimelinesDeleteAction,
   TimelinesDeleteSuccessAction
 } from './timelines.reducer';
-import { FirebaseTimeline } from '../timeline/firebase-timeline.effects';
+import { FirebaseTimeline } from '../timeline/timeline-firebase.effects';
 
 class MockFirebaseList extends ReplaySubject<FirebaseTimeline[]> {
   //noinspection JSMethodCanBeStatic
@@ -26,9 +26,9 @@ class MockFirebaseList extends ReplaySubject<FirebaseTimeline[]> {
   }
 }
 
-describe('FirebaseTimelinesEffects', () => {
+describe('TimelinesFirebaseEffects', () => {
 
-  let effects: FirebaseTimelinesEffects;
+  let effects: TimelinesFirebaseEffects;
   let runner: EffectsRunner;
   let firebase: AngularFire;
   let authStateChanges: ReplaySubject<FirebaseAuthState>;
@@ -48,7 +48,7 @@ describe('FirebaseTimelinesEffects', () => {
       },
     };
 
-    effects = new FirebaseTimelinesEffects(new Actions(runner), firebase);
+    effects = new TimelinesFirebaseEffects(new Actions(runner), firebase);
   });
 
 

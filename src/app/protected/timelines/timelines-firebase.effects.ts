@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { AngularFire, FirebaseAuthState, FirebaseListObservable } from 'angularfire2';
+import { AngularFire, FirebaseListObservable } from 'angularfire2';
 import { Actions, Effect } from '@ngrx/effects';
 import { Observable } from '../../shared/rxjs';
-import { FirebaseTimeline, toTimeline } from '../timeline/firebase-timeline.effects';
+import { FirebaseTimeline, toTimeline } from '../timeline/timeline-firebase.effects';
 import {
   TimelinesGetSuccessAction,
   TimelinesGetAction,
@@ -14,11 +14,12 @@ import {
   TimelinesAction,
   TimelinesDeleteSuccessAction,
   TimelinesDeleteErrorAction,
-  TimelinesDeleteAction
+  TimelinesDeleteAction,
 } from './timelines.reducer';
+import { ProtectedFirebaseEffects } from '../shared/protected-firebase.effects';
 
 @Injectable()
-export class FirebaseTimelinesEffects {
+export class TimelinesFirebaseEffects extends ProtectedFirebaseEffects<TimelinesActionType, TimelinesAction> {
 
 
   @Effect() get: Observable<TimelinesGetSuccessAction|TimelinesGetErrorAction> =
@@ -69,27 +70,21 @@ export class FirebaseTimelinesEffects {
           )
       );
 
-  private auth: FirebaseAuthState = null;
-  private list: FirebaseListObservable<FirebaseTimeline[]> = null;
+  private firebaseList: FirebaseListObservable<FirebaseTimeline[]> = null;
 
-  constructor(private actions: Actions, private fire: AngularFire) {
-    this.fire.auth.subscribe((auth: FirebaseAuthState) => {
-      this.auth = auth;
-      this.list = null;
-    });
+  constructor(actions: Actions, fire: AngularFire) {
+    super(actions, fire);
   }
 
-  private authorizedActionsOfType(type: TimelinesActionType): Observable<TimelinesAction> {
-    return this.actions
-      .ofType(type)
-      .filter((action: TimelinesAction) => this.auth !== null);
+  protected onAuthChanged(): void {
+    this.firebaseList = null;
   }
 
   private getTimelinesList(): FirebaseListObservable<FirebaseTimeline[]> {
-    if (!this.list) {
-      this.list = this.fire.database.list('/private/' + this.auth.uid + '/timelines');
+    if (!this.firebaseList) {
+      this.firebaseList = this.fire.database.list('/private/' + this.auth.uid + '/timelines');
     }
-    return this.list;
+    return this.firebaseList;
   }
 }
 

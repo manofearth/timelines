@@ -7,7 +7,7 @@ import {
   TimelineGetErrorAction, TimelineSaveSuccessAction
 } from './timeline.reducer';
 import { Actions } from '@ngrx/effects';
-import { FirebaseTimelineEffects, FirebaseTimeline, SAVE_DEBOUNCE_TIME } from './firebase-timeline.effects';
+import { TimelineFirebaseEffects, FirebaseTimeline, SAVE_DEBOUNCE_TIME } from './timeline-firebase.effects';
 import { EffectsRunner } from '@ngrx/effects/testing';
 import { FirebaseAuthState, AngularFire } from 'angularfire2';
 import { fakeAsync, tick } from '@angular/core/testing';
@@ -19,9 +19,9 @@ class MockFirebaseObject extends ReplaySubject<FirebaseTimeline> {
   }
 }
 
-describe('FirebaseTimelineEffects', () => {
+describe('TimelineFirebaseEffects', () => {
 
-  let effects: FirebaseTimelineEffects;
+  let effects: TimelineFirebaseEffects;
   let runner: EffectsRunner;
   let firebase: AngularFire;
   let authStateChanges: ReplaySubject<FirebaseAuthState>;
@@ -41,7 +41,7 @@ describe('FirebaseTimelineEffects', () => {
       },
     };
 
-    effects = new FirebaseTimelineEffects(new Actions(runner), firebase);
+    effects = new TimelineFirebaseEffects(new Actions(runner), firebase);
   });
 
 

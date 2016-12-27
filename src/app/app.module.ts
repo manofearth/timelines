@@ -14,8 +14,8 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { reducer, initialState } from './reducers';
 import { AuthGuard } from './auth/auth-guard.service';
 import { StoreModule } from '@ngrx/store';
-import { FirebaseTimelinesEffects } from './protected/timelines/firebase-timelines.effects';
-import { FirebaseTimelineEffects } from './protected/timeline/firebase-timeline.effects';
+import { TimelinesFirebaseEffects } from './protected/timelines/timelines-firebase.effects';
+import { TimelineFirebaseEffects } from './protected/timeline/timeline-firebase.effects';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 const routes: Routes = [
@@ -60,8 +60,8 @@ const routes: Routes = [
     AngularFireModule.initializeApp(firebaseConfig),
     EffectsModule.run(FirebaseAuthEffects),
     // until https://github.com/angular/angular/issues/12869 fixed
-    EffectsModule.run(FirebaseTimelinesEffects),
-    EffectsModule.run(FirebaseTimelineEffects),
+    EffectsModule.run(TimelinesFirebaseEffects),
+    EffectsModule.run(TimelineFirebaseEffects),
   ],
   providers: [AuthGuard],
   bootstrap: [AppComponent]

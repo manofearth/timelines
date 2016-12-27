@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
-import { AngularFire, FirebaseAuthState, FirebaseObjectObservable } from 'angularfire2';
+import { AngularFire, FirebaseObjectObservable } from 'angularfire2';
 import { Observable } from '../../shared/rxjs';
 import {
   TimelineGetSuccessAction,
@@ -13,11 +13,12 @@ import {
   TimelineSaveErrorAction,
   TimelineChangedAction,
 } from './timeline.reducer';
+import { ProtectedFirebaseEffects } from '../shared/protected-firebase.effects';
 
 export const SAVE_DEBOUNCE_TIME = 1000;
 
 @Injectable()
-export class FirebaseTimelineEffects {
+export class TimelineFirebaseEffects extends ProtectedFirebaseEffects<TimelineActionType, TimelineAction> {
 
   @Effect() get: Observable<TimelineGetSuccessAction | TimelineGetErrorAction> = this
     .authorizedActionsOfType('ACTION_TIMELINE_GET')
@@ -50,22 +51,16 @@ export class FirebaseTimelineEffects {
         }))
     );
 
-  private auth: FirebaseAuthState = null;
   private firebaseObject: FirebaseObjectObservable<FirebaseTimeline> = null;
   private firebaseObjectKey: string = null;
 
-  constructor(private actions: Actions, private fire: AngularFire) {
-    this.fire.auth.subscribe((auth: FirebaseAuthState) => {
-      this.auth = auth;
-      this.firebaseObject = null;
-      this.firebaseObjectKey = null;
-    });
+  constructor(actions: Actions, fire: AngularFire) {
+    super(actions, fire);
   }
 
-  private authorizedActionsOfType(...types: TimelineActionType[]): Observable<TimelineAction> {
-    return this.actions
-      .ofType(...types)
-      .filter((action: TimelineAction) => this.auth !== null);
+  protected onAuthChanged(): void {
+    this.firebaseObject = null;
+    this.firebaseObjectKey = null;
   }
 
   private getFirebaseObject(key: string): FirebaseObjectObservable<FirebaseTimeline> {
