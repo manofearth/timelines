@@ -1,18 +1,21 @@
+//noinspection TypeScriptPreferShortImport
+import { ReplaySubject } from '../../shared/rxjs';
 import {
   TimelineGetAction,
   TimelineGetSuccessAction,
   TimelineChangedAction,
-  TimelineGetErrorAction
+  TimelineGetErrorAction, TimelineSaveSuccessAction
 } from './timeline.reducer';
 import { Actions } from '@ngrx/effects';
-import { FirebaseTimelineEffects, FirebaseTimeline } from './firebase-timeline.effects';
+import { FirebaseTimelineEffects, FirebaseTimeline, SAVE_DEBOUNCE_TIME } from './firebase-timeline.effects';
 import { EffectsRunner } from '@ngrx/effects/testing';
-import { FirebaseAuthState, AngularFire, FirebaseObjectObservable } from 'angularfire2';
-import { Observable, ReplaySubject } from '../../shared/rxjs';
+import { FirebaseAuthState, AngularFire } from 'angularfire2';
+import { fakeAsync, tick } from '@angular/core/testing';
 
 class MockFirebaseObject extends ReplaySubject<FirebaseTimeline> {
+  //noinspection JSMethodCanBeStatic
   update() {
-
+    return Promise.resolve();
   }
 }
 
@@ -22,6 +25,7 @@ describe('FirebaseTimelineEffects', () => {
   let runner: EffectsRunner;
   let firebase: AngularFire;
   let authStateChanges: ReplaySubject<FirebaseAuthState>;
+  let mockFirebaseObject: MockFirebaseObject;
 
   beforeEach(() => {
 
@@ -29,10 +33,11 @@ describe('FirebaseTimelineEffects', () => {
 
     runner = new EffectsRunner();
 
+    mockFirebaseObject = new MockFirebaseObject();
     firebase = <any>{
       auth: authStateChanges,
       database: {
-        object: () => new MockFirebaseObject(),
+        object: () => mockFirebaseObject,
       },
     };
 
@@ -67,70 +72,201 @@ describe('FirebaseTimelineEffects', () => {
 
   describe('when logged in', () => {
 
-    let mockFirebaseObject: MockFirebaseObject;
-
     beforeEach(() => {
       authStateChanges.next(<any>{ uid: 'some-uid' });
-      runner.next(<TimelineGetAction>{
-        type: 'ACTION_TIMELINE_GET',
-        payload: 'some-timeline-id'
-      });
-      mockFirebaseObject = <any> firebase.database.object();
     });
 
-    it('should emit ACTION_TIMELINE_GET_SUCCESS', (done: DoneFn) => {
+    describe('on ACTION_TIMELINE_GET', () => {
 
-      mockFirebaseObject.next({ id: '1', title: 'Timeline 1' });
+      beforeEach(() => {
+        runner.next(<TimelineGetAction>{
+          type: 'ACTION_TIMELINE_GET',
+          payload: 'some-timeline-id'
+        });
+      });
 
-      effects.get.subscribe((action: TimelineGetSuccessAction) => {
-        expect(action.type).toBe('ACTION_TIMELINE_GET_SUCCESS');
-        expect(action.payload).toEqual({ id: '1', title: 'Timeline 1' });
-        done();
+      it('should emit ACTION_TIMELINE_GET_SUCCESS', (done: DoneFn) => {
+
+        mockFirebaseObject.next({ $key: '1', title: 'Timeline 1' });
+
+        effects.get.subscribe((action: TimelineGetSuccessAction) => {
+          expect(action.type).toBe('ACTION_TIMELINE_GET_SUCCESS');
+          expect(action.payload).toEqual({ id: '1', title: 'Timeline 1' });
+          done();
+        });
+      });
+
+      it('should emit ACTION_TIMELINE_GET_ERROR', (done: DoneFn) => {
+
+        mockFirebaseObject.error('some error');
+
+        effects.get.subscribe((action: TimelineGetErrorAction) => {
+          expect(action.type).toBe('ACTION_TIMELINE_GET_ERROR');
+          expect(action.payload).toBe('some error');
+          done();
+        });
       });
     });
 
-    it('should emit ACTION_TIMELINE_GET_ERROR', (done: DoneFn) => {
-      firebase.database.object = <any>(() => Observable.throw('some error'));
+    describe('on ACTION_TIMELINE_CHANGED', () => {
 
-      effects.get.subscribe((action: TimelineGetErrorAction) => {
-        expect(action.type).toBe('ACTION_TIMELINE_GET_ERROR');
-        expect(action.payload).toBe('some error');
-        done();
+      beforeEach(fakeAsync(() => {
+        runner.next(<TimelineChangedAction>{
+          type: 'ACTION_TIMELINE_CHANGED',
+          payload: {
+            id: 'some-timeline-id',
+            title: 'some title'
+          },
+        });
+      }));
+
+      it('should update firebase database object', fakeAsync(() => {
+        spyOn(mockFirebaseObject, 'update').and.callThrough();
+        effects.save.subscribe();
+        tick(SAVE_DEBOUNCE_TIME);
+        expect(mockFirebaseObject.update).toHaveBeenCalledWith({ title: 'some title' });
+      }));
+
+      it('should emit ACTION_TIMELINE_SAVE_SUCCESS', (done: DoneFn) => {
+
+        fakeAsync(() => {
+          mockFirebaseObject.update = () => Promise.resolve();
+
+          effects.save.subscribe((action: TimelineSaveSuccessAction) => {
+            expect(action.type).toBe('ACTION_TIMELINE_SAVE_SUCCESS');
+            done();
+          });
+          tick(SAVE_DEBOUNCE_TIME);
+        })();
+
       });
+
+      it('should emit ACTION_TIMELINE_SAVE_ERROR', (done: DoneFn) => {
+
+        fakeAsync(() => {
+          mockFirebaseObject.update = () => Promise.reject('some error');
+
+          effects.save.subscribe((action: TimelineSaveSuccessAction) => {
+            expect(action.type).toBe('ACTION_TIMELINE_SAVE_ERROR');
+            expect(action.payload).toBe('some error');
+            done();
+          });
+          tick(SAVE_DEBOUNCE_TIME);
+        })();
+
+      });
+
     });
 
   });
 
-  it('should not query firebase database repeatedly until user or object id changed', () => {
-    const firebaseObjectSpy: jasmine.Spy = spyOn(firebase.database, 'object').and.callThrough();
+  describe('multiple actions', () => {
 
-    effects.get.subscribe();
-    effects.save.subscribe();
+    let firebaseObjectSpy: jasmine.Spy;
 
-    authStateChanges.next(<any>{ uid: 'first-user-uid' });
-    runner.next(<TimelineGetAction>{
-      type: 'ACTION_TIMELINE_GET',
-      payload: 'first-timeline-id'
-    });
-    runner.next(<TimelineChangedAction>{
-      type: 'ACTION_TIMELINE_CHANGED',
-      payload: { id: 'first-timeline-id' },
+    beforeEach(() => {
+      firebaseObjectSpy = spyOn(firebase.database, 'object').and.callThrough();
+      effects.get.subscribe();
+      effects.save.subscribe();
     });
 
-    authStateChanges.next(<any>{ uid: 'second-user-uid' });
-    runner.next(<TimelineGetAction>{
-      type: 'ACTION_TIMELINE_GET',
-      payload: 'second-timeline-id'
-    });
-    runner.next(<TimelineChangedAction>{
-      type: 'ACTION_TIMELINE_CHANGED',
-      payload: { id: 'second-timeline-id' },
-    });
+    it('should not query firebase database repeatedly if user or object key not changed', fakeAsync(() => {
 
-    expect(firebaseObjectSpy.calls.allArgs()).toEqual([
-      ['/private/first-user-uid/timelines/first-timeline-id'],
-      ['/private/second-user-uid/timelines/second-timeline-id'],
-    ]);
+      authStateChanges.next(<any>{ uid: 'first-user-uid' });
+
+      runner.next(<TimelineGetAction>{
+        type: 'ACTION_TIMELINE_GET',
+        payload: 'first-timeline-id'
+      });
+      runner.next(<TimelineGetAction>{
+        type: 'ACTION_TIMELINE_GET',
+        payload: 'first-timeline-id' // object key not changed
+      });
+      runner.next(<TimelineChangedAction>{
+        type: 'ACTION_TIMELINE_CHANGED',
+        payload: { id: 'first-timeline-id' }, // object key not changed
+      });
+      tick(SAVE_DEBOUNCE_TIME);
+      runner.next(<TimelineChangedAction>{
+        type: 'ACTION_TIMELINE_CHANGED',
+        payload: { id: 'first-timeline-id' }, // object key not changed
+      });
+      tick(SAVE_DEBOUNCE_TIME);
+
+      expect(firebase.database.object).toHaveBeenCalledWith('/private/first-user-uid/timelines/first-timeline-id');
+      expect(firebaseObjectSpy.calls.count()).toBe(1);
+
+    }));
+
+    it('should query firebase database repeatedly if object key changed', fakeAsync(() => {
+
+      authStateChanges.next(<any>{ uid: 'first-user-uid' });
+
+      runner.next(<TimelineGetAction>{
+        type: 'ACTION_TIMELINE_GET',
+        payload: 'first-timeline-id'
+      });
+      runner.next(<TimelineGetAction>{
+        type: 'ACTION_TIMELINE_GET',
+        payload: 'second-timeline-id' // object key changed
+      });
+      runner.next(<TimelineChangedAction>{
+        type: 'ACTION_TIMELINE_CHANGED',
+        payload: { id: 'third-timeline-id' }, // object key changed
+      });
+      tick(SAVE_DEBOUNCE_TIME);
+      runner.next(<TimelineChangedAction>{
+        type: 'ACTION_TIMELINE_CHANGED',
+        payload: { id: 'fourth-timeline-id' }, // object key changed
+      });
+      tick(SAVE_DEBOUNCE_TIME);
+
+      expect(firebaseObjectSpy.calls.allArgs()).toEqual([
+        ['/private/first-user-uid/timelines/first-timeline-id'],
+        ['/private/first-user-uid/timelines/second-timeline-id'],
+        ['/private/first-user-uid/timelines/third-timeline-id'],
+        ['/private/first-user-uid/timelines/fourth-timeline-id'],
+      ]);
+
+    }));
+
+    it('should query firebase database repeatedly if user changed', fakeAsync(() => {
+
+      authStateChanges.next(<any>{ uid: 'first-user-uid' });
+      runner.next(<TimelineGetAction>{
+        type: 'ACTION_TIMELINE_GET',
+        payload: 'first-timeline-id'
+      });
+
+      authStateChanges.next(<any>{ uid: 'second-user-uid' }); // user changed
+      runner.next(<TimelineGetAction>{
+        type: 'ACTION_TIMELINE_GET',
+        payload: 'first-timeline-id' // object key not changed
+      });
+
+      authStateChanges.next(<any>{ uid: 'third-user-uid' }); // user changed
+      runner.next(<TimelineChangedAction>{
+        type: 'ACTION_TIMELINE_CHANGED',
+        payload: { id: 'first-timeline-id' }, // object key not changed
+      });
+      tick(SAVE_DEBOUNCE_TIME);
+
+      authStateChanges.next(<any>{ uid: 'fourth-user-uid' }); // user changed
+      runner.next(<TimelineChangedAction>{
+        type: 'ACTION_TIMELINE_CHANGED',
+        payload: { id: 'first-timeline-id' }, // object key not changed
+      });
+      tick(SAVE_DEBOUNCE_TIME);
+
+      expect(firebaseObjectSpy.calls.allArgs()).toEqual([
+        ['/private/first-user-uid/timelines/first-timeline-id'],
+        ['/private/second-user-uid/timelines/first-timeline-id'],
+        ['/private/third-user-uid/timelines/first-timeline-id'],
+        ['/private/fourth-user-uid/timelines/first-timeline-id'],
+      ]);
+
+    }));
+
   });
 
 });

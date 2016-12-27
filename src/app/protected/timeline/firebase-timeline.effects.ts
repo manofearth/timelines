@@ -14,7 +14,7 @@ import {
   TimelineChangedAction,
 } from './timeline.reducer';
 
-const SAVE_DEBOUNCE_TIME = 1000;
+export const SAVE_DEBOUNCE_TIME = 1000;
 
 @Injectable()
 export class FirebaseTimelineEffects {
@@ -57,6 +57,8 @@ export class FirebaseTimelineEffects {
   constructor(private actions: Actions, private fire: AngularFire) {
     this.fire.auth.subscribe((auth: FirebaseAuthState) => {
       this.auth = auth;
+      this.firebaseObject = null;
+      this.firebaseObjectKey = null;
     });
   }
 

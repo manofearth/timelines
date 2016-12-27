@@ -57,7 +57,7 @@ export class FirebaseTimelinesEffects {
   @Effect() deleteTimeline: Observable<TimelinesDeleteSuccessAction|TimelinesDeleteErrorAction> =
     this.authorizedActionsOfType('ACTION_TIMELINES_DELETE')
       .switchMap((action: TimelinesDeleteAction) =>
-        Observable.fromPromise(<Promise<any>>this.getTimelinesList().remove(action.payload.id))
+        Observable.fromPromise(<Promise<void>>this.getTimelinesList().remove(action.payload.id))
           .map((): TimelinesDeleteSuccessAction => ({
             type: 'ACTION_TIMELINES_DELETE_SUCCESS',
           }))
@@ -70,11 +70,12 @@ export class FirebaseTimelinesEffects {
       );
 
   private auth: FirebaseAuthState = null;
-  private list: FirebaseListObservable<FirebaseTimeline[]>;
+  private list: FirebaseListObservable<FirebaseTimeline[]> = null;
 
   constructor(private actions: Actions, private fire: AngularFire) {
     this.fire.auth.subscribe((auth: FirebaseAuthState) => {
       this.auth = auth;
+      this.list = null;
     });
   }
 

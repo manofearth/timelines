@@ -1,18 +1,28 @@
+//noinspection TypeScriptPreferShortImport
+import { ReplaySubject } from '../../shared/rxjs';
 import { FirebaseTimelinesEffects } from './firebase-timelines.effects';
 import { EffectsRunner } from '@ngrx/effects/testing';
-import { AngularFire, FirebaseAuthState, FirebaseListObservable } from 'angularfire2';
-import { Observable, ReplaySubject } from '../../shared/rxjs';
+import { AngularFire, FirebaseAuthState } from 'angularfire2';
 import { Actions } from '@ngrx/effects';
 import {
   TimelinesGetAction,
   TimelinesGetSuccessAction,
   TimelinesCreateAction,
   TimelinesCreateSuccessAction,
-  TimelinesDeleteAction, TimelinesDeleteSuccessAction
+  TimelinesDeleteAction,
+  TimelinesDeleteSuccessAction
 } from './timelines.reducer';
+import { FirebaseTimeline } from '../timeline/firebase-timeline.effects';
 
-class MockFirebaseDatabase {
-  list() {
+class MockFirebaseList extends ReplaySubject<FirebaseTimeline[]> {
+  //noinspection JSMethodCanBeStatic
+  push() {
+    return Promise.resolve();
+  }
+
+  //noinspection JSMethodCanBeStatic
+  remove() {
+    return Promise.resolve();
   }
 }
 
@@ -22,6 +32,7 @@ describe('FirebaseTimelinesEffects', () => {
   let runner: EffectsRunner;
   let firebase: AngularFire;
   let authStateChanges: ReplaySubject<FirebaseAuthState>;
+  let mockFirebaseList: MockFirebaseList;
 
   beforeEach(() => {
 
@@ -29,9 +40,12 @@ describe('FirebaseTimelinesEffects', () => {
 
     runner = new EffectsRunner();
 
+    mockFirebaseList = new MockFirebaseList();
     firebase = <any> {
       auth: authStateChanges,
-      database: new MockFirebaseDatabase(),
+      database: {
+        list: () => mockFirebaseList,
+      },
     };
 
     effects = new FirebaseTimelinesEffects(new Actions(runner), firebase);
@@ -48,6 +62,7 @@ describe('FirebaseTimelinesEffects', () => {
       spyOn(firebase.database, 'list');
       effects.get.subscribe();
       effects.create.subscribe();
+      effects.deleteTimeline.subscribe();
       expect(firebase.database.list).not.toHaveBeenCalled();
     });
 
@@ -56,6 +71,9 @@ describe('FirebaseTimelinesEffects', () => {
         fail('should not emit actions');
       });
       effects.create.subscribe(() => {
+        fail('should not emit actions');
+      });
+      effects.deleteTimeline.subscribe(() => {
         fail('should not emit actions');
       });
     });
@@ -74,18 +92,12 @@ describe('FirebaseTimelinesEffects', () => {
         runner.next(<TimelinesGetAction>{ type: 'ACTION_TIMELINES_GET' });
       });
 
-      it('should query firebase database', () => {
-        spyOn(firebase.database, 'list').and.returnValue(Observable.of([]));
-        effects.get.subscribe();
-        expect(firebase.database.list).toHaveBeenCalledWith('/private/some uid/timelines');
-      });
-
       it('should emit ACTION_TIMELINES_GET_SUCCESS', (done: DoneFn) => {
 
-        firebase.database.list = <any>(() => Observable.of([
+        mockFirebaseList.next([
           { $key: '1', title: 'Timeline 1' },
           { $key: '2', title: 'Timeline 2' },
-        ]));
+        ]);
 
         effects.get.subscribe((action: TimelinesGetSuccessAction) => {
           expect(action.type).toBe('ACTION_TIMELINES_GET_SUCCESS');
@@ -99,7 +111,7 @@ describe('FirebaseTimelinesEffects', () => {
 
       it('should emit ACTION_TIMELINES_GET_ERROR', (done: DoneFn) => {
 
-        firebase.database.list = <any>(() => Observable.throw('some error'));
+        mockFirebaseList.error('some error');
 
         effects.get.subscribe((action: TimelinesGetSuccessAction) => {
           expect(action.type).toBe('ACTION_TIMELINES_GET_ERROR');
@@ -112,27 +124,19 @@ describe('FirebaseTimelinesEffects', () => {
 
     describe('create effect', () => {
 
-      let mockListObservable: FirebaseListObservable<{ key: string }>;
-
       beforeEach(() => {
         runner.next(<TimelinesCreateAction>{ type: 'ACTION_TIMELINES_CREATE' });
-        mockListObservable = <any> {
-          push: () => Promise.resolve({}),
-        };
-        firebase.database.list = <any> (() => mockListObservable);
       });
 
-      it('should query firebase database', () => {
-        spyOn(firebase.database, 'list').and.callThrough();
-        spyOn(mockListObservable, 'push').and.callThrough();
+      it('should push new timeline to firebase database list', () => {
+        spyOn(mockFirebaseList, 'push').and.returnValue(Promise.resolve({}));
         effects.create.subscribe();
-        expect(firebase.database.list).toHaveBeenCalledWith('/private/some uid/timelines');
-        expect(mockListObservable.push).toHaveBeenCalledWith({ title: 'Новая лента' });
+        expect(mockFirebaseList.push).toHaveBeenCalledWith({ title: 'Новая лента' });
       });
 
       it('should emit ACTION_TIMELINES_CREATE_SUCCESS', (done: DoneFn) => {
 
-        mockListObservable.push = <any> (() => Promise.resolve({ key: 'generated key' }));
+        mockFirebaseList.push = () => Promise.resolve({ key: 'generated key' });
 
         effects.create.subscribe((action: TimelinesCreateSuccessAction) => {
           expect(action.type).toBe('ACTION_TIMELINES_CREATE_SUCCESS');
@@ -143,7 +147,7 @@ describe('FirebaseTimelinesEffects', () => {
 
       it('should emit ACTION_TIMELINES_CREATE_ERROR', (done: DoneFn) => {
 
-        mockListObservable.push = <any> (() => Promise.reject('some error'));
+        mockFirebaseList.push = () => Promise.reject('some error');
 
         effects.create.subscribe((action: TimelinesCreateSuccessAction) => {
           expect(action.type).toBe('ACTION_TIMELINES_CREATE_ERROR');
@@ -155,28 +159,23 @@ describe('FirebaseTimelinesEffects', () => {
 
     describe('deleteTimeline effect', () => {
 
-      let mockListObservable: FirebaseListObservable<{ key: string }>;
-
       beforeEach(() => {
         runner.next(<TimelinesDeleteAction>{
           type: 'ACTION_TIMELINES_DELETE',
           payload: { id: 'some timeline id' },
         });
-        mockListObservable = <any> {
-          remove: () => Promise.resolve(),
-        };
-        firebase.database.list = <any> (() => mockListObservable);
       });
 
-      it('should query firebase database', () => {
-        spyOn(firebase.database, 'list').and.callThrough();
-        spyOn(mockListObservable, 'remove').and.callThrough();
+      it('should delete timeline from firebase database list', () => {
+        spyOn(mockFirebaseList, 'remove').and.returnValue(Promise.resolve());
         effects.deleteTimeline.subscribe();
-        expect(firebase.database.list).toHaveBeenCalledWith('/private/some uid/timelines');
-        expect(mockListObservable.remove).toHaveBeenCalledWith('some timeline id');
+        expect(mockFirebaseList.remove).toHaveBeenCalledWith('some timeline id');
       });
 
       it('should emit ACTION_TIMELINES_DELETE_SUCCESS', (done: DoneFn) => {
+
+        mockFirebaseList.remove = () => Promise.resolve();
+
         effects.deleteTimeline.subscribe((action: TimelinesDeleteSuccessAction) => {
           expect(action.type).toBe('ACTION_TIMELINES_DELETE_SUCCESS');
           expect(action.payload).toBeUndefined();
@@ -186,7 +185,7 @@ describe('FirebaseTimelinesEffects', () => {
 
       it('should emit ACTION_TIMELINES_DELETE_ERROR', (done: DoneFn) => {
 
-        mockListObservable.remove = <any> (() => Promise.reject('some error'));
+        mockFirebaseList.remove = () => Promise.reject('some error');
 
         effects.deleteTimeline.subscribe((action: TimelinesDeleteSuccessAction) => {
           expect(action.type).toBe('ACTION_TIMELINES_DELETE_ERROR');
@@ -197,5 +196,55 @@ describe('FirebaseTimelinesEffects', () => {
     });
 
   });
+
+  describe('multiple actions', () => {
+
+    let firebaseListSpy: jasmine.Spy;
+
+    beforeEach(() => {
+      firebaseListSpy = spyOn(firebase.database, 'list').and.callThrough();
+      effects.get.subscribe();
+      effects.create.subscribe();
+      effects.deleteTimeline.subscribe();
+    });
+
+    it('should not query firebase database repeatedly if user not changed', () => {
+
+      authStateChanges.next(<any>{ uid: 'some-user-uid' });
+
+      runner.next(<TimelinesGetAction>{ type: 'ACTION_TIMELINES_GET' });
+      runner.next(<TimelinesGetAction>{ type: 'ACTION_TIMELINES_GET' });
+      runner.next(<TimelinesCreateAction>{ type: 'ACTION_TIMELINES_CREATE' });
+      runner.next(<TimelinesCreateAction>{ type: 'ACTION_TIMELINES_CREATE' });
+      runner.next(<TimelinesDeleteAction>{
+        type: 'ACTION_TIMELINES_DELETE',
+        payload: { id: 'some timeline id' },
+      });
+      runner.next(<TimelinesDeleteAction>{
+        type: 'ACTION_TIMELINES_DELETE',
+        payload: { id: 'some timeline id' },
+      });
+
+      expect(firebaseListSpy.calls.count()).toBe(1);
+      expect(firebase.database.list).toHaveBeenCalledWith('/private/some-user-uid/timelines');
+    });
+
+    it('should query firebase database repeatedly if user changed', () => {
+
+      authStateChanges.next(<any>{ uid: 'first-user-uid' });
+      runner.next(<TimelinesGetAction>{ type: 'ACTION_TIMELINES_GET' });
+
+      authStateChanges.next(<any>{ uid: 'second-user-uid' });
+      runner.next(<TimelinesCreateAction>{ type: 'ACTION_TIMELINES_CREATE' });
+
+      expect(firebaseListSpy.calls.allArgs()).toEqual([
+        ['/private/first-user-uid/timelines'],
+        ['/private/second-user-uid/timelines'],
+      ]);
+
+    });
+
+  });
+
 
 });
