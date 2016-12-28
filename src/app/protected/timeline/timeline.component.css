@@ -1,9 +1,20 @@
 input.title {
-    font-size: larger;
-    font-weight: bolder;
-    border-color: transparent;
+  font-size: larger;
+  font-weight: bolder;
+  border-color: transparent;
 }
 
 input.title:hover {
-    border-color: rgba(0, 0, 0, 0.15);
+  /*noinspection CssConvertColorToHexInspection*/
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.add-event-container {
+  position: relative;
+}
+
+.create-event-button {
+  position: absolute;
+  top: 0;
+  right: 0;
 }

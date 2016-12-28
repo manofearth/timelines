@@ -8,6 +8,7 @@ import { TimelineComponent } from './timeline/timeline.component';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule } from '@angular/forms';
 import {TimelineCanDeactivateService} from './timeline/timeline-can-deactivate.service';
+import { EventComponent } from './event/event.component';
 
 const routes: Routes = [
   {
@@ -41,10 +42,14 @@ const routes: Routes = [
     TimelineComponent,
     ProtectedComponent,
     LogoutComponent,
+    EventComponent,
   ],
   providers: [
     TimelineCanDeactivateService,
   ],
+  entryComponents: [
+    EventComponent,
+  ]
 })
 export class ProtectedModule {
 }

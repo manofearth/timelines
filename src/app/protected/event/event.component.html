@@ -1,0 +1,15 @@
+<div class="modal-header">
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <h4 class="modal-title">Событие</h4>
+</div>
+<div class="modal-body">
+  <form [formGroup]="form">
+    <input type="text" class="form-control" placeholder="Имя события" formControlName="title">
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-primary" (click)="activeModal.close(form.value)">Сохранить</button>
+  <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Отмена</button>
+</div>

@@ -7,7 +7,8 @@ import { TimelineGetAction, TimelineState, Timeline, TimelineChangedAction } fro
 import { ActivatedRoute, Params } from '@angular/router';
 import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { areEqual } from '../../shared/helpers';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { EventComponent } from '../event/event.component';
 
 @Component({
   selector: 'app-timeline',
@@ -27,12 +28,14 @@ export class TimelineComponent implements OnInit, OnDestroy {
   private stateSubscription: Subscription;
   private formChangesSubscription: Subscription;
 
-  constructor(
-    private store: Store<AppState>,
-    private route: ActivatedRoute,
-    private fb: FormBuilder,
-    private changeDetector: ChangeDetectorRef,
-    private titleService: Title) { }
+  //noinspection OverlyComplexFunctionJS
+  constructor(private store: Store<AppState>,
+              private route: ActivatedRoute,
+              private fb: FormBuilder,
+              private changeDetector: ChangeDetectorRef,
+              private titleService: Title,
+              private modalService: NgbModal) {
+  }
 
   ngOnInit() {
 
@@ -69,6 +72,17 @@ export class TimelineComponent implements OnInit, OnDestroy {
     this.stateSubscription.unsubscribe();
   }
 
+  openEvent(event: { title: string }) {
+    const eventModal = <EventComponent> this.modalService.open(EventComponent).componentInstance;
+    eventModal.event = event;
+  }
+
+  onEventInputKeyDown(keyCode: number, inputValue: string) {
+    if (keyCode === KEY_ENTER) {
+      this.openEvent({ title: inputValue });
+    }
+  }
+
   private initForm(timeline: Timeline) {
     this.form = <TimelineForm>this.fb.group({
       title: timeline.title,
@@ -99,15 +113,11 @@ export interface TimelineFormValue {
   title: string;
 }
 
-function toFormValue(timeline: Timeline): TimelineFormValue {
-  return {
-    title: timeline.title,
-  };
-}
-
 function toTimeline(oldTimeline: Timeline, formValue: TimelineFormValue): Timeline {
   return {
     id: oldTimeline.id,
     title: formValue.title,
   };
 }
+
+const KEY_ENTER: number = 13;
