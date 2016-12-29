@@ -8,13 +8,3 @@ input.title:hover {
   /*noinspection CssConvertColorToHexInspection*/
   border-color: rgba(0, 0, 0, 0.15);
 }
-
-.add-event-container {
-  position: relative;
-}
-
-.create-event-button {
-  position: absolute;
-  top: 0;
-  right: 0;
-}

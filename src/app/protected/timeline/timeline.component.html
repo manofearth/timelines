@@ -6,13 +6,7 @@
       <input class="form-control title" id="input-title" type="text" title="Название" formControlName="title">
     </div>
   </form>
-  <div class="add-event-container">
-    <input #eventInput type="text" title="Добавьте событие" placeholder="Добавьте событие" class="form-control"
-           (keydown)="onEventInputKeyDown($event.keyCode, eventInput.value)">
-    <button type="button" class="btn btn-link create-event-button" (click)="openEvent({ title: eventInput.value })">
-      Создать
-    </button>
-  </div>
+  <tl-selector [placeholder]="'Добавьте событие'" (create)="openTimelineEvent($event)"></tl-selector>
 </div>
 
 <template ngbModalContainer></template>

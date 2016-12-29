@@ -1,6 +1,6 @@
 # Timelines
 
-#### Roadmap
+### Roadmap
 - [x] Sign up
 - [x] Sign up fields hints
 - [x] Sign up errors
@@ -14,8 +14,8 @@
 - [x] Delete timeline
 - [x] Delete timeline confirmation dialog
 - [x] Edit timeline title
-- [ ] Edit timeline. Add event
-- [ ] Edit event dialog
+- [x] Edit timeline. Add event
+- [x] Edit event dialog
 - [ ] Edit event. Date field
 - [ ] Save event
 - [ ] Chart

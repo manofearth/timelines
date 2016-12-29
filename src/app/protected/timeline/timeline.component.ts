@@ -11,7 +11,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EventComponent } from '../event/event.component';
 
 @Component({
-  selector: 'app-timeline',
   templateUrl: './timeline.component.html',
   styleUrls: ['./timeline.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -72,15 +71,9 @@ export class TimelineComponent implements OnInit, OnDestroy {
     this.stateSubscription.unsubscribe();
   }
 
-  openEvent(event: { title: string }) {
+  openTimelineEvent(userInput: string) {
     const eventModal = <EventComponent> this.modalService.open(EventComponent).componentInstance;
-    eventModal.event = event;
-  }
-
-  onEventInputKeyDown(keyCode: number, inputValue: string) {
-    if (keyCode === KEY_ENTER) {
-      this.openEvent({ title: inputValue });
-    }
+    eventModal.event = { title: userInput };
   }
 
   private initForm(timeline: Timeline) {
@@ -119,5 +112,3 @@ function toTimeline(oldTimeline: Timeline, formValue: TimelineFormValue): Timeli
     title: formValue.title,
   };
 }
-
-const KEY_ENTER: number = 13;

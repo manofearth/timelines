@@ -1,0 +1,9 @@
+.selector-container {
+  position: relative;
+}
+
+.create-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+}

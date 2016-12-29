@@ -1,0 +1,12 @@
+<div class="selector-container">
+  <input
+      type="text"
+      title="{{placeholder}}"
+      class="form-control"
+      placeholder="{{placeholder}}"
+      [formControl]="inputControl"
+      (keydown)="onKeyDown($event.keyCode)"
+  >
+  <button type="button" class="btn btn-link create-button" (click)="onCreateButtonClick()">Создать</button>
+</div>
+

@@ -9,6 +9,8 @@ import { TimelineState, TimelineGetAction } from './timeline.reducer';
 import { AppState } from '../../reducers';
 import { Title } from '@angular/platform-browser';
 import { FormBuilder } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { EventComponent } from '../event/event.component';
 
 describe('TimelineComponent', () => {
 
@@ -18,6 +20,7 @@ describe('TimelineComponent', () => {
     let mockRoute: ActivatedRoute;
     let mockTitleService: Title;
     let stateChanges = new Subject();
+    let mockModalService: NgbModal;
 
     beforeEach(() => {
       stateChanges = new Subject();
@@ -30,14 +33,19 @@ describe('TimelineComponent', () => {
         params: Observable.of({}),
       };
       mockTitleService = <any>{
-        setTitle: () => { },
+        setTitle: () => {
+        },
+      };
+      mockModalService = <any>{
+        open: () => {},
       };
       const mockChangeDetector: ChangeDetectorRef = <any>{
-        markForCheck: () => { },
+        markForCheck: () => {
+        },
       };
       const formBuilder: FormBuilder = new FormBuilder();
 
-      component = new TimelineComponent(mockStore, mockRoute, formBuilder, mockChangeDetector, mockTitleService);
+      component = new TimelineComponent(mockStore, mockRoute, formBuilder, mockChangeDetector, mockTitleService, mockModalService);
     });
 
     it('ngOnInit() should dispatch ACTION_TIMELINE_GET', () => {
@@ -89,6 +97,14 @@ describe('TimelineComponent', () => {
         }
       });
     });
+
+    it('openTimelineEvent() should open modal with timeline event component', () => {
+      const mockTimelineEventComponent = { event: null };
+      spyOn(mockModalService, 'open').and.returnValue({ componentInstance: mockTimelineEventComponent });
+      component.openTimelineEvent('some event title');
+      expect(mockModalService.open).toHaveBeenCalledWith(EventComponent);
+      expect(mockTimelineEventComponent.event).toEqual({ title: 'some event title' });
+    });
   });
 
   describe('Shallow', () => {
@@ -96,6 +112,7 @@ describe('TimelineComponent', () => {
     let fixture: ComponentFixture<TimelineComponent>;
 
     beforeEach(async(() => {
+      //noinspection JSIgnoredPromiseFromCall
       TestBed.configureTestingModule({
         imports: [RouterModule.forRoot([])],
         declarations: [TimelineComponent],
@@ -112,6 +129,10 @@ describe('TimelineComponent', () => {
               dispatch: () => {
               },
             }
+          },
+          {
+            provide: NgbModal,
+            useValue: {},
           },
           {
             provide: APP_BASE_HREF,

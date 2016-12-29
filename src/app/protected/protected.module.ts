@@ -9,6 +9,7 @@ import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule } from '@angular/forms';
 import {TimelineCanDeactivateService} from './timeline/timeline-can-deactivate.service';
 import { EventComponent } from './event/event.component';
+import { SelectorComponent } from './shared/selector/selector.component';
 
 const routes: Routes = [
   {
@@ -43,6 +44,7 @@ const routes: Routes = [
     ProtectedComponent,
     LogoutComponent,
     EventComponent,
+    SelectorComponent,
   ],
   providers: [
     TimelineCanDeactivateService,
