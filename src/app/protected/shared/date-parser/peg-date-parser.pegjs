@@ -10,23 +10,42 @@
       day: day ? day : 1
     };
   }
+  function toDateObjFromCentury(century) {
+    if (options.context === 'ENDING_DATE') {
+      return toDateObj(century * 100, 12, 31);
+    } else {
+      return toDateObj(century * 100 - 99, 1, 1);
+    }
+  }
 }
 
 Expression
  = Date / Year / Century
 
 Date
-  = day:Integer "." month:Integer "." year:Integer { return toDateObj(year, month, day)  }
+  = day:Integer "." month:Integer "." year:Integer _ bc:BCLabel? {
+  if(bc) {
+    return toDateObj(-year, month, day)
+  } else {
+    return toDateObj(year, month, day)
+  }
+}
 
 Year
-  = year:Integer _? YearLabel? { return toDateObj(year) }
+  = year:Integer _ YearLabel? _ bc:BCLabel? {
+  if(bc) {
+    return toDateObj(-year)
+  } else {
+    return toDateObj(year)
+  }
+}
 
 YearLabel
   = "год" / "г." / "г"
 
 Century
   = x1:CenturyX? x2:CenturyX? x3:CenturyX? tail:CenturyTail? _? CenturyLabel? {
-    return toDateObj((coalesce(x1,0) + coalesce(x2,0) + coalesce(x3,0) + coalesce(tail,0)) * 100);
+    return toDateObjFromCentury(coalesce(x1,0) + coalesce(x2,0) + coalesce(x3,0) + coalesce(tail,0));
   }
 
 CenturyX
@@ -45,6 +64,13 @@ CenturyTail
 
 CenturyLabel
      = "век" / "в." / "в"
+
+BCLabel
+  = BeforeLabel _ OurLabel _ EraLabel
+
+BeforeLabel = "д." / "до"
+OurLabel = "н." / "нашей"
+EraLabel = "э." / "эры"
 
 Integer
   = [0-9]+ { return parseInt(text(), 10); }
