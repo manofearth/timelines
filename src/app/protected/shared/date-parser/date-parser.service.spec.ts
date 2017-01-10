@@ -6,36 +6,40 @@ describe('DateParser', () => {
 
   it('should parse year', () => {
 
+    //noinspection MagicNumberJS
     expect(parser.parse('1')).toEqual({
-      year: 1, month: 1, day: 1,
+      day: 365, title: '1',
     });
+    //noinspection MagicNumberJS
     expect(parser.parse('1 д.н.э.')).toEqual({
-      year: -1, month: 1, day: 1,
+      day: 0, title: '1 д.н.э.',
     });
 
+    //noinspection MagicNumberJS
     expect(parser.parse('10 г')).toEqual({
-      year: 10, month: 1, day: 1,
+      day: 3652, title: '10 г',
     });
+    //noinspection MagicNumberJS
     expect(parser.parse('10 г до н.э.')).toEqual({
-      year: -10, month: 1, day: 1,
+      day: -3288, title: '10 г до н.э.',
     });
 
     //noinspection MagicNumberJS
     expect(parser.parse('100 г.')).toEqual({
-      year: 100, month: 1, day: 1,
+      day: 36524, title: '100 г.',
     });
     //noinspection MagicNumberJS
     expect(parser.parse('100 г. до нашей э.')).toEqual({
-      year: -100, month: 1, day: 1,
+      day: -36160, title: '100 г. до нашей э.',
     });
 
     //noinspection MagicNumberJS
     expect(parser.parse('1920 год')).toEqual({
-      year: 1920, month: 1, day: 1,
+      day: 701265, title: '1920 год',
     });
     //noinspection MagicNumberJS
     expect(parser.parse('1920 год до нашей эры')).toEqual({
-      year: -1920, month: 1, day: 1,
+      day: -700900, title: '1920 год до нашей эры',
     });
   });
 
@@ -43,16 +47,16 @@ describe('DateParser', () => {
 
     //noinspection MagicNumberJS
     expect(parser.parse('17.08.0001')).toEqual({
-      year: 1, month: 8, day: 17,
+      day: 594, title: '17.08.0001',
     });
     //noinspection MagicNumberJS
     expect(parser.parse('17.08.0001 до н.э.')).toEqual({
-      year: -1, month: 8, day: 17,
+      day: 230, title: '17.08.0001 до н.э.',
     });
 
     //noinspection MagicNumberJS
     expect(parser.parse('31.03.2011')).toEqual({
-      year: 2011, month: 3, day: 31,
+      day: 734592, title: '31.03.2011',
     });
     //noinspection MagicNumberJS
     expect(parser.parse('31.03.2011 до нашей эры')).toEqual({
