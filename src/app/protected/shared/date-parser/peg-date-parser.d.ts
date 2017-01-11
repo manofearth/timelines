@@ -1,10 +1,21 @@
 
 export declare type PegDateParserContext = 'BEGINNING_DATE' | 'ENDING_DATE';
 
-export declare interface PegDateParserResult {
+export declare interface PegDateParserDate {
+  type: 'date',
   year: number;
   month: number;
   day: number;
+}
+
+export declare interface PegDateParserYear {
+  type: 'year';
+  year: number;
+}
+
+export declare interface PegDateParserCentury {
+  type: 'century';
+  year: number;
 }
 
 export declare function parse(
@@ -12,4 +23,4 @@ export declare function parse(
   options?: {
     context: PegDateParserContext,
   },
-): any;
+): PegDateParserDate | PegDateParserYear | PegDateParserCentury;

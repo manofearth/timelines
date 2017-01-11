@@ -1,21 +1,29 @@
 {
   function coalesce(val, def) {
-    if(val === null) { return def }
-    else { return val }
+    return val === null ? def : val;
+  }
+  function bceCoeff(bceCoeffNullable) {
+  	return coalesce(bceCoeffNullable, 1);
   }
   function toDateObj(year, month, day) {
     return {
+      type: 'date',
       year: year,
-      month: month ? month : 1,
-      day: day ? day : 1
+      month: month,
+      day: day,
     };
   }
-  function toDateObjFromCentury(century) {
-    if (options.context === 'ENDING_DATE') {
-      return toDateObj(century * 100, 12, 31);
-    } else {
-      return toDateObj(century * 100 - 99, 1, 1);
-    }
+  function toYearObj(year) {
+    return {
+      type: 'year',
+      year: year,
+    };
+  }
+  function toCenturyObj(century) {
+    return {
+      type: 'century',
+      century: century,
+    };
   }
 }
 
@@ -23,29 +31,17 @@ Expression
  = Date / Year / Century
 
 Date
-  = day:Integer "." month:Integer "." year:Integer _ bc:BCLabel? {
-  if(bc) {
-    return toDateObj(-year, month, day)
-  } else {
-    return toDateObj(year, month, day)
-  }
-}
+  = day:Integer "." month:Integer "." year:Integer _ bce:BCECoeff? { return toDateObj(bceCoeff(bce) * year, month, day) }
 
 Year
-  = year:Integer _ YearLabel? _ bc:BCLabel? {
-  if(bc) {
-    return toDateObj(-year)
-  } else {
-    return toDateObj(year)
-  }
-}
+  = year:Integer _ YearLabel? _ bce:BCECoeff? { return toYearObj(bceCoeff(bce) * year) }
 
 YearLabel
   = "год" / "г." / "г"
 
 Century
-  = x1:CenturyX? x2:CenturyX? x3:CenturyX? tail:CenturyTail? _? CenturyLabel? {
-    return toDateObjFromCentury(coalesce(x1,0) + coalesce(x2,0) + coalesce(x3,0) + coalesce(tail,0));
+  = x1:CenturyX? x2:CenturyX? x3:CenturyX? tail:CenturyTail? _ CenturyLabel? _ bce:BCECoeff? {
+    return toCenturyObj(bceCoeff(bce) * (coalesce(x1,0) + coalesce(x2,0) + coalesce(x3,0) + coalesce(tail,0)));
   }
 
 CenturyX
@@ -65,8 +61,8 @@ CenturyTail
 CenturyLabel
      = "век" / "в." / "в"
 
-BCLabel
-  = BeforeLabel _ OurLabel _ EraLabel
+BCECoeff
+  = before:BeforeLabel? _ OurLabel _ EraLabel { return before === null ? 1 : -1 }
 
 BeforeLabel = "д." / "до"
 OurLabel = "н." / "нашей"
