@@ -15,12 +15,14 @@ export declare interface PegDateParserYear {
 
 export declare interface PegDateParserCentury {
   type: 'century';
-  year: number;
+  century: number;
 }
+
+export type PegDateParserResult = PegDateParserDate | PegDateParserYear | PegDateParserCentury;
 
 export declare function parse(
   expression: string,
   options?: {
     context: PegDateParserContext,
   },
-): PegDateParserDate | PegDateParserYear | PegDateParserCentury;
+): PegDateParserResult;

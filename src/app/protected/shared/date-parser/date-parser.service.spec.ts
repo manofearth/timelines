@@ -77,7 +77,7 @@ describe('DateParser', () => {
     });
     //noinspection MagicNumberJS
     expect(parser.parse('I д.н.э.', { context: DateParserContext.BEGINNING_DATE })).toEqual({
-      day: -36524, title: 'I д.н.э.',
+      day: -36159, title: 'I д.н.э.',
     });
     //noinspection MagicNumberJS
     expect(parser.parse('I до н.э.', { context: DateParserContext.ENDING_DATE })).toEqual({
@@ -109,6 +109,14 @@ describe('DateParser', () => {
     //noinspection MagicNumberJS
     expect(parser.parse('V', { context: DateParserContext.ENDING_DATE })).toEqual({
       day: 182987, title: 'V',
+    });
+    //noinspection MagicNumberJS
+    expect(parser.parse('V до нашей эры', { context: DateParserContext.BEGINNING_DATE })).toEqual({
+      day: -182256, title: 'V до нашей эры',
+    });
+    //noinspection MagicNumberJS
+    expect(parser.parse('V до н. эры', { context: DateParserContext.ENDING_DATE })).toEqual({
+      day: -145731, title: 'V до н. эры',
     });
 
     //noinspection MagicNumberJS
