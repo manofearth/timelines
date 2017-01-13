@@ -5,6 +5,9 @@
   function bceCoeff(bceCoeffNullable) {
   	return coalesce(bceCoeffNullable, 1);
   }
+  function approx(approxLabel) {
+    return coalesce(approxLabel, 'accurate');
+  }
   function toDateObj(year, month, day) {
     return {
       type: 'date',
@@ -13,16 +16,18 @@
       day: day,
     };
   }
-  function toYearObj(year) {
+  function toYearObj(year, approxLabel) {
     return {
       type: 'year',
       year: year,
+      approx: approx(approxLabel),
     };
   }
-  function toCenturyObj(century) {
+  function toCenturyObj(century, approxLabel) {
     return {
       type: 'century',
       century: century,
+      approx: approx(approxLabel),
     };
   }
 }
@@ -34,14 +39,20 @@ Date
   = day:Integer "." month:Integer "." year:Integer _ bce:BCECoeff? { return toDateObj(bceCoeff(bce) * year, month, day) }
 
 Year
-  = year:Integer _ YearLabel? _ bce:BCECoeff? { return toYearObj(bceCoeff(bce) * year) }
+  = approx:ApproxLabel? _ year:YearSpec _ bce:BCECoeff? { return toYearObj(bceCoeff(bce) * year, approx) }
+
+YearSpec
+  = year:Integer YearCenturySuffix? _ YearLabel? { return year }
+
+YearCenturySuffix
+ = "-го" / "го" / "-й" / "й"
 
 YearLabel
-  = "год" / "г." / "г"
+  = "года" / "год" / "г." / "г"
 
 Century
-  = x1:CenturyX? x2:CenturyX? x3:CenturyX? tail:CenturyTail? _ CenturyLabel? _ bce:BCECoeff? {
-    return toCenturyObj(bceCoeff(bce) * (coalesce(x1,0) + coalesce(x2,0) + coalesce(x3,0) + coalesce(tail,0)));
+  = approx:ApproxLabel? _ x1:CenturyX? x2:CenturyX? x3:CenturyX? tail:CenturyTail? YearCenturySuffix? _ CenturyLabel? _ bce:BCECoeff? {
+    return toCenturyObj(bceCoeff(bce) * (coalesce(x1,0) + coalesce(x2,0) + coalesce(x3,0) + coalesce(tail,0)), approx);
   }
 
 CenturyX
@@ -59,7 +70,31 @@ CenturyTail
   / "I" { return 1 }
 
 CenturyLabel
-     = "век" / "в." / "в"
+  = "века" / "век" / "в." / "в"
+
+ApproxLabel
+  = ApproxBeginLabel { return 'begin' }
+  / ApproxEndLabel { return 'end' }
+  / ApproxHalfSpec
+
+ApproxBeginLabel
+  = "начало" / "нач." / "нач"
+
+ApproxEndLabel
+  = "конец" / "кон." / "кон"
+
+ApproxHalfSpec
+  = ApproxFirstHalfLabel _ ApproxHalfLabel { return 'first_half' }
+  / ApproxSecondHalfLabel _ ApproxHalfLabel { return 'second_half' }
+
+ApproxFirstHalfLabel
+  = "1-я" / "1"
+
+ApproxSecondHalfLabel
+  = "2-я" / "2"
+
+ApproxHalfLabel
+  = "половина" / "пол." / "пол"
 
 BCECoeff
   = before:BeforeLabel? _ OurLabel _ EraLabel { return before === null ? 1 : -1 }

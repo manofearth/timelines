@@ -1,4 +1,4 @@
-import { parse } from './peg-date-parser';
+import { parse, PegDateParserYear, PegDateParserCentury } from './peg-date-parser';
 import { TimelineDate } from '../date';
 
 export enum DateParserContext {
@@ -14,11 +14,6 @@ const defaultOptions = {
   context: DateParserContext.BEGINNING_DATE,
 };
 
-const FIRST_MONTH = 1;
-const FIRST_DAY_IN_FIRST_MONTH = 1;
-const LAST_MONTH = 12;
-const LAST_DAY_IN_LAST_MONTH = 31;
-
 export class DateParser {
 
   //noinspection JSMethodCanBeStatic
@@ -33,25 +28,11 @@ export class DateParser {
         break;
 
       case 'year':
-        if (options.context === DateParserContext.ENDING_DATE) {
-          days = daysTillDate(yearToIso8601(pegResult.year), LAST_MONTH, LAST_DAY_IN_LAST_MONTH, options.context);
-        } else {
-          days = daysTillDate(yearToIso8601(pegResult.year), FIRST_MONTH, FIRST_DAY_IN_FIRST_MONTH, options.context);
-        }
+        days = fromPegDateParserYear(pegResult, options.context);
         break;
 
       case 'century':
-        let firstYearOfCentury = pegResult.century * YEARS_IN_CENTURY + 1;
-        if (pegResult.century > 0) {
-          firstYearOfCentury -= YEARS_IN_CENTURY;
-        }
-
-        if (options.context === DateParserContext.ENDING_DATE) {
-          const lastYearOfCentury = firstYearOfCentury + YEARS_IN_CENTURY - 1;
-          days = daysTillDate(lastYearOfCentury, LAST_MONTH, LAST_DAY_IN_LAST_MONTH, options.context);
-        } else {
-          days = daysTillDate(firstYearOfCentury, FIRST_MONTH, FIRST_DAY_IN_FIRST_MONTH, options.context);
-        }
+        days = fromPegDateParserCentury(pegResult, options.context);
         break;
 
       default:
@@ -62,6 +43,82 @@ export class DateParser {
       day: days,
       title: expression,
     };
+  }
+}
+
+const FIRST_MONTH = 1;
+const FIRST_DAY_IN_FIRST_MONTH = 1;
+const LAST_MONTH = 12;
+const LAST_DAY_IN_LAST_MONTH = 31;
+const FIRST_QUARTER_LAST_MONTH = 3;
+const LAST_DAY_IN_FIRST_QUARTER_LAST_MONTH = 31;
+const LAST_QUARTER_FIRST_MONTH = 10;
+const FIRST_DAY_IN_LAST_QUARTER_FIRST_MONTH = 1;
+const FIRST_HALF_LAST_MONTH = 6;
+const LAST_DAY_IN_FIRST_HALF_LAST_MONTH = 30;
+const SECOND_HALF_FIRST_MONTH = 7;
+const FIRST_DAY_IN_SECOND_HALF_FIRST_MONTH = 1;
+
+function fromPegDateParserYear(pegYear: PegDateParserYear, context: DateParserContext): number {
+
+  const year = yearToIso8601(pegYear.year);
+
+  if (context === DateParserContext.ENDING_DATE) {
+    if (pegYear.approx === 'begin') {
+      return daysTillDate(year, FIRST_QUARTER_LAST_MONTH, LAST_DAY_IN_FIRST_QUARTER_LAST_MONTH, context);
+    } else if (pegYear.approx === 'first_half') {
+      return daysTillDate(year, FIRST_HALF_LAST_MONTH, LAST_DAY_IN_FIRST_HALF_LAST_MONTH, context);
+    } else {
+      return daysTillDate(year, LAST_MONTH, LAST_DAY_IN_LAST_MONTH, context);
+    }
+  } else {
+    if (pegYear.approx === 'end') {
+      return daysTillDate(year, LAST_QUARTER_FIRST_MONTH, FIRST_DAY_IN_LAST_QUARTER_FIRST_MONTH, context);
+    } else if (pegYear.approx === 'second_half') {
+      return daysTillDate(year, SECOND_HALF_FIRST_MONTH, FIRST_DAY_IN_SECOND_HALF_FIRST_MONTH, context);
+    } else {
+      return daysTillDate(year, FIRST_MONTH, FIRST_DAY_IN_FIRST_MONTH, context);
+    }
+  }
+}
+
+const FIRST_QUARTER_LAST_YEAR = 25;
+const LAST_QUARTER_FIRST_YEAR = 76;
+const FIRST_HALF_LAST_YEAR = 50;
+const SECOND_HALF_FIRST_YEAR = 51;
+
+function fromPegDateParserCentury(pegCentury: PegDateParserCentury, context: DateParserContext): number {
+
+  let firstYearOfCentury = pegCentury.century * YEARS_IN_CENTURY + 1;
+  if (pegCentury.century > 0) {
+    firstYearOfCentury -= YEARS_IN_CENTURY;
+  }
+
+  if (context === DateParserContext.ENDING_DATE) {
+    if (pegCentury.approx === 'begin') {
+      const lastYearOfCenturyFirstQuarter = firstYearOfCentury + FIRST_QUARTER_LAST_YEAR - 1;
+      return daysTillDate(lastYearOfCenturyFirstQuarter, LAST_MONTH, LAST_DAY_IN_LAST_MONTH, context);
+
+    } else if (pegCentury.approx === 'first_half') {
+      const lastYearOfCenturyFirstHalf= firstYearOfCentury + FIRST_HALF_LAST_YEAR - 1;
+      return daysTillDate(lastYearOfCenturyFirstHalf, LAST_MONTH, LAST_DAY_IN_LAST_MONTH, context);
+
+    } else {
+      const lastYearOfCentury = firstYearOfCentury + YEARS_IN_CENTURY - 1;
+      return daysTillDate(lastYearOfCentury, LAST_MONTH, LAST_DAY_IN_LAST_MONTH, context);
+    }
+  } else {
+    if (pegCentury.approx === 'end') {
+      const firstYearOfCenturyLastQuarter = firstYearOfCentury + LAST_QUARTER_FIRST_YEAR - 1;
+      return daysTillDate(firstYearOfCenturyLastQuarter, FIRST_MONTH, FIRST_DAY_IN_FIRST_MONTH, context);
+
+    } else if (pegCentury.approx === 'second_half') {
+      const firstYearOfCenturySecondHalf= firstYearOfCentury + SECOND_HALF_FIRST_YEAR - 1;
+      return daysTillDate(firstYearOfCenturySecondHalf, FIRST_MONTH, FIRST_DAY_IN_FIRST_MONTH, context);
+
+    } else {
+      return daysTillDate(firstYearOfCentury, FIRST_MONTH, FIRST_DAY_IN_FIRST_MONTH, context);
+    }
   }
 }
 
@@ -145,8 +202,8 @@ function daysTillDate(year: number, month: number, day: number, context: DatePar
   }
 
   return fullDaysAtBeginningOfYear(year)
-  + fullDaysAtBeginningOfMonth(month)
-  + leapDay
-  + day
-  + (context === DateParserContext.ENDING_DATE ? 0 : -1);
+    + fullDaysAtBeginningOfMonth(month)
+    + leapDay
+    + day
+    + (context === DateParserContext.ENDING_DATE ? 0 : -1);
 }

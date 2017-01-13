@@ -1,5 +1,5 @@
 
-export declare type PegDateParserContext = 'BEGINNING_DATE' | 'ENDING_DATE';
+export declare type ApproximityType = 'begin' | 'end' | 'first_half' | 'second_half' | 'accurate';
 
 export declare interface PegDateParserDate {
   type: 'date',
@@ -11,18 +11,17 @@ export declare interface PegDateParserDate {
 export declare interface PegDateParserYear {
   type: 'year';
   year: number;
+  approx: ApproximityType;
 }
 
 export declare interface PegDateParserCentury {
   type: 'century';
   century: number;
+  approx: ApproximityType;
 }
 
 export type PegDateParserResult = PegDateParserDate | PegDateParserYear | PegDateParserCentury;
 
 export declare function parse(
-  expression: string,
-  options?: {
-    context: PegDateParserContext,
-  },
+  expression: string
 ): PegDateParserResult;
