@@ -7,7 +7,7 @@ import {AppState} from '../../reducers';
 import {TimelineState} from './timeline.reducer';
 
 @Injectable()
-export class TimelineCanDeactivateService implements CanDeactivate<TimelineComponent> {
+export class TimelineCanDeactivate implements CanDeactivate<TimelineComponent> {
 
   constructor(private store: Store<AppState>) {
   }

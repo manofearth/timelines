@@ -33,7 +33,7 @@
 }
 
 Expression
- = Date / Year / Century
+  = Date / Year / Century
 
 Date
   = day:Integer "." month:Integer "." year:Integer _ bce:BCECoeff? { return toDateObj(bceCoeff(bce) * year, month, day) }
@@ -45,7 +45,7 @@ YearSpec
   = year:Integer YearCenturySuffix? _ YearLabel? { return year }
 
 YearCenturySuffix
- = "-го" / "го" / "-й" / "й"
+  = "-го" / "го" / "-й" / "й"
 
 YearLabel
   = "года" / "год" / "г." / "г"

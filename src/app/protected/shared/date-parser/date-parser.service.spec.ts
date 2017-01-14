@@ -4,6 +4,13 @@ describe('DateParser', () => {
 
   const parser: DateParser = new DateParser();
 
+  it('should throw error on incorrect input', () => {
+
+    expect(() => {
+      parser.parse('some incorrect input');
+    }).toThrowError();
+  });
+
   it('year 1 CE', () => {
 
     //noinspection MagicNumberJS
@@ -266,17 +273,59 @@ describe('DateParser', () => {
     });
   });
 
-  it('should parse century', () => {
-
+  it('century I BCE', () => {
     //noinspection MagicNumberJS
-    expect(parser.parse('I д.н.э.', { context: DateParserContext.BEGINNING_DATE })).toEqual({
+    expect(parser.parse('I д.н.э.')).toEqual({
       day: -36159, title: 'I д.н.э.',
     });
+
     //noinspection MagicNumberJS
-    expect(parser.parse('I до н.э.', { context: DateParserContext.ENDING_DATE })).toEqual({
-      day: 366, title: 'I до н.э.',
+    expect(parser.parse('I-й до н.э.', { context: DateParserContext.BEGINNING_DATE })).toEqual({
+      day: -36159, title: 'I-й до н.э.',
+    });
+    //noinspection MagicNumberJS
+    expect(parser.parse('I-й век до нашей э.', { context: DateParserContext.ENDING_DATE })).toEqual({
+      day: 366, title: 'I-й век до нашей э.',
     });
 
+    //noinspection MagicNumberJS
+    expect(parser.parse('нач I-го в. до н.э.', { context: DateParserContext.BEGINNING_DATE })).toEqual({
+      day: -36159, title: 'нач I-го в. до н.э.',
+    });
+    //noinspection MagicNumberJS
+    expect(parser.parse('начало I-го века до нашей эры', { context: DateParserContext.ENDING_DATE })).toEqual({
+      day: -27028, title: 'начало I-го века до нашей эры',
+    });
+
+    //noinspection MagicNumberJS
+    expect(parser.parse('кон. I-го в. до н.э.', { context: DateParserContext.BEGINNING_DATE })).toEqual({
+      day: -8766, title: 'кон. I-го в. до н.э.',
+    });
+    //noinspection MagicNumberJS
+    expect(parser.parse('конец I-го века до нашей эры', { context: DateParserContext.ENDING_DATE })).toEqual({
+      day: 366, title: 'конец I-го века до нашей эры',
+    });
+
+    //noinspection MagicNumberJS
+    expect(parser.parse('1-я пол. I-го в. до н.э.', { context: DateParserContext.BEGINNING_DATE })).toEqual({
+      day: -36159, title: '1-я пол. I-го в. до н.э.',
+    });
+    //noinspection MagicNumberJS
+    expect(parser.parse('1-я половина I-го века до нашей эры', { context: DateParserContext.ENDING_DATE })).toEqual({
+      day: -17897, title: '1-я половина I-го века до нашей эры',
+    });
+
+    //noinspection MagicNumberJS
+    expect(parser.parse('2-я пол. I-го в. до н.э.', { context: DateParserContext.BEGINNING_DATE })).toEqual({
+      day: -17897, title: '2-я пол. I-го в. до н.э.',
+    });
+    //noinspection MagicNumberJS
+    expect(parser.parse('2-я половина I-го века до нашей эры', { context: DateParserContext.ENDING_DATE })).toEqual({
+      day: 366, title: '2-я половина I-го века до нашей эры',
+    });
+  });
+
+  it('century II CE', () => {
     //noinspection MagicNumberJS
     expect(parser.parse('II', { context: DateParserContext.BEGINNING_DATE })).toEqual({
       day: 36890, title: 'II',
@@ -285,7 +334,9 @@ describe('DateParser', () => {
     expect(parser.parse('II', { context: DateParserContext.ENDING_DATE })).toEqual({
       day: 73414, title: 'II',
     });
+  });
 
+  it('century IV CE', () => {
     //noinspection MagicNumberJS
     expect(parser.parse('IV', { context: DateParserContext.BEGINNING_DATE })).toEqual({
       day: 109938, title: 'IV',
@@ -294,7 +345,9 @@ describe('DateParser', () => {
     expect(parser.parse('IV', { context: DateParserContext.ENDING_DATE })).toEqual({
       day: 146463, title: 'IV',
     });
+  });
 
+  it('century V CE', () => {
     //noinspection MagicNumberJS
     expect(parser.parse('V', { context: DateParserContext.BEGINNING_DATE })).toEqual({
       day: 146463, title: 'V',
@@ -303,6 +356,9 @@ describe('DateParser', () => {
     expect(parser.parse('V', { context: DateParserContext.ENDING_DATE })).toEqual({
       day: 182987, title: 'V',
     });
+  });
+
+  it('century V BCE', () => {
     //noinspection MagicNumberJS
     expect(parser.parse('V до нашей эры', { context: DateParserContext.BEGINNING_DATE })).toEqual({
       day: -182256, title: 'V до нашей эры',
@@ -311,7 +367,9 @@ describe('DateParser', () => {
     expect(parser.parse('V до н. эры', { context: DateParserContext.ENDING_DATE })).toEqual({
       day: -145731, title: 'V до н. эры',
     });
+  });
 
+  it('century VIII CE', () => {
     //noinspection MagicNumberJS
     expect(parser.parse('VIII', { context: DateParserContext.BEGINNING_DATE })).toEqual({
       day: 256035, title: 'VIII',
@@ -320,7 +378,9 @@ describe('DateParser', () => {
     expect(parser.parse('VIII', { context: DateParserContext.ENDING_DATE })).toEqual({
       day: 292560, title: 'VIII',
     });
+  });
 
+  it('century XIV CE', () => {
     //noinspection MagicNumberJS
     expect(parser.parse('XIV', { context: DateParserContext.BEGINNING_DATE })).toEqual({
       day: 475181, title: 'XIV',
@@ -329,7 +389,9 @@ describe('DateParser', () => {
     expect(parser.parse('XIV', { context: DateParserContext.ENDING_DATE })).toEqual({
       day: 511705, title: 'XIV',
     });
+  });
 
+  it('century XX CE', () => {
     //noinspection MagicNumberJS
     expect(parser.parse('XX', { context: DateParserContext.BEGINNING_DATE })).toEqual({
       day: 694326, title: 'XX',
@@ -338,6 +400,9 @@ describe('DateParser', () => {
     expect(parser.parse('XX', { context: DateParserContext.ENDING_DATE })).toEqual({
       day: 730851, title: 'XX',
     });
+  });
+
+  it('century XXI CE', () => {
 
     //noinspection MagicNumberJS
     expect(parser.parse('XXI', { context: DateParserContext.BEGINNING_DATE })).toEqual({

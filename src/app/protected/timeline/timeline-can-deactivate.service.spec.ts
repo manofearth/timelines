@@ -1,15 +1,15 @@
 //noinspection TypeScriptPreferShortImport
 import {Subject} from '../../shared/rxjs';
-import {TimelineCanDeactivateService} from './timeline-can-deactivate.service';
+import {TimelineCanDeactivate} from './timeline-can-deactivate.service';
 import {Store} from '@ngrx/store';
 import {AppState} from '../../reducers';
 import {TimelineState} from './timeline.reducer';
 
-describe('TimelineCanDeactivateService', () => {
+describe('TimelineCanDeactivate', () => {
 
   let stateChanges: Subject<TimelineState>;
   let mockStore: Store<AppState>;
-  let guard: TimelineCanDeactivateService;
+  let guard: TimelineCanDeactivate;
 
   beforeEach(() => {
     stateChanges = new Subject<TimelineState>();
@@ -18,7 +18,7 @@ describe('TimelineCanDeactivateService', () => {
       select: () => stateChanges,
     };
 
-    guard = new TimelineCanDeactivateService(mockStore);
+    guard = new TimelineCanDeactivate(mockStore);
   });
 
   it('should not allow deactivation if timeline saving', () => {

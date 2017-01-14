@@ -1,5 +1,6 @@
 import { parse, PegDateParserYear, PegDateParserCentury } from './peg-date-parser';
 import { TimelineDate } from '../date';
+import { Injectable } from '@angular/core';
 
 export enum DateParserContext {
   BEGINNING_DATE,
@@ -14,6 +15,7 @@ const defaultOptions = {
   context: DateParserContext.BEGINNING_DATE,
 };
 
+@Injectable()
 export class DateParser {
 
   //noinspection JSMethodCanBeStatic

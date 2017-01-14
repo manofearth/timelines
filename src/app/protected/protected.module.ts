@@ -7,9 +7,10 @@ import { LogoutComponent } from './logout/logout.component';
 import { TimelineComponent } from './timeline/timeline.component';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule } from '@angular/forms';
-import {TimelineCanDeactivateService} from './timeline/timeline-can-deactivate.service';
+import {TimelineCanDeactivate} from './timeline/timeline-can-deactivate.service';
 import { EventComponent } from './event/event.component';
 import { SelectorComponent } from './shared/selector/selector.component';
+import { DateParser } from './shared/date-parser/date-parser.service';
 
 const routes: Routes = [
   {
@@ -23,7 +24,7 @@ const routes: Routes = [
       {
         path: 'timeline/:id',
         component: TimelineComponent,
-        canDeactivate: [TimelineCanDeactivateService],
+        canDeactivate: [TimelineCanDeactivate],
       },
     ],
   },
@@ -47,7 +48,8 @@ const routes: Routes = [
     SelectorComponent,
   ],
   providers: [
-    TimelineCanDeactivateService,
+    TimelineCanDeactivate,
+    DateParser,
   ],
   entryComponents: [
     EventComponent,
