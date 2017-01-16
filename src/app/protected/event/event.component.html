@@ -4,9 +4,32 @@
   </button>
   <h4 class="modal-title">Событие</h4>
 </div>
-<div class="modal-body">
+<div class="modal-body container-fluid">
   <form [formGroup]="form">
-    <input type="text" class="form-control" placeholder="Имя события" formControlName="title">
+    <div class="row">
+      <div class="col-md-12">
+        <input type="text" class="form-control" title="Имя события" placeholder="Имя события" formControlName="title"
+               [class.has-danger]="form.controls.title.invalid && form.controls.title.touched">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3 form-group"
+           [class.has-danger]="invalidControl('dateBegin')">
+        <input type="text" class="form-control" title="Начало периода" placeholder="Начало периода"
+               formControlName="dateBegin" tl-date="beginning">
+        <div *ngIf="invalidControl('dateBegin')" class="form-control-feedback">Неверный формат даты</div>
+      </div>
+      <div class="col-md-3 form-group"
+           [class.has-danger]=
+               "invalidControl('dateEnd') || dateEndLessDateBegin()">
+        <input type="text" class="form-control" title="Конец периода" placeholder="Конец периода"
+               formControlName="dateEnd" tl-date="ending">
+        <div *ngIf="invalidControl('dateEnd')" class="form-control-feedback">Неверный формат даты</div>
+        <div *ngIf="dateEndLessDateBegin()" class="form-control-feedback">
+          Окончание периода должно быть больше начала
+        </div>
+      </div>
+    </div>
   </form>
 </div>
 <div class="modal-footer">

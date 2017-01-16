@@ -17,6 +17,7 @@ import { StoreModule } from '@ngrx/store';
 import { TimelinesFirebaseEffects } from './protected/timelines/timelines-firebase.effects';
 import { TimelineFirebaseEffects } from './protected/timeline/timeline-firebase.effects';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { Logger } from './shared/logger.service';
 
 const routes: Routes = [
   {
@@ -63,7 +64,10 @@ const routes: Routes = [
     EffectsModule.run(TimelinesFirebaseEffects),
     EffectsModule.run(TimelineFirebaseEffects),
   ],
-  providers: [AuthGuard],
+  providers: [
+    AuthGuard,
+    Logger,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

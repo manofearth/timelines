@@ -11,6 +11,7 @@ import {TimelineCanDeactivate} from './timeline/timeline-can-deactivate.service'
 import { EventComponent } from './event/event.component';
 import { SelectorComponent } from './shared/selector/selector.component';
 import { DateParser } from './shared/date-parser/date-parser.service';
+import { DateDirective } from './date/date.directive';
 
 const routes: Routes = [
   {
@@ -46,6 +47,7 @@ const routes: Routes = [
     LogoutComponent,
     EventComponent,
     SelectorComponent,
+    DateDirective,
   ],
   providers: [
     TimelineCanDeactivate,

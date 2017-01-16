@@ -38,6 +38,12 @@ export class DateDirective implements ControlValueAccessor {
       this.logger.error('Date parse error: ' + e.message);
       this.date = null;
     }
+    this.propagateChange(this.date);
+  }
+
+  //noinspection JSUnusedGlobalSymbols
+  @HostListener('blur') onBlur() {
+    this.propagateTouch();
   }
 
   get value(): TimelineDate {
