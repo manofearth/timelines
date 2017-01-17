@@ -32,11 +32,15 @@ export class DateDirective implements ControlValueAccessor {
   }
 
   @HostListener('change', ['$event.target.value']) onChange(value: string) {
-    try {
-      this.date = this.parser.parse(value, { context: toParserContext(this.context) })
-    } catch (e) {
-      this.logger.error('Date parse error: ' + e.message);
+    if (value === '') {
       this.date = null;
+    } else {
+      try {
+        this.date = this.parser.parse(value, { context: toParserContext(this.context) });
+      } catch (e) {
+        this.logger.error('Date parse error: ' + e.message);
+        this.date = null;
+      }
     }
     this.propagateChange(this.date);
   }

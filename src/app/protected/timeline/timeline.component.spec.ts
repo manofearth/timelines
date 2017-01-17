@@ -37,7 +37,8 @@ describe('TimelineComponent', () => {
         },
       };
       mockModalService = <any>{
-        open: () => {},
+        open: () => {
+        },
       };
       const mockChangeDetector: ChangeDetectorRef = <any>{
         markForCheck: () => {
@@ -102,8 +103,12 @@ describe('TimelineComponent', () => {
       const mockTimelineEventComponent = { event: null };
       spyOn(mockModalService, 'open').and.returnValue({ componentInstance: mockTimelineEventComponent });
       component.openTimelineEvent('some event title');
-      expect(mockModalService.open).toHaveBeenCalledWith(EventComponent);
-      expect(mockTimelineEventComponent.event).toEqual({ title: 'some event title' });
+      expect(mockModalService.open).toHaveBeenCalledWith(EventComponent, { size: 'lg' });
+      expect(mockTimelineEventComponent.event).toEqual({
+        title: 'some event title',
+        dateBegin: null,
+        dateEnd: null,
+      });
     });
   });
 

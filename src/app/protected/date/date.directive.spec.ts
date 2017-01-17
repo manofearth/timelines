@@ -29,7 +29,12 @@ describe('DateDirective', () => {
     directive = new DateDirective(inputEl, renderer, parser, logger);
   });
 
-  it('should parse and set value on change', () => {
+  it('onChange() should set null if empty value', () => {
+    directive.onChange('');
+    expect(directive.value).toBe(null);
+  });
+
+  it('onChange() should parse and set value on change', () => {
 
     spyOn(parser, 'parse').and.returnValue('some parsed date');
     expect(directive.value).toBeNull();
@@ -37,7 +42,7 @@ describe('DateDirective', () => {
     expect(directive.value).toBe('some parsed date');
   });
 
-  it('should set null as value on parse error and log error', () => {
+  it('onChange() should set null as value on parse error and log error', () => {
 
     spyOn(parser, 'parse').and.throwError('some parse error');
     spyOn(logger, 'error');
@@ -48,6 +53,5 @@ describe('DateDirective', () => {
 
     expect(directive.value).toBeNull();
     expect(logger.error).toHaveBeenCalledWith('Date parse error: some parse error');
-
   });
 });

@@ -16,7 +16,7 @@
 - [x] Edit timeline title
 - [x] Edit timeline. Add event
 - [x] Edit event dialog
-- [ ] Edit event. Date field
+- [x] Edit event. Date field
 - [ ] Save event
 - [ ] Chart
 - [ ] Chart. Scaling

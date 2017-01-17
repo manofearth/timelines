@@ -7,9 +7,8 @@
 <div class="modal-body container-fluid">
   <form [formGroup]="form">
     <div class="row">
-      <div class="col-md-12">
-        <input type="text" class="form-control" title="Имя события" placeholder="Имя события" formControlName="title"
-               [class.has-danger]="form.controls.title.invalid && form.controls.title.touched">
+      <div class="col-md-12 form-group" [class.has-danger]="invalidControl('title')">
+        <input type="text" class="form-control" title="Имя события" placeholder="Имя события" formControlName="title">
       </div>
     </div>
     <div class="row">
@@ -17,17 +16,17 @@
            [class.has-danger]="invalidControl('dateBegin')">
         <input type="text" class="form-control" title="Начало периода" placeholder="Начало периода"
                formControlName="dateBegin" tl-date="beginning">
-        <div *ngIf="invalidControl('dateBegin')" class="form-control-feedback">Неверный формат даты</div>
+        <small *ngIf="invalidControl('dateBegin')" class="form-control-feedback">Неверный формат даты</small>
       </div>
       <div class="col-md-3 form-group"
            [class.has-danger]=
                "invalidControl('dateEnd') || dateEndLessDateBegin()">
         <input type="text" class="form-control" title="Конец периода" placeholder="Конец периода"
                formControlName="dateEnd" tl-date="ending">
-        <div *ngIf="invalidControl('dateEnd')" class="form-control-feedback">Неверный формат даты</div>
-        <div *ngIf="dateEndLessDateBegin()" class="form-control-feedback">
-          Окончание периода должно быть больше начала
-        </div>
+        <small *ngIf="invalidControl('dateEnd')" class="form-control-feedback">Неверный формат даты</small>
+        <small *ngIf="dateEndLessDateBegin()" class="form-control-feedback">
+          Период оканчивается раньше своего начала
+        </small>
       </div>
     </div>
   </form>
