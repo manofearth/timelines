@@ -27,15 +27,15 @@ describe('EventComponent', () => {
 
       component.event = {
         title: 'some event',
-        dateBegin: { day: 0, title: '01.01.0001 до н.э.' },
-        dateEnd: { day: 1, title: '01.01.0001 до н.э.' },
+        dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
+        dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
       };
       expect(component.form).toBeUndefined();
       component.ngOnInit();
       expect(component.form.value).toEqual({
         title: 'some event',
-        dateBegin: { day: 0, title: '01.01.0001 до н.э.' },
-        dateEnd: { day: 1, title: '01.01.0001 до н.э.' },
+        dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
+        dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
       });
     });
 
@@ -59,13 +59,13 @@ describe('EventComponent', () => {
 
       component.form.setValue({
         title: 'some title',
-        dateBegin: { day: 0, title: '01.01.0001 до н.э.' },
-        dateEnd: { day: 1, title: '01.01.0001 до н.э.' },
+        dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
+        dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
       });
       expect(component.form.invalid).toBe(false);
       expect(component.form.errors).toBeNull();
 
-      component.form.controls.dateEnd.setValue({ day: -1, title: '30.12.0002 до н.э.' });
+      component.form.controls.dateEnd.setValue({ days: -1, title: '30.12.0002 до н.э.' });
       expect(component.form.invalid).toBe(true);
       expect(component.form.errors).toEqual({ dateEndLessDateBegin: true });
 
@@ -117,8 +117,8 @@ describe('EventComponent', () => {
     function testFormInit() {
       component.event = {
         title: 'some title',
-        dateBegin: { day: 0, title: '01.01.0001 до н.э.' },
-        dateEnd: { day: 1, title: '01.01.0001 до н.э.' },
+        dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
+        dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
       };
       fixture.detectChanges();
 
@@ -157,8 +157,8 @@ describe('EventComponent', () => {
 
       component.form.setValue({
         title: 'some title',
-        dateBegin: { day: 0, title: '01.01.0001 до н.э.' },
-        dateEnd: { day: -1, title: '30.12.0002 до н.э.' }, // incorrect - less then beginning date
+        dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
+        dateEnd: { days: -1, title: '30.12.0002 до н.э.' }, // incorrect - less then beginning date
       });
       fixture.detectChanges();
 

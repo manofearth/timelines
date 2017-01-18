@@ -42,7 +42,7 @@ export class DateParser {
     }
 
     return {
-      day: days,
+      days: days,
       title: expression,
     };
   }

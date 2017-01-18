@@ -4,6 +4,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TimelineEvent } from '../shared/timeline-event';
 import { composeChildrenValidators } from '../../shared/compose-children-validators.validator';
 import { ifEmptyObject } from '../../shared/helpers';
+import { TimelineDate } from '../shared/date';
 
 @Component({
   templateUrl: './event.component.html',
@@ -35,12 +36,17 @@ export class EventComponent implements OnInit {
 
 }
 
+export interface DateFormControl extends FormControl {
+  setValue(value: TimelineDate);
+}
+
 export interface EventForm extends FormGroup {
   controls: {
-    title: FormControl,
-    dateBegin: FormControl,
-    dateEnd: FormControl,
-  },
+    title: FormControl;
+    dateBegin: DateFormControl;
+    dateEnd: DateFormControl;
+  };
+  setValue(value: TimelineEvent);
 }
 
 function validateEventForm(form: EventForm) {
@@ -48,7 +54,7 @@ function validateEventForm(form: EventForm) {
   const errors = Object.assign({}, composeChildrenValidators(form));
 
   if (form.controls.dateBegin.value !== null && form.controls.dateEnd.value !== null
-    && form.controls.dateBegin.value.day >= form.controls.dateEnd.value.day) {
+    && form.controls.dateBegin.value.days >= form.controls.dateEnd.value.days) {
     errors['dateEndLessDateBegin'] = true;
   }
 

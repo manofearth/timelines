@@ -1,4 +1,4 @@
 export interface TimelineDate {
-  day: number;
+  days: number;
   title: string;
 }
