@@ -23,48 +23,48 @@ export class TimelinesFirebaseEffects extends ProtectedFirebaseEffects<Timelines
 
 
   @Effect() get: Observable<TimelinesGetSuccessAction|TimelinesGetErrorAction> =
-    this.authorizedActionsOfType('ACTION_TIMELINES_GET')
+    this.authorizedActionsOfType('TIMELINES_GET')
       .take(1)
       .mergeMap((action: TimelinesGetAction) => this
         .getTimelinesList()
         .map((firebaseTimelines: FirebaseTimeline[]): TimelinesGetSuccessAction => {
           return {
-            type: 'ACTION_TIMELINES_GET_SUCCESS',
+            type: 'TIMELINES_GET_SUCCESS',
             payload: firebaseTimelines.map(toTimeline),
           }
         })
         .catch((error: Error): Observable<TimelinesGetErrorAction> => Observable.of<TimelinesGetErrorAction>({
-          type: 'ACTION_TIMELINES_GET_ERROR',
+          type: 'TIMELINES_GET_ERROR',
           payload: error,
         }))
       );
 
   @Effect() create: Observable<TimelinesCreateSuccessAction|TimelinesCreateErrorAction> =
-    this.authorizedActionsOfType('ACTION_TIMELINES_CREATE')
+    this.authorizedActionsOfType('TIMELINES_CREATE')
       .switchMap((action: TimelinesCreateAction) =>
         Observable.fromPromise(<any>this.getTimelinesList().push({ title: 'Новая лента' }))
           .map((ref: { key: string }): TimelinesCreateSuccessAction => ({
-            type: 'ACTION_TIMELINES_CREATE_SUCCESS',
+            type: 'TIMELINES_CREATE_SUCCESS',
             payload: ref.key,
           }))
           .catch((error: Error|string): Observable<TimelinesCreateErrorAction> =>
             Observable.of<TimelinesCreateErrorAction>({
-              type: 'ACTION_TIMELINES_CREATE_ERROR',
+              type: 'TIMELINES_CREATE_ERROR',
               payload: toError(error),
             })
           )
       );
 
   @Effect() deleteTimeline: Observable<TimelinesDeleteSuccessAction|TimelinesDeleteErrorAction> =
-    this.authorizedActionsOfType('ACTION_TIMELINES_DELETE')
+    this.authorizedActionsOfType('TIMELINES_DELETE')
       .switchMap((action: TimelinesDeleteAction) =>
         Observable.fromPromise(<Promise<void>>this.getTimelinesList().remove(action.payload.id))
           .map((): TimelinesDeleteSuccessAction => ({
-            type: 'ACTION_TIMELINES_DELETE_SUCCESS',
+            type: 'TIMELINES_DELETE_SUCCESS',
           }))
           .catch((error: Error|string): Observable<TimelinesDeleteErrorAction> =>
             Observable.of<TimelinesDeleteErrorAction>({
-              type: 'ACTION_TIMELINES_DELETE_ERROR',
+              type: 'TIMELINES_DELETE_ERROR',
               payload: toError(error),
             })
           )

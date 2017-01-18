@@ -8,55 +8,55 @@ export interface AuthState {
   user: User;
 }
 
-export type AuthActionType = 'ACTION_SIGNUP' | 'ACTION_LOGIN' | 'ACTION_SIGNUP_SUCCESS' | 'ACTION_SIGNUP_ERROR'
-  | 'ACTION_LOGIN_SUCCESS' | 'ACTION_LOGIN_ERROR' | 'ACTION_AUTH_STATE_CHANGED' | 'ACTION_LOGOUT'
-  | 'ACTION_LOGOUT_SUCCESS';
+export type AuthActionType = 'SIGNUP' | 'LOGIN' | 'SIGNUP_SUCCESS' | 'SIGNUP_ERROR'
+  | 'LOGIN_SUCCESS' | 'LOGIN_ERROR' | 'AUTH_STATE_CHANGED' | 'LOGOUT'
+  | 'LOGOUT_SUCCESS';
 
 export interface AuthAction extends Action {
   type: AuthActionType;
 }
 
 export interface SignupAction extends AuthAction {
-  type: 'ACTION_SIGNUP';
+  type: 'SIGNUP';
   payload: SignupFormData;
 }
 
 export interface SignupSuccessAction extends AuthAction {
-  type: 'ACTION_SIGNUP_SUCCESS';
+  type: 'SIGNUP_SUCCESS';
   payload: User;
 }
 
 export interface SignupErrorAction extends AuthAction {
-  type: 'ACTION_SIGNUP_ERROR';
+  type: 'SIGNUP_ERROR';
   payload: Error;
 }
 
 export interface LoginAction extends AuthAction {
-  type: 'ACTION_LOGIN';
+  type: 'LOGIN';
   payload: LoginFormData;
 }
 
 export interface LoginSuccessAction extends AuthAction {
-  type: 'ACTION_LOGIN_SUCCESS';
+  type: 'LOGIN_SUCCESS';
   payload: User;
 }
 
 export interface LoginErrorAction extends AuthAction {
-  type: 'ACTION_LOGIN_ERROR';
+  type: 'LOGIN_ERROR';
   payload: Error;
 }
 
 export interface AuthStateChangedAction extends AuthAction {
-  type: 'ACTION_AUTH_STATE_CHANGED';
+  type: 'AUTH_STATE_CHANGED';
   payload: User;
 }
 
 export interface LogoutAction extends AuthAction {
-    type: 'ACTION_LOGOUT',
+    type: 'LOGOUT',
 }
 
 export interface LogoutSuccessAction extends AuthAction {
-    type: 'ACTION_LOGOUT_SUCCESS',
+    type: 'LOGOUT_SUCCESS',
 }
 
 export interface User {
@@ -65,13 +65,13 @@ export interface User {
 
 export function authReducer(state: AuthState, action: AuthAction): AuthState {
   switch (action.type) {
-    case 'ACTION_SIGNUP_SUCCESS':
-    case 'ACTION_LOGIN_SUCCESS':
+    case 'SIGNUP_SUCCESS':
+    case 'LOGIN_SUCCESS':
       return Object.assign({}, state, { error: null });
-    case 'ACTION_SIGNUP_ERROR':
-    case 'ACTION_LOGIN_ERROR':
+    case 'SIGNUP_ERROR':
+    case 'LOGIN_ERROR':
       return Object.assign({}, state, { error: action.payload });
-    case 'ACTION_AUTH_STATE_CHANGED':
+    case 'AUTH_STATE_CHANGED':
       return Object.assign({}, state, { isLoading: false, user: action.payload });
     default:
       return state;

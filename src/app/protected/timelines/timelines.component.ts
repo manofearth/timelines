@@ -58,7 +58,7 @@ export class TimelinesComponent implements OnInit, OnDestroy {
     });
 
     this.store.dispatch(<TimelinesGetAction>{
-      type: 'ACTION_TIMELINES_GET'
+      type: 'TIMELINES_GET'
     });
   }
 
@@ -69,7 +69,7 @@ export class TimelinesComponent implements OnInit, OnDestroy {
   create() {
     this.modeOpenNew = true;
     this.store.dispatch(<TimelinesCreateAction>{
-      type: 'ACTION_TIMELINES_CREATE',
+      type: 'TIMELINES_CREATE',
     });
   }
 
@@ -83,7 +83,7 @@ export class TimelinesComponent implements OnInit, OnDestroy {
       }
 
       this.store.dispatch(<TimelinesDeleteAction>{
-        type: 'ACTION_TIMELINES_DELETE',
+        type: 'TIMELINES_DELETE',
         payload: timeline,
       });
 

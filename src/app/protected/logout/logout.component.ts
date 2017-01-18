@@ -24,6 +24,7 @@ export class LogoutComponent implements OnInit, OnDestroy {
     this.authSubscription = this.store.select<AuthState>('auth').subscribe((auth: AuthState) => {
       this.user = auth.user;
       if (this.user === null) {
+        //noinspection JSIgnoredPromiseFromCall
         this.router.navigate(['/login']);
       }
     });
@@ -35,7 +36,7 @@ export class LogoutComponent implements OnInit, OnDestroy {
 
   logout() {
     this.store.dispatch(<LogoutAction>{
-      type: 'ACTION_LOGOUT',
+      type: 'LOGOUT',
     });
   }
 

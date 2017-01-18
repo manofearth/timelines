@@ -25,7 +25,7 @@ import {
 export class FirebaseAuthEffects {
 
   @Effect() signup: Observable<SignupSuccessAction|SignupErrorAction> = this.actions
-    .ofType('ACTION_SIGNUP')
+    .ofType('SIGNUP')
     .switchMap((action: SignupAction) =>
       Observable.fromPromise(
         <Promise<FirebaseAuthState>>this.fire.auth.createUser({
@@ -33,17 +33,17 @@ export class FirebaseAuthEffects {
           password: action.payload.password,
         }))
         .map((authState: FirebaseAuthState): SignupSuccessAction => ({
-          type: 'ACTION_SIGNUP_SUCCESS',
+          type: 'SIGNUP_SUCCESS',
           payload: toUser(authState),
         }))
         .catch((error: Error|string): Observable<SignupErrorAction> => Observable.of({
-          type: <'ACTION_SIGNUP_ERROR'>'ACTION_SIGNUP_ERROR',
+          type: <'SIGNUP_ERROR'>'SIGNUP_ERROR',
           payload: toError(error),
         }))
     );
 
   @Effect() login: Observable<LoginSuccessAction|LoginErrorAction> = this.actions
-    .ofType('ACTION_LOGIN')
+    .ofType('LOGIN')
     .switchMap((action: LoginAction) =>
       Observable.fromPromise(
         <Promise<FirebaseAuthState>>this.fire.auth.login({
@@ -53,25 +53,25 @@ export class FirebaseAuthEffects {
           method: AuthMethods.Password,
         }))
         .map((authState: FirebaseAuthState): LoginSuccessAction => ({
-          type: 'ACTION_LOGIN_SUCCESS',
+          type: 'LOGIN_SUCCESS',
           payload: toUser(authState),
         }))
         .catch((error: Error|string): Observable<LoginErrorAction> => Observable.of({
-          type: <'ACTION_LOGIN_ERROR'>'ACTION_LOGIN_ERROR',
+          type: <'LOGIN_ERROR'>'LOGIN_ERROR',
           payload: toError(error),
         }))
     );
 
   @Effect() logout: Observable<LogoutSuccessAction> = this.actions
-    .ofType('ACTION_LOGOUT')
+    .ofType('LOGOUT')
     .map((): LogoutSuccessAction => {
       this.fire.auth.logout();
-      return { type: 'ACTION_LOGOUT_SUCCESS' }
+      return { type: 'LOGOUT_SUCCESS' }
     });
 
   @Effect() auth: Observable<AuthStateChangedAction> = this.fire.auth
     .map((authState: FirebaseAuthState): AuthStateChangedAction => ({
-      type: 'ACTION_AUTH_STATE_CHANGED',
+      type: 'AUTH_STATE_CHANGED',
       payload: toUser(authState),
     }));
 

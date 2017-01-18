@@ -48,11 +48,11 @@ describe('LogoutComponent', () => {
       expect(router.navigate).toHaveBeenCalledWith(['/login']);
     });
 
-    it('logout() should dispatch ACTION_LOGOUT', () => {
+    it('logout() should dispatch LOGOUT', () => {
       spyOn(store, 'dispatch');
       component.logout();
       expect(store.dispatch).toHaveBeenCalledWith(<LogoutAction>{
-        type: 'ACTION_LOGOUT',
+        type: 'LOGOUT',
       });
     });
 

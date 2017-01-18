@@ -49,12 +49,12 @@ describe('TimelineComponent', () => {
       component = new TimelineComponent(mockStore, mockRoute, formBuilder, mockChangeDetector, mockTitleService, mockModalService);
     });
 
-    it('ngOnInit() should dispatch ACTION_TIMELINE_GET', () => {
+    it('ngOnInit() should dispatch TIMELINE_GET', () => {
       spyOn(mockStore, 'dispatch');
       mockRoute.params = Observable.of({ id: 'some id' });
       component.ngOnInit();
       expect(mockStore.dispatch).toHaveBeenCalledWith(<TimelineGetAction>{
-        type: 'ACTION_TIMELINE_GET',
+        type: 'TIMELINE_GET',
         payload: 'some id',
       });
     });
@@ -78,7 +78,7 @@ describe('TimelineComponent', () => {
       ]);
     });
 
-    it('should dispatch ACTION_TIMELINE_CHANGED on form value changes', () => {
+    it('should dispatch TIMELINE_CHANGED on form value changes', () => {
       spyOn(mockStore, 'dispatch');
       component.ngOnInit();
       stateChanges.next({
@@ -91,7 +91,7 @@ describe('TimelineComponent', () => {
       component.form.controls.title.setValue('some new title');
 
       expect(mockStore.dispatch).toHaveBeenCalledWith({
-        type: 'ACTION_TIMELINE_CHANGED',
+        type: 'TIMELINE_CHANGED',
         payload: {
           id: 'some id',
           title: 'some new title',

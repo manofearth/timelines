@@ -53,7 +53,7 @@ describe('SignupComponent', () => {
       component.submit();
 
       const expectedAction: SignupAction = {
-        type: 'ACTION_SIGNUP',
+        type: 'SIGNUP',
         payload: {
           email: 'test@mail.ru',
           password: 'some password',

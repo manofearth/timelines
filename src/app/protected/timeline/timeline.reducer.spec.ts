@@ -5,7 +5,7 @@ import {
 
 describe('timeline reducer', () => {
 
-  it('on ACTION_TIMELINE_GET_SUCCESS should mark not loading, erase error, and set timeline', () => {
+  it('on TIMELINE_GET_SUCCESS should mark not loading, erase error, and set timeline', () => {
 
     const state: TimelineState = Object.freeze({
       isLoading: true,
@@ -15,7 +15,7 @@ describe('timeline reducer', () => {
     });
 
     const action: TimelineGetSuccessAction = {
-      type: 'ACTION_TIMELINE_GET_SUCCESS',
+      type: 'TIMELINE_GET_SUCCESS',
       payload: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'Second World War' },
     };
 
@@ -30,7 +30,7 @@ describe('timeline reducer', () => {
     });
   });
 
-  it('on ACTION_TIMELINE_GET_ERROR should mark not loading and set error', () => {
+  it('on TIMELINE_GET_ERROR should mark not loading and set error', () => {
 
     const state: TimelineState = Object.freeze({
       isLoading: true,
@@ -40,7 +40,7 @@ describe('timeline reducer', () => {
     });
 
     const action: TimelineGetErrorAction = {
-      type: 'ACTION_TIMELINE_GET_ERROR',
+      type: 'TIMELINE_GET_ERROR',
       payload: new Error('some error'),
     };
 
@@ -55,7 +55,7 @@ describe('timeline reducer', () => {
     });
   });
 
-  it('on ACTION_TIMELINE_CHANGED should mark as saving, change timeline and erase error', () => {
+  it('on TIMELINE_CHANGED should mark as saving, change timeline and erase error', () => {
 
     const state: TimelineState = Object.freeze({
       isLoading: true,
@@ -65,7 +65,7 @@ describe('timeline reducer', () => {
     });
 
     const action: TimelineChangedAction = {
-      type: 'ACTION_TIMELINE_CHANGED',
+      type: 'TIMELINE_CHANGED',
       payload: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'First World War' },
     };
 
@@ -80,7 +80,7 @@ describe('timeline reducer', () => {
     });
   });
 
-  it('on ACTION_TIMELINE_SAVE_SUCCESS should mark as not saving and erase error', () => {
+  it('on TIMELINE_SAVE_SUCCESS should mark as not saving and erase error', () => {
 
     const state: TimelineState = Object.freeze({
       isLoading: true,
@@ -90,7 +90,7 @@ describe('timeline reducer', () => {
     });
 
     const action: TimelineSaveSuccessAction = {
-      type: 'ACTION_TIMELINE_SAVE_SUCCESS',
+      type: 'TIMELINE_SAVE_SUCCESS',
     };
 
     const newState: TimelineState = timelineReducer(state, action);
@@ -104,7 +104,7 @@ describe('timeline reducer', () => {
     });
   });
 
-  it('on ACTION_TIMELINE_SAVE_ERROR should mark as not saving and set error', () => {
+  it('on TIMELINE_SAVE_ERROR should mark as not saving and set error', () => {
 
     const state: TimelineState = Object.freeze({
       isLoading: true,
@@ -114,7 +114,7 @@ describe('timeline reducer', () => {
     });
 
     const action: TimelineSaveErrorAction = {
-      type: 'ACTION_TIMELINE_SAVE_ERROR',
+      type: 'TIMELINE_SAVE_ERROR',
       payload: new Error('some error'),
     };
 

@@ -54,7 +54,7 @@ describe('LoginComponent', () => {
       component.submit();
 
       const expectedAction: LoginAction = {
-        type: 'ACTION_LOGIN',
+        type: 'LOGIN',
         payload: {
           email: 'test@test.ru',
           password: 'some password',

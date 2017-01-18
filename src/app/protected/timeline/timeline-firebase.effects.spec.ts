@@ -48,8 +48,8 @@ describe('TimelineFirebaseEffects', () => {
   describe('when not logged in', () => {
 
     beforeEach(() => {
-      runner.next(<TimelineGetAction>{ type: 'ACTION_TIMELINE_GET' });
-      runner.next(<TimelineChangedAction>{ type: 'ACTION_TIMELINE_CHANGED' });
+      runner.next(<TimelineGetAction>{ type: 'TIMELINE_GET' });
+      runner.next(<TimelineChangedAction>{ type: 'TIMELINE_CHANGED' });
     });
 
     it('should not query firebase database', () => {
@@ -76,43 +76,43 @@ describe('TimelineFirebaseEffects', () => {
       authStateChanges.next(<any>{ uid: 'some-uid' });
     });
 
-    describe('on ACTION_TIMELINE_GET', () => {
+    describe('on TIMELINE_GET', () => {
 
       beforeEach(() => {
         runner.next(<TimelineGetAction>{
-          type: 'ACTION_TIMELINE_GET',
+          type: 'TIMELINE_GET',
           payload: 'some-timeline-id'
         });
       });
 
-      it('should emit ACTION_TIMELINE_GET_SUCCESS', (done: DoneFn) => {
+      it('should emit TIMELINE_GET_SUCCESS', (done: DoneFn) => {
 
         mockFirebaseObject.next({ $key: '1', title: 'Timeline 1' });
 
         effects.get.subscribe((action: TimelineGetSuccessAction) => {
-          expect(action.type).toBe('ACTION_TIMELINE_GET_SUCCESS');
+          expect(action.type).toBe('TIMELINE_GET_SUCCESS');
           expect(action.payload).toEqual({ id: '1', title: 'Timeline 1' });
           done();
         });
       });
 
-      it('should emit ACTION_TIMELINE_GET_ERROR', (done: DoneFn) => {
+      it('should emit TIMELINE_GET_ERROR', (done: DoneFn) => {
 
         mockFirebaseObject.error('some error');
 
         effects.get.subscribe((action: TimelineGetErrorAction) => {
-          expect(action.type).toBe('ACTION_TIMELINE_GET_ERROR');
+          expect(action.type).toBe('TIMELINE_GET_ERROR');
           expect(action.payload).toBe('some error');
           done();
         });
       });
     });
 
-    describe('on ACTION_TIMELINE_CHANGED', () => {
+    describe('on TIMELINE_CHANGED', () => {
 
       beforeEach(fakeAsync(() => {
         runner.next(<TimelineChangedAction>{
-          type: 'ACTION_TIMELINE_CHANGED',
+          type: 'TIMELINE_CHANGED',
           payload: {
             id: 'some-timeline-id',
             title: 'some title'
@@ -127,13 +127,13 @@ describe('TimelineFirebaseEffects', () => {
         expect(mockFirebaseObject.update).toHaveBeenCalledWith({ title: 'some title' });
       }));
 
-      it('should emit ACTION_TIMELINE_SAVE_SUCCESS', (done: DoneFn) => {
+      it('should emit TIMELINE_SAVE_SUCCESS', (done: DoneFn) => {
 
         fakeAsync(() => {
           mockFirebaseObject.update = () => Promise.resolve();
 
           effects.save.subscribe((action: TimelineSaveSuccessAction) => {
-            expect(action.type).toBe('ACTION_TIMELINE_SAVE_SUCCESS');
+            expect(action.type).toBe('TIMELINE_SAVE_SUCCESS');
             done();
           });
           tick(SAVE_DEBOUNCE_TIME);
@@ -141,13 +141,13 @@ describe('TimelineFirebaseEffects', () => {
 
       });
 
-      it('should emit ACTION_TIMELINE_SAVE_ERROR', (done: DoneFn) => {
+      it('should emit TIMELINE_SAVE_ERROR', (done: DoneFn) => {
 
         fakeAsync(() => {
           mockFirebaseObject.update = () => Promise.reject('some error');
 
           effects.save.subscribe((action: TimelineSaveSuccessAction) => {
-            expect(action.type).toBe('ACTION_TIMELINE_SAVE_ERROR');
+            expect(action.type).toBe('TIMELINE_SAVE_ERROR');
             expect(action.payload).toBe('some error');
             done();
           });
@@ -175,20 +175,20 @@ describe('TimelineFirebaseEffects', () => {
       authStateChanges.next(<any>{ uid: 'first-user-uid' });
 
       runner.next(<TimelineGetAction>{
-        type: 'ACTION_TIMELINE_GET',
+        type: 'TIMELINE_GET',
         payload: 'first-timeline-id'
       });
       runner.next(<TimelineGetAction>{
-        type: 'ACTION_TIMELINE_GET',
+        type: 'TIMELINE_GET',
         payload: 'first-timeline-id' // object key not changed
       });
       runner.next(<TimelineChangedAction>{
-        type: 'ACTION_TIMELINE_CHANGED',
+        type: 'TIMELINE_CHANGED',
         payload: { id: 'first-timeline-id' }, // object key not changed
       });
       tick(SAVE_DEBOUNCE_TIME);
       runner.next(<TimelineChangedAction>{
-        type: 'ACTION_TIMELINE_CHANGED',
+        type: 'TIMELINE_CHANGED',
         payload: { id: 'first-timeline-id' }, // object key not changed
       });
       tick(SAVE_DEBOUNCE_TIME);
@@ -203,20 +203,20 @@ describe('TimelineFirebaseEffects', () => {
       authStateChanges.next(<any>{ uid: 'first-user-uid' });
 
       runner.next(<TimelineGetAction>{
-        type: 'ACTION_TIMELINE_GET',
+        type: 'TIMELINE_GET',
         payload: 'first-timeline-id'
       });
       runner.next(<TimelineGetAction>{
-        type: 'ACTION_TIMELINE_GET',
+        type: 'TIMELINE_GET',
         payload: 'second-timeline-id' // object key changed
       });
       runner.next(<TimelineChangedAction>{
-        type: 'ACTION_TIMELINE_CHANGED',
+        type: 'TIMELINE_CHANGED',
         payload: { id: 'third-timeline-id' }, // object key changed
       });
       tick(SAVE_DEBOUNCE_TIME);
       runner.next(<TimelineChangedAction>{
-        type: 'ACTION_TIMELINE_CHANGED',
+        type: 'TIMELINE_CHANGED',
         payload: { id: 'fourth-timeline-id' }, // object key changed
       });
       tick(SAVE_DEBOUNCE_TIME);
@@ -234,26 +234,26 @@ describe('TimelineFirebaseEffects', () => {
 
       authStateChanges.next(<any>{ uid: 'first-user-uid' });
       runner.next(<TimelineGetAction>{
-        type: 'ACTION_TIMELINE_GET',
+        type: 'TIMELINE_GET',
         payload: 'first-timeline-id'
       });
 
       authStateChanges.next(<any>{ uid: 'second-user-uid' }); // user changed
       runner.next(<TimelineGetAction>{
-        type: 'ACTION_TIMELINE_GET',
+        type: 'TIMELINE_GET',
         payload: 'first-timeline-id' // object key not changed
       });
 
       authStateChanges.next(<any>{ uid: 'third-user-uid' }); // user changed
       runner.next(<TimelineChangedAction>{
-        type: 'ACTION_TIMELINE_CHANGED',
+        type: 'TIMELINE_CHANGED',
         payload: { id: 'first-timeline-id' }, // object key not changed
       });
       tick(SAVE_DEBOUNCE_TIME);
 
       authStateChanges.next(<any>{ uid: 'fourth-user-uid' }); // user changed
       runner.next(<TimelineChangedAction>{
-        type: 'ACTION_TIMELINE_CHANGED',
+        type: 'TIMELINE_CHANGED',
         payload: { id: 'first-timeline-id' }, // object key not changed
       });
       tick(SAVE_DEBOUNCE_TIME);

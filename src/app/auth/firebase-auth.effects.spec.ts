@@ -43,12 +43,12 @@ describe('FirebaseAuthEffects', () => {
 
   });
 
-  describe('on ACTION_SIGNUP', () => {
+  describe('on SIGNUP', () => {
 
     beforeEach(() => {
 
       const action: SignupAction = {
-        type: 'ACTION_SIGNUP',
+        type: 'SIGNUP',
         payload: {
           email: 'test@test.ru',
           password: '123456',
@@ -73,7 +73,7 @@ describe('FirebaseAuthEffects', () => {
 
     });
 
-    it('should emit ACTION_SIGNUP_SUCCESS', done => {
+    it('should emit SIGNUP_SUCCESS', done => {
 
       const mockAuth = {
         email: 'test@test.tt',
@@ -82,19 +82,19 @@ describe('FirebaseAuthEffects', () => {
       spyOn(firebase.auth, 'createUser').and.returnValue(Promise.resolve({ auth: mockAuth }));
 
       effects.signup.subscribe((result: SignupSuccessAction) => {
-        expect(result.type).toBe('ACTION_SIGNUP_SUCCESS');
+        expect(result.type).toBe('SIGNUP_SUCCESS');
         expect(result.payload).toEqual(mockAuth);
         done();
       });
 
     });
 
-    it('should emit ACTION_SIGNUP_ERROR', done => {
+    it('should emit SIGNUP_ERROR', done => {
 
       spyOn(firebase.auth, 'createUser').and.returnValue(Promise.reject(new Error('some error')));
 
       effects.signup.subscribe((result: SignupErrorAction) => {
-        expect(result.type).toBe('ACTION_SIGNUP_ERROR');
+        expect(result.type).toBe('SIGNUP_ERROR');
         expect(result.payload).toEqual(new Error('some error'));
         done();
       });
@@ -103,12 +103,12 @@ describe('FirebaseAuthEffects', () => {
 
   });
 
-  describe('on ACTION_LOGIN', () => {
+  describe('on LOGIN', () => {
 
     beforeEach(() => {
 
       const action: LoginAction = {
-        type: 'ACTION_LOGIN',
+        type: 'LOGIN',
         payload: {
           email: 'test@test.ru',
           password: '123456',
@@ -135,7 +135,7 @@ describe('FirebaseAuthEffects', () => {
 
     });
 
-    it('should emit ACTION_LOGIN_SUCCESS', done => {
+    it('should emit LOGIN_SUCCESS', done => {
 
       const mockAuth = {
         email: 'test@test.tt',
@@ -144,19 +144,19 @@ describe('FirebaseAuthEffects', () => {
       spyOn(firebase.auth, 'login').and.returnValue(Promise.resolve({ auth: mockAuth }));
 
       effects.login.subscribe((result: LoginSuccessAction) => {
-        expect(result.type).toBe('ACTION_LOGIN_SUCCESS');
+        expect(result.type).toBe('LOGIN_SUCCESS');
         expect(result.payload).toEqual(mockAuth);
         done();
       });
 
     });
 
-    it('should emit ACTION_LOGIN_ERROR', done => {
+    it('should emit LOGIN_ERROR', done => {
 
       spyOn(firebase.auth, 'login').and.returnValue(Promise.reject(new Error('some error')));
 
       effects.login.subscribe((result: LoginErrorAction) => {
-        expect(result.type).toBe('ACTION_LOGIN_ERROR');
+        expect(result.type).toBe('LOGIN_ERROR');
         expect(result.payload).toEqual(new Error('some error'));
         done();
       });
@@ -165,12 +165,12 @@ describe('FirebaseAuthEffects', () => {
 
   });
 
-  describe('on ACTION_LOGOUT', () => {
+  describe('on LOGOUT', () => {
 
     beforeEach(() => {
 
       const action: LogoutAction = {
-        type: 'ACTION_LOGOUT',
+        type: 'LOGOUT',
       };
 
       runner.queue(action);
@@ -190,20 +190,20 @@ describe('FirebaseAuthEffects', () => {
 
   describe('on auth state change', () => {
 
-    it('should emit ACTION_AUTH_STATE_CHANGED on unauthorization', done => {
+    it('should emit AUTH_STATE_CHANGED on unauthorization', done => {
 
       firebase.auth.next(null);
 
       effects.auth.subscribe((auth: AuthStateChangedAction) => {
         expect(auth).toEqual({
-          type: 'ACTION_AUTH_STATE_CHANGED',
+          type: 'AUTH_STATE_CHANGED',
           payload: null,
         });
         done();
       });
     });
 
-    it('should emit ACTION_AUTH_STATE_CHANGED on authorization', done => {
+    it('should emit AUTH_STATE_CHANGED on authorization', done => {
 
       const mockFirebaseAuth = {
         email: 'test@test.tt',
@@ -213,7 +213,7 @@ describe('FirebaseAuthEffects', () => {
 
       effects.auth.subscribe((auth: AuthStateChangedAction) => {
         expect(auth).toEqual({
-          type: 'ACTION_AUTH_STATE_CHANGED',
+          type: 'AUTH_STATE_CHANGED',
           payload: mockFirebaseAuth,
         });
         done();

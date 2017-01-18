@@ -9,10 +9,10 @@ import {
 
 describe('authReducer', () => {
 
-  it('on ACTION_SIGNUP_ERROR should push error in state', () => {
+  it('on SIGNUP_ERROR should push error in state', () => {
 
     const action: SignupErrorAction = {
-      type: 'ACTION_SIGNUP_ERROR',
+      type: 'SIGNUP_ERROR',
       payload: new Error('some error'),
     };
 
@@ -27,10 +27,10 @@ describe('authReducer', () => {
 
   });
 
-  it('on ACTION_SIGNUP_SUCCESS should erase error', () => {
+  it('on SIGNUP_SUCCESS should erase error', () => {
 
     const action: SignupSuccessAction = {
-      type: 'ACTION_SIGNUP_SUCCESS',
+      type: 'SIGNUP_SUCCESS',
       payload: <any>'firebase auth state'
     };
 
@@ -43,10 +43,10 @@ describe('authReducer', () => {
 
   });
 
-  it('on ACTION_LOGIN_SUCCESS should erase error', () => {
+  it('on LOGIN_SUCCESS should erase error', () => {
 
     const action: LoginSuccessAction = {
-      type: 'ACTION_LOGIN_SUCCESS',
+      type: 'LOGIN_SUCCESS',
       payload: <any>'firebase auth state',
     };
 
@@ -59,10 +59,10 @@ describe('authReducer', () => {
 
   });
 
-  it('on ACTION_SIGNUP_ERROR should set error', () => {
+  it('on SIGNUP_ERROR should set error', () => {
 
     const action: SignupErrorAction = {
-      type: 'ACTION_SIGNUP_ERROR',
+      type: 'SIGNUP_ERROR',
       payload: <any>'some error',
     };
 
@@ -74,10 +74,10 @@ describe('authReducer', () => {
     expect(newState).toEqual({ isLoading: false, error: 'some error', user: 'some user' });
   });
 
-  it('on ACTION_LOGIN_ERROR should set error', () => {
+  it('on LOGIN_ERROR should set error', () => {
 
     const action: LoginErrorAction = {
-      type: 'ACTION_LOGIN_ERROR',
+      type: 'LOGIN_ERROR',
       payload: <any>'some error',
     };
 
@@ -89,10 +89,10 @@ describe('authReducer', () => {
     expect(newState).toEqual({ isLoading: false, error: 'some error', user: 'some user' });
   });
 
-  it('on ACTION_AUTH_STATE_CHANGED should set user and set auth state as "not loading"', () => {
+  it('on AUTH_STATE_CHANGED should set user and set auth state as "not loading"', () => {
 
     const action: AuthStateChangedAction = {
-      type: 'ACTION_AUTH_STATE_CHANGED',
+      type: 'AUTH_STATE_CHANGED',
       payload: <any>'some user',
     };
 

@@ -80,7 +80,7 @@ export class SignupComponent extends AuthComponent<SignupForm, SignupAction> {
 
   protected createAction(): SignupAction {
     return {
-      type: 'ACTION_SIGNUP',
+      type: 'SIGNUP',
       payload: this.form.value
     };
   }

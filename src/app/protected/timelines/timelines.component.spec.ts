@@ -56,19 +56,19 @@ describe('TimelinesComponent', () => {
       );
     });
 
-    it('ngOnInit() should dispatch ACTION_TIMELINES_GET', () => {
+    it('ngOnInit() should dispatch TIMELINES_GET', () => {
       spyOn(mockStore, 'dispatch');
       component.ngOnInit();
       expect(mockStore.dispatch).toHaveBeenCalledWith(<TimelinesGetAction>{
-        type: 'ACTION_TIMELINES_GET',
+        type: 'TIMELINES_GET',
       });
     });
 
-    it('create() should dispatch ACTION_TIMELINES_CREATE and set "open new" mode', () => {
+    it('create() should dispatch TIMELINES_CREATE and set "open new" mode', () => {
       spyOn(mockStore, 'dispatch');
       component.create();
       expect(mockStore.dispatch).toHaveBeenCalledWith(<TimelinesCreateAction>{
-        type: 'ACTION_TIMELINES_CREATE',
+        type: 'TIMELINES_CREATE',
       });
       expect(component.modeOpenNew).toBe(true);
     });
@@ -89,7 +89,7 @@ describe('TimelinesComponent', () => {
       expect(mockBootstrapModal.open).toHaveBeenCalled();
     });
 
-    it('confirmDeletion() should not dispatch ACTION_TIMELINES_DELETE if user not confirmed it', fakeAsync(() => {
+    it('confirmDeletion() should not dispatch TIMELINES_DELETE if user not confirmed it', fakeAsync(() => {
       spyOn(mockStore, 'dispatch');
       mockBootstrapModal.open = <any>(() => ({ result: Promise.resolve(false) }));
       component.confirmDeletion(<any>'some timeline');
@@ -97,13 +97,13 @@ describe('TimelinesComponent', () => {
       expect(mockStore.dispatch).not.toHaveBeenCalled();
     }));
 
-    it('confirmDeletion() should dispatch ACTION_TIMELINES_DELETE if user confirmed it', fakeAsync(() => {
+    it('confirmDeletion() should dispatch TIMELINES_DELETE if user confirmed it', fakeAsync(() => {
       spyOn(mockStore, 'dispatch');
       mockBootstrapModal.open = <any>(() => ({ result: Promise.resolve(true) }));
       component.confirmDeletion(<any>'some timeline');
       tick();
       expect(mockStore.dispatch).toHaveBeenCalledWith(<TimelinesDeleteAction>{
-        type: 'ACTION_TIMELINES_DELETE',
+        type: 'TIMELINES_DELETE',
         payload: <any>'some timeline',
       });
     }));

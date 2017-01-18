@@ -52,7 +52,7 @@ export class LoginComponent extends AuthComponent<LoginForm, LoginAction> {
 
   protected createAction(): LoginAction {
     return {
-      type: 'ACTION_LOGIN',
+      type: 'LOGIN',
       payload: this.form.value
     };
   }

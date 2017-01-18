@@ -40,7 +40,7 @@ export class TimelineComponent implements OnInit, OnDestroy {
 
     this.routeParamsSubscription = this.route.params.subscribe((params: Params) => {
       this.store.dispatch(<TimelineGetAction>{
-        type: 'ACTION_TIMELINE_GET',
+        type: 'TIMELINE_GET',
         payload: params['id'],
       });
     });
@@ -84,7 +84,7 @@ export class TimelineComponent implements OnInit, OnDestroy {
     this.formChangesSubscription = this.form.valueChanges
       .subscribe((value: TimelineFormValue) => {
         this.store.dispatch(<TimelineChangedAction>{
-          type: 'ACTION_TIMELINE_CHANGED',
+          type: 'TIMELINE_CHANGED',
           payload: toTimeline(this.timeline, value),
         });
       });
