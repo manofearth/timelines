@@ -31,7 +31,7 @@ export class EventComponent implements OnInit {
   }
 
   dateEndLessDateBegin(): boolean {
-    return this.form.invalid && this.form.errors['dateEndLessDateBegin'];
+    return this.form.invalid && this.form.errors.dateEndLessDateBegin;
   }
 
 }
@@ -46,16 +46,22 @@ export interface EventForm extends FormGroup {
     dateBegin: DateFormControl;
     dateEnd: DateFormControl;
   };
+  errors: EventFormErrors | null;
   setValue(value: TimelineEvent);
+}
+
+interface EventFormErrors {
+  required?: true;
+  dateEndLessDateBegin?: true;
 }
 
 function validateEventForm(form: EventForm) {
 
-  const errors = Object.assign({}, composeChildrenValidators(form));
+  const errors: EventFormErrors = Object.assign({}, composeChildrenValidators(form));
 
   if (form.controls.dateBegin.value !== null && form.controls.dateEnd.value !== null
     && form.controls.dateBegin.value.days >= form.controls.dateEnd.value.days) {
-    errors['dateEndLessDateBegin'] = true;
+    errors.dateEndLessDateBegin = true;
   }
 
   return ifEmptyObject(errors, null);
