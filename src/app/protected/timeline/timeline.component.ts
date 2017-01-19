@@ -9,6 +9,7 @@ import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EventComponent } from '../event/event.component';
+import { EventCreateAction, EventState } from '../event/event.reducer';
 
 @Component({
   templateUrl: './timeline.component.html',
@@ -24,8 +25,9 @@ export class TimelineComponent implements OnInit, OnDestroy {
   form: TimelineForm;
 
   private routeParamsSubscription: Subscription;
-  private stateSubscription: Subscription;
+  private timelineStateSubscription: Subscription;
   private formChangesSubscription: Subscription;
+  private timelineEventStateSubscription: Subscription;
 
   //noinspection OverlyComplexFunctionJS
   constructor(private store: Store<AppState>,
@@ -45,7 +47,7 @@ export class TimelineComponent implements OnInit, OnDestroy {
       });
     });
 
-    this.stateSubscription = this.store
+    this.timelineStateSubscription = this.store
       .select('timeline')
       .filter((timeline: TimelineState): boolean => timeline.timeline !== null)
       .subscribe((timeline: TimelineState) => {
@@ -64,16 +66,26 @@ export class TimelineComponent implements OnInit, OnDestroy {
 
       });
 
+    this.timelineEventStateSubscription = this.store
+      .select('event')
+      .filter((event: EventState) => event.event !== null)
+      .subscribe((ignore: EventState) => {
+        this.modalService.open(EventComponent, { size: 'lg' });
+      });
+
   }
 
   ngOnDestroy() {
     this.routeParamsSubscription.unsubscribe();
-    this.stateSubscription.unsubscribe();
+    this.timelineStateSubscription.unsubscribe();
+    this.timelineEventStateSubscription.unsubscribe();
   }
 
-  openTimelineEvent(userInput: string) {
-    const eventModal = <EventComponent> this.modalService.open(EventComponent, { size: 'lg' }).componentInstance;
-    eventModal.event = { title: userInput, dateBegin: null, dateEnd: null };
+  createTimelineEvent(title: string) {
+    this.store.dispatch(<EventCreateAction>{
+      type: 'EVENT_CREATE',
+      payload: title,
+    });
   }
 
   private initForm(timeline: Timeline) {

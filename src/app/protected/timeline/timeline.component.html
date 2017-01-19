@@ -6,7 +6,7 @@
       <input class="form-control title" id="input-title" type="text" title="Название" formControlName="title">
     </div>
   </form>
-  <tl-selector [placeholder]="'Добавьте событие'" (create)="openTimelineEvent($event)"></tl-selector>
+  <tl-selector [placeholder]="'Добавьте событие'" (create)="createTimelineEvent($event)"></tl-selector>
 </div>
 
 <template ngbModalContainer></template>

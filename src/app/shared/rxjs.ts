@@ -1,4 +1,5 @@
 export { Observable } from 'rxjs/Observable';
+export { Observer } from 'rxjs/Observer';
 export { Subscription } from 'rxjs/Subscription';
 export { Subject } from 'rxjs/Subject';
 export { ReplaySubject } from 'rxjs/ReplaySubject';
