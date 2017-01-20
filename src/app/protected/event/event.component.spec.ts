@@ -1,3 +1,5 @@
+//noinspection TypeScriptPreferShortImport
+import { ReplaySubject, Observer } from '../../shared/rxjs';
 import { EventComponent } from './event.component';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -9,29 +11,49 @@ import { DateParser } from '../shared/date-parser/date-parser.service';
 import { Logger } from '../../shared/logger.service';
 import { dispatchEvent } from '@angular/platform-browser/testing/browser_util';
 import { CommonModule } from '@angular/common';
+import { Store, Action } from '@ngrx/store';
+import { AppState } from '../../reducers';
+import { TimelineEvent } from '../shared/timeline-event';
 
 describe('EventComponent', () => {
+
+  let store: Store<AppState>;
+  let stateChanges: ReplaySubject<AppState>;
+  let mockDispatcher: Observer<Action>;
+
+  beforeEach(() => {
+    mockDispatcher = <any> {
+      next: () => {
+      },
+    };
+    stateChanges = new ReplaySubject<AppState>(1);
+    store = new Store(mockDispatcher, null, stateChanges);
+  });
 
   describe('Isolated', () => {
     const formBuilder: FormBuilder = new FormBuilder();
     let component: EventComponent;
 
+
     beforeEach(() => {
-
       const modal: NgbActiveModal = <any> {};
-
-      component = new EventComponent(formBuilder, modal);
+      component = new EventComponent(formBuilder, modal, store);
     });
 
-    it('ngOnInit() should init form', () => {
+    beforeEach(() => {
+      component.ngOnInit();
+    });
 
-      component.event = {
+    it('should init form', () => {
+
+      expect(component.form).toBeUndefined();
+
+      nextEventState({
         title: 'some event',
         dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
         dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
-      };
-      expect(component.form).toBeUndefined();
-      component.ngOnInit();
+      });
+
       expect(component.form.value).toEqual({
         title: 'some event',
         dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
@@ -41,13 +63,11 @@ describe('EventComponent', () => {
 
     it('should validate form', () => {
 
-      component.event = {
+      nextEventState({
         title: '',
         dateBegin: null,
         dateEnd: null,
-      };
-
-      component.ngOnInit();
+      });
 
       expect(component.form.invalid).toBe(true);
       expect(component.form.errors).toEqual({
@@ -70,6 +90,11 @@ describe('EventComponent', () => {
       expect(component.form.errors).toEqual({ dateEndLessDateBegin: true });
 
     });
+
+    afterEach(() => {
+      component.ngOnDestroy();
+    });
+
   });
 
   describe('Shallow', () => {
@@ -78,27 +103,33 @@ describe('EventComponent', () => {
 
     beforeEach(async(() => {
       //noinspection JSIgnoredPromiseFromCall
-      TestBed.configureTestingModule({
-        imports: [
-          CommonModule,
-          ReactiveFormsModule,
-        ],
-        declarations: [
-          EventComponent,
-          DateDirective,
-        ],
-        providers: [
-          FormBuilder,
-          DateParser,
-          Logger,
-          {
-            provide: NgbActiveModal,
-            useValue: {},
-          },
-        ],
-        schemas: [NO_ERRORS_SCHEMA],
-      })
+      TestBed
+        .configureTestingModule({
+          imports: [
+            CommonModule,
+            ReactiveFormsModule,
+          ],
+          declarations: [
+            EventComponent,
+            DateDirective,
+          ],
+          providers: [
+            FormBuilder,
+            DateParser,
+            Logger,
+            {
+              provide: NgbActiveModal,
+              useValue: {},
+            },
+            {
+              provide: Store,
+              useValue: store,
+            },
+          ],
+          schemas: [NO_ERRORS_SCHEMA],
+        })
         .compileComponents();
+
     }));
 
     beforeEach(() => {
@@ -108,19 +139,22 @@ describe('EventComponent', () => {
 
     it('should init and validate form', () => {
 
+      nextEventState({
+        title: 'some title',
+        dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
+        dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
+      });
+      fixture.detectChanges(); // fires ngOnInit()
+
       testFormInit();
       testFormValidate();
+
+      component.ngOnDestroy();
 
     });
 
     //noinspection NestedFunctionJS
     function testFormInit() {
-      component.event = {
-        title: 'some title',
-        dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
-        dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
-      };
-      fixture.detectChanges();
 
       const inputs = fixture.debugElement.queryAll(By.css('input[formControlName]'));
       expect(inputs.length).toBe(3);
@@ -170,4 +204,16 @@ describe('EventComponent', () => {
     }
 
   });
+
+  //noinspection NestedFunctionJS
+  function nextEventState(event: TimelineEvent) {
+    stateChanges.next({
+      auth: null,
+      timelines: null,
+      timeline: null,
+      event: {
+        event: event,
+      },
+    });
+  }
 });

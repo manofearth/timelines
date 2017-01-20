@@ -1,29 +1,44 @@
-import { Component, OnInit } from '@angular/core';
+//noinspection TypeScriptPreferShortImport
+import { Subscription } from '../../shared/rxjs';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TimelineEvent } from '../shared/timeline-event';
 import { composeChildrenValidators } from '../../shared/compose-children-validators.validator';
 import { ifEmptyObject } from '../../shared/helpers';
 import { TimelineDate } from '../shared/date';
+import { Store } from '@ngrx/store';
+import { AppState } from '../../reducers';
+import { EventState } from './event.reducer';
 
 @Component({
   templateUrl: './event.component.html',
   styleUrls: ['./event.component.css'],
+  //changeDetection: ChangeDetectionStrategy.OnPush, can't make OnPush, shallow test unexpectedly hangs up
 })
-export class EventComponent implements OnInit {
+export class EventComponent implements OnInit, OnDestroy {
 
   form: EventForm;
-  event: TimelineEvent;
+  private eventStateSubscription: Subscription;
 
-  constructor(private fb: FormBuilder, public activeModal: NgbActiveModal) {
+  constructor(private fb: FormBuilder,
+              public activeModal: NgbActiveModal,
+              private store: Store<AppState>) {
   }
 
   ngOnInit() {
-    this.form = <EventForm> this.fb.group({
-      title: [this.event.title, Validators.required],
-      dateBegin: [this.event.dateBegin, Validators.required],
-      dateEnd: [this.event.dateEnd, Validators.required],
-    }, { validator: validateEventForm });
+    this.eventStateSubscription = this.store.select('event').subscribe((state: EventState) => {
+      this.form = <EventForm> this.fb.group({
+        title: [state.event.title, Validators.required],
+        dateBegin: [state.event.dateBegin, Validators.required],
+        dateEnd: [state.event.dateEnd, Validators.required],
+      }, { validator: validateEventForm });
+
+    });
+  }
+
+  ngOnDestroy() {
+    this.eventStateSubscription.unsubscribe();
   }
 
   invalidControl(controlName: string): boolean {

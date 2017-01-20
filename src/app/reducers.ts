@@ -5,11 +5,13 @@ import { storeFreeze } from 'ngrx-store-freeze';
 import { timelinesReducer, TimelinesState } from './protected/timelines/timelines.reducer';
 import { environment } from '../environments/environment';
 import { TimelineState, timelineReducer } from './protected/timeline/timeline.reducer';
+import { EventState } from './protected/event/event.reducer';
 
 export interface AppState {
-  auth: AuthState,
-  timelines: TimelinesState,
-  timeline: TimelineState,
+  auth: AuthState;
+  timelines: TimelinesState;
+  timeline: TimelineState;
+  event: EventState;
 }
 
 export const initialState: AppState = {
@@ -29,7 +31,10 @@ export const initialState: AppState = {
     isSaving: false,
     error: null,
     timeline: null,
-  }
+  },
+  event: {
+    event: null,
+  },
 };
 
 interface AppReducers {
