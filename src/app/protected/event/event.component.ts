@@ -9,17 +9,18 @@ import { ifEmptyObject } from '../../shared/helpers';
 import { TimelineDate } from '../shared/date';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
-import { EventState } from './event.reducer';
 
 @Component({
   templateUrl: './event.component.html',
   styleUrls: ['./event.component.css'],
-  //changeDetection: ChangeDetectionStrategy.OnPush, can't make OnPush, shallow test unexpectedly hangs up
+  //changeDetection: ChangeDetectionStrategy.OnPush, //can't make OnPush - shallow test unexpectedly hangs up
 })
 export class EventComponent implements OnInit, OnDestroy {
 
   form: EventForm;
+  closeAfterSave: boolean = false;
   private eventStateSubscription: Subscription;
+  private isSavingStateSubscription: Subscription;
 
   constructor(private fb: FormBuilder,
               public activeModal: NgbActiveModal,
@@ -27,18 +28,27 @@ export class EventComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.eventStateSubscription = this.store.select('event').subscribe((state: EventState) => {
+    this.eventStateSubscription = this.store.select('event', 'event').subscribe((event: TimelineEvent) => {
       this.form = <EventForm> this.fb.group({
-        title: [state.event.title, Validators.required],
-        dateBegin: [state.event.dateBegin, Validators.required],
-        dateEnd: [state.event.dateEnd, Validators.required],
+        id: event.id,
+        title: [event.title, Validators.required],
+        dateBegin: [event.dateBegin, Validators.required],
+        dateEnd: [event.dateEnd, Validators.required],
       }, { validator: validateEventForm });
-
     });
+
+    this.isSavingStateSubscription = this.store
+      .select('event', 'isSaving')
+      .subscribe((isSaving: boolean) => {
+        if(this.closeAfterSave && !isSaving) {
+          this.activeModal.close();
+        }
+      });
   }
 
   ngOnDestroy() {
     this.eventStateSubscription.unsubscribe();
+    this.isSavingStateSubscription.unsubscribe();
   }
 
   invalidControl(controlName: string): boolean {
@@ -49,6 +59,17 @@ export class EventComponent implements OnInit, OnDestroy {
     return this.form.invalid && this.form.errors.dateEndLessDateBegin;
   }
 
+  save() {
+    this.closeAfterSave = true;
+    this.store.dispatch({
+      type: 'EVENT_SAVE',
+      payload: this.form.value,
+    });
+  }
+
+  dismiss() {
+    this.activeModal.dismiss();
+  }
 }
 
 export interface DateFormControl extends FormControl {

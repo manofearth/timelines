@@ -56,6 +56,8 @@ describe('TimelinesFirebaseEffects', () => {
 
     beforeEach(() => {
       runner.next(<TimelinesGetAction>{ type: 'TIMELINES_GET' });
+      runner.next(<TimelinesCreateAction>{ type: 'TIMELINES_CREATE' });
+      runner.next(<TimelinesDeleteAction>{ type: 'TIMELINES_DELETE' });
     });
 
     it('should not query firebase database', () => {

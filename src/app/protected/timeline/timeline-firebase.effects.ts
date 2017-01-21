@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
-import { AngularFire, FirebaseObjectObservable } from 'angularfire2';
+import { AngularFire } from 'angularfire2';
 import { Observable } from '../../shared/rxjs';
 import {
   TimelineGetSuccessAction,
@@ -13,12 +13,13 @@ import {
   TimelineSaveErrorAction,
   TimelineChangedAction,
 } from './timeline.reducer';
-import { ProtectedFirebaseEffects } from '../shared/protected-firebase.effects';
+import { ProtectedFirebaseObjectEffects } from '../shared/protected-firebase-object.effects';
 
 export const SAVE_DEBOUNCE_TIME = 1000;
 
 @Injectable()
-export class TimelineFirebaseEffects extends ProtectedFirebaseEffects<TimelineActionType, TimelineAction> {
+export class TimelineFirebaseEffects extends ProtectedFirebaseObjectEffects<
+  TimelineActionType, TimelineAction, FirebaseTimeline> {
 
   @Effect() get: Observable<TimelineGetSuccessAction | TimelineGetErrorAction> = this
     .authorizedActionsOfType('TIMELINE_GET')
@@ -39,8 +40,8 @@ export class TimelineFirebaseEffects extends ProtectedFirebaseEffects<TimelineAc
     .switchMap((action: TimelineChangedAction) =>
       Observable
         .fromPromise(
-        <Promise<void>>this.getFirebaseObject(action.payload.id)
-          .update(toFirebaseTimelineUpdateObject(action.payload))
+          <Promise<void>>this.getFirebaseObject(action.payload.id)
+            .update(toFirebaseTimelineUpdateObject(action.payload))
         )
         .map((): TimelineSaveSuccessAction => ({
           type: 'TIMELINE_SAVE_SUCCESS',
@@ -51,25 +52,10 @@ export class TimelineFirebaseEffects extends ProtectedFirebaseEffects<TimelineAc
         }))
     );
 
-  private firebaseObject: FirebaseObjectObservable<FirebaseTimeline> = null;
-  private firebaseObjectKey: string = null;
-
   constructor(actions: Actions, fire: AngularFire) {
     super(actions, fire);
   }
 
-  protected onAuthChanged(): void {
-    this.firebaseObject = null;
-    this.firebaseObjectKey = null;
-  }
-
-  private getFirebaseObject(key: string): FirebaseObjectObservable<FirebaseTimeline> {
-    if (this.firebaseObjectKey !== key) {
-      this.firebaseObject = this.fire.database.object('/private/' + this.auth.uid + '/timelines/' + key);
-      this.firebaseObjectKey = key;
-    }
-    return this.firebaseObject;
-  }
 }
 
 export interface FirebaseTimeline {

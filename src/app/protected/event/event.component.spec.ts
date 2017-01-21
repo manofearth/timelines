@@ -14,6 +14,7 @@ import { CommonModule } from '@angular/common';
 import { Store, Action } from '@ngrx/store';
 import { AppState } from '../../reducers';
 import { TimelineEvent } from '../shared/timeline-event';
+import { EventState } from './event.reducer';
 
 describe('EventComponent', () => {
 
@@ -33,11 +34,14 @@ describe('EventComponent', () => {
   describe('Isolated', () => {
     const formBuilder: FormBuilder = new FormBuilder();
     let component: EventComponent;
+    let mockModal: NgbActiveModal;
 
 
     beforeEach(() => {
-      const modal: NgbActiveModal = <any> {};
-      component = new EventComponent(formBuilder, modal, store);
+      mockModal = <any> {
+        close: () => {},
+      };
+      component = new EventComponent(formBuilder, mockModal, store);
     });
 
     beforeEach(() => {
@@ -49,12 +53,14 @@ describe('EventComponent', () => {
       expect(component.form).toBeUndefined();
 
       nextEventState({
+        id: 'some-event-id',
         title: 'some event',
         dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
         dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
       });
 
       expect(component.form.value).toEqual({
+        id: 'some-event-id',
         title: 'some event',
         dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
         dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
@@ -64,6 +70,7 @@ describe('EventComponent', () => {
     it('should validate form', () => {
 
       nextEventState({
+        id: null,
         title: '',
         dateBegin: null,
         dateEnd: null,
@@ -78,6 +85,7 @@ describe('EventComponent', () => {
       expect(component.form.controls.dateEnd.errors).toEqual({ required: true });
 
       component.form.setValue({
+        id: 'some-event-id',
         title: 'some title',
         dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
         dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
@@ -89,6 +97,65 @@ describe('EventComponent', () => {
       expect(component.form.invalid).toBe(true);
       expect(component.form.errors).toEqual({ dateEndLessDateBegin: true });
 
+    });
+
+    it('should dispatch EVENT_SAVE action on save() and switch to "close after save" mode', () => {
+
+      spyOn(mockDispatcher, 'next');
+
+      nextEventState({
+        id: 'some-event-id',
+        title: 'some event',
+        dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
+        dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
+      });
+
+      expect(component.closeAfterSave).toBe(false);
+
+      component.save();
+
+      expect(component.closeAfterSave).toBe(true);
+      expect(mockDispatcher.next).toHaveBeenCalledWith({
+        type: 'EVENT_SAVE',
+        payload: {
+          id: 'some-event-id',
+          title: 'some event',
+          dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
+          dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
+        },
+      });
+    });
+
+    it('should close dialog in "close after save" mode when event changes state to "not saving"', () => {
+      spyOn(mockModal, 'close');
+
+      const event: TimelineEvent = {
+        id: 'some-event-id',
+        title: 'some event',
+        dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
+        dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
+      };
+
+      nextState({
+        isSaving: false,
+        event: event,
+      });
+
+      expect(mockModal.close).not.toHaveBeenCalled();
+
+      component.closeAfterSave = true;
+
+      nextState({
+        isSaving: true,
+        event: event,
+      });
+
+      nextState({
+        isSaving: false,
+        event: event,
+      });
+
+      expect(mockModal.close).toHaveBeenCalledTimes(1);
     });
 
     afterEach(() => {
@@ -140,6 +207,7 @@ describe('EventComponent', () => {
     it('should init and validate form', () => {
 
       nextEventState({
+        id: 'some-event-id',
         title: 'some title',
         dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
         dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
@@ -174,6 +242,7 @@ describe('EventComponent', () => {
       expect(formGroups[1].query(By.css('.form-control-feedback'))).toBeNull();
 
       component.form.setValue({
+        id: null,
         title: '',       // required
         dateBegin: null, // required
         dateEnd: null,   // required
@@ -190,6 +259,7 @@ describe('EventComponent', () => {
       expect(formGroups[2].query(By.css('.form-control-feedback'))).not.toBeNull(); // some danger notice
 
       component.form.setValue({
+        id: 'some-event-id',
         title: 'some title',
         dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
         dateEnd: { days: -1, title: '30.12.0002 до н.э.' }, // incorrect - less then beginning date
@@ -205,15 +275,20 @@ describe('EventComponent', () => {
 
   });
 
-  //noinspection NestedFunctionJS
-  function nextEventState(event: TimelineEvent) {
+  function nextState(state: EventState) {
     stateChanges.next({
       auth: null,
       timelines: null,
       timeline: null,
-      event: {
-        event: event,
-      },
+      event: state,
+    });
+  }
+
+  //noinspection NestedFunctionJS
+  function nextEventState(event: TimelineEvent) {
+    nextState({
+      isSaving: false,
+      event: event,
     });
   }
 });

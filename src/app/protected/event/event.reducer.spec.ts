@@ -13,8 +13,10 @@ describe('eventReducer', () => {
     const newState = eventReducer(state, action);
 
     expect(newState).not.toBe(state);
-    expect(newState).toEqual({
+    expect(newState).toEqual(<EventState> {
+      isSaving: false,
       event: {
+        id: null,
         title: 'some event title',
         dateBegin: null,
         dateEnd: null,
