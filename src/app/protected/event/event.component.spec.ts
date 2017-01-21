@@ -99,7 +99,7 @@ describe('EventComponent', () => {
 
     });
 
-    it('should dispatch EVENT_SAVE action on save() and switch to "close after save" mode', () => {
+    it('should dispatch EVENT_UPDATE action on save() and switch to "close after save" mode', () => {
 
       spyOn(mockDispatcher, 'next');
 
@@ -116,7 +116,7 @@ describe('EventComponent', () => {
 
       expect(component.closeAfterSave).toBe(true);
       expect(mockDispatcher.next).toHaveBeenCalledWith({
-        type: 'EVENT_SAVE',
+        type: 'EVENT_UPDATE',
         payload: {
           id: 'some-event-id',
           title: 'some event',

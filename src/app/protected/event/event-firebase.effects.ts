@@ -1,7 +1,7 @@
 import { Observable } from '../../shared/rxjs';
 import {
-  EventActionType, EventAction, EventSaveAction, EventSaveSuccessAction,
-  EventSaveErrorAction
+  EventActionType, EventAction, EventUpdateAction, EventUpdateSuccessAction,
+  EventUpdateErrorAction
 } from './event.reducer';
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
@@ -13,19 +13,19 @@ import { TimelineDate } from '../shared/date';
 @Injectable()
 export class EventFirebaseEffects extends ProtectedFirebaseObjectEffects<EventActionType, EventAction, TimelineEvent> {
 
-  @Effect() save: Observable<EventSaveSuccessAction | EventSaveErrorAction> = this
-    .authorizedActionsOfType('EVENT_SAVE')
-    .switchMap((action: EventSaveAction) =>
+  @Effect() update: Observable<EventUpdateSuccessAction | EventUpdateErrorAction> = this
+    .authorizedActionsOfType('EVENT_UPDATE')
+    .switchMap((action: EventUpdateAction) =>
       Observable
         .fromPromise(
           <Promise<void>>this.getFirebaseObject(action.payload.id)
             .update(toFirebaseEventUpdateObject(action.payload))
         )
-        .map((): EventSaveSuccessAction => ({
-          type: 'EVENT_SAVE_SUCCESS',
+        .map((): EventUpdateSuccessAction => ({
+          type: 'EVENT_UPDATE_SUCCESS',
         }))
-        .catch((error: Error): Observable<EventSaveErrorAction> => Observable.of<EventSaveErrorAction>({
-          type: 'EVENT_SAVE_ERROR',
+        .catch((error: Error): Observable<EventUpdateErrorAction> => Observable.of<EventUpdateErrorAction>({
+          type: 'EVENT_UPDATE_ERROR',
           payload: error,
         }))
     );

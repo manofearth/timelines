@@ -6,7 +6,7 @@ export interface EventState {
   event: TimelineEvent;
 }
 
-export type EventActionType = 'EVENT_CREATE' | 'EVENT_SAVE' | 'EVENT_SAVE_SUCCESS' | 'EVENT_SAVE_ERROR';
+export type EventActionType = 'EVENT_CREATE' | 'EVENT_UPDATE' | 'EVENT_UPDATE_SUCCESS' | 'EVENT_UPDATE_ERROR';
 
 export interface EventAction extends Action {
   type: EventActionType;
@@ -17,17 +17,17 @@ export interface EventCreateAction extends EventAction {
     payload: string;
 }
 
-export interface EventSaveAction extends EventAction {
-  type: 'EVENT_SAVE';
+export interface EventUpdateAction extends EventAction {
+  type: 'EVENT_UPDATE';
   payload: TimelineEvent;
 }
 
-export interface EventSaveSuccessAction extends EventAction {
-  type: 'EVENT_SAVE_SUCCESS';
+export interface EventUpdateSuccessAction extends EventAction {
+  type: 'EVENT_UPDATE_SUCCESS';
 }
 
-export interface EventSaveErrorAction extends EventAction {
-  type: 'EVENT_SAVE_ERROR';
+export interface EventUpdateErrorAction extends EventAction {
+  type: 'EVENT_UPDATE_ERROR';
 }
 
 export function eventReducer(state: EventState, action: EventAction): EventState {

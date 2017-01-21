@@ -62,7 +62,7 @@ export class EventComponent implements OnInit, OnDestroy {
   save() {
     this.closeAfterSave = true;
     this.store.dispatch({
-      type: 'EVENT_SAVE',
+      type: 'EVENT_UPDATE',
       payload: this.form.value,
     });
   }

@@ -1,4 +1,4 @@
-import { EventCreateAction, EventState, eventReducer } from './event.reducer';
+import { EventCreateAction, EventState, eventReducer, EventUpdateAction } from './event.reducer';
 
 describe('eventReducer', () => {
 
@@ -23,4 +23,29 @@ describe('eventReducer', () => {
       },
     });
   });
+
+  it('on EVENT_UPDATE should mark as saving', () => {
+    const action: EventUpdateAction = {
+      type: 'EVENT_UPDATE',
+      payload: <any> 'some event',
+    };
+
+    const state: any = Object.freeze(<EventState>{
+      isSaving: false,
+      event: <any> 'some event',
+    });
+
+    const newState = eventReducer(state, action);
+
+    expect(newState).not.toBe(state);
+    expect(newState).toEqual(<EventState>{
+      isSaving: true,
+      event: <any> 'some event',
+    });
+  });
+
+  it('on EVENT_UPDATE_SUCCESS should mark as not saving ', () => {
+
+  });
+
 });

@@ -4,8 +4,7 @@ import { EffectsRunner } from '@ngrx/effects/testing';
 import { AngularFire, FirebaseAuthState } from 'angularfire2';
 import { Actions } from '@ngrx/effects';
 import { EventFirebaseEffects, FirebaseEvent } from './event-firebase.effects';
-import { EventSaveAction, EventSaveSuccessAction } from './event.reducer';
-import { fakeAsync } from '@angular/core/testing';
+import { EventUpdateAction, EventUpdateSuccessAction } from './event.reducer';
 
 class MockFirebaseObject extends ReplaySubject<FirebaseEvent> {
   //noinspection JSMethodCanBeStatic
@@ -42,17 +41,17 @@ describe('EventFirebaseEffects', () => {
   describe('when not logged in', () => {
 
     beforeEach(() => {
-      runner.next(<EventSaveAction>{ type: 'EVENT_SAVE' });
+      runner.next(<EventUpdateAction>{ type: 'EVENT_UPDATE' });
     });
 
     it('should not query firebase database', () => {
       spyOn(firebase.database, 'object');
-      effects.save.subscribe();
+      effects.update.subscribe();
       expect(firebase.database.object).not.toHaveBeenCalled();
     });
 
     it('should not emit actions', () => {
-      effects.save.subscribe(() => {
+      effects.update.subscribe(() => {
         fail('should not emit actions');
       });
     });
@@ -65,11 +64,11 @@ describe('EventFirebaseEffects', () => {
       authStateChanges.next(<any>{ uid: 'some-uid' });
     });
 
-    describe('on EVENT_CHANGED', () => {
+    describe('on EVENT_UPDATE', () => {
 
-      beforeEach(fakeAsync(() => {
-        runner.next(<EventSaveAction>{
-          type: 'EVENT_SAVE',
+      beforeEach(() => {
+        runner.next(<EventUpdateAction>{
+          type: 'EVENT_UPDATE',
           payload: {
             id: 'some-event-id',
             title: 'some title',
@@ -77,12 +76,12 @@ describe('EventFirebaseEffects', () => {
             dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
           },
         });
-      }));
+      });
 
       it('should update firebase database object', () => {
 
         spyOn(mockFirebaseObject, 'update').and.callThrough();
-        effects.save.subscribe();
+        effects.update.subscribe();
         expect(mockFirebaseObject.update).toHaveBeenCalledWith({
           title: 'some title',
           dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
@@ -91,23 +90,23 @@ describe('EventFirebaseEffects', () => {
 
       });
 
-      it('should emit EVENT_SAVE_SUCCESS', (done: DoneFn) => {
+      it('should emit EVENT_UPDATE_SUCCESS', (done: DoneFn) => {
 
         mockFirebaseObject.update = () => Promise.resolve();
 
-        effects.save.subscribe((action: EventSaveSuccessAction) => {
-          expect(action.type).toBe('EVENT_SAVE_SUCCESS');
+        effects.update.subscribe((action: EventUpdateSuccessAction) => {
+          expect(action.type).toBe('EVENT_UPDATE_SUCCESS');
           done();
         });
 
       });
 
-      it('should emit EVENT_SAVE_ERROR', (done: DoneFn) => {
+      it('should emit EVENT_UPDATE_ERROR', (done: DoneFn) => {
 
         mockFirebaseObject.update = () => Promise.reject('some error');
 
-        effects.save.subscribe((action: EventSaveSuccessAction) => {
-          expect(action.type).toBe('EVENT_SAVE_ERROR');
+        effects.update.subscribe((action: EventUpdateSuccessAction) => {
+          expect(action.type).toBe('EVENT_UPDATE_ERROR');
           expect(action.payload).toBe('some error');
           done();
         });
