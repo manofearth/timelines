@@ -1,17 +1,23 @@
 import { Observable } from '../../shared/rxjs';
 import {
-  EventActionType, EventAction, EventUpdateAction, EventUpdateSuccessAction,
-  EventUpdateErrorAction
+  EventActionType,
+  EventAction,
+  EventUpdateAction,
+  EventUpdateSuccessAction,
+  EventUpdateErrorAction,
+  EventInsertSuccessAction,
+  EventInsertErrorAction,
+  EventInsertAction,
 } from './event.reducer';
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
 import { AngularFire } from 'angularfire2';
-import { ProtectedFirebaseObjectEffects } from '../shared/protected-firebase-object.effects';
 import { TimelineEvent } from '../shared/timeline-event';
 import { TimelineDate } from '../shared/date';
+import { ProtectedFirebaseEffects, toError } from '../shared/protected-firebase.effects';
 
 @Injectable()
-export class EventFirebaseEffects extends ProtectedFirebaseObjectEffects<EventActionType, EventAction, TimelineEvent> {
+export class EventFirebaseEffects extends ProtectedFirebaseEffects<EventActionType, EventAction, TimelineEvent> {
 
   @Effect() update: Observable<EventUpdateSuccessAction | EventUpdateErrorAction> = this
     .authorizedActionsOfType('EVENT_UPDATE')
@@ -30,13 +36,33 @@ export class EventFirebaseEffects extends ProtectedFirebaseObjectEffects<EventAc
         }))
     );
 
+  @Effect() insert: Observable<EventInsertSuccessAction | EventInsertErrorAction> = this
+    .authorizedActionsOfType('EVENT_INSERT')
+    .switchMap((action: EventInsertAction) =>
+      Observable.fromPromise(<any>this.getFirebaseList().push(toFirebaseEventUpdateObject(action.payload)))
+        .map((ref: { key: string}): EventInsertSuccessAction => ({
+          type: 'EVENT_INSERT_SUCCESS',
+          payload: ref.key,
+        }))
+        .catch((error: Error|string): Observable<EventInsertErrorAction> =>
+          Observable.of<EventInsertErrorAction>({
+            type: 'EVENT_INSERT_ERROR',
+            payload: toError(error),
+          })
+        )
+    );
+
   constructor(actions: Actions, fire: AngularFire) {
     super(actions, fire);
   }
 
+  protected getFirebaseNodeName(): string {
+    return 'events';
+  }
+
 }
 
-export interface FirebaseEvent {
+export interface FirebaseTimelineEvent {
   $key: string;
   title: string;
   dateBegin: TimelineDate;

@@ -6,7 +6,8 @@ export interface EventState {
   event: TimelineEvent;
 }
 
-export type EventActionType = 'EVENT_CREATE' | 'EVENT_UPDATE' | 'EVENT_UPDATE_SUCCESS' | 'EVENT_UPDATE_ERROR';
+export type EventActionType = 'EVENT_CREATE' | 'EVENT_UPDATE' | 'EVENT_UPDATE_SUCCESS' | 'EVENT_UPDATE_ERROR'
+  | 'EVENT_INSERT' | 'EVENT_INSERT_SUCCESS' | 'EVENT_INSERT_ERROR';
 
 export interface EventAction extends Action {
   type: EventActionType;
@@ -28,6 +29,21 @@ export interface EventUpdateSuccessAction extends EventAction {
 
 export interface EventUpdateErrorAction extends EventAction {
   type: 'EVENT_UPDATE_ERROR';
+  payload: Error;
+}
+
+export interface EventInsertAction extends EventAction {
+  type: 'EVENT_INSERT';
+  payload: TimelineEvent;
+}
+
+export interface EventInsertSuccessAction extends EventAction {
+  type: 'EVENT_INSERT_SUCCESS';
+}
+
+export interface EventInsertErrorAction extends EventAction {
+  type: 'EVENT_INSERT_ERROR';
+  payload: Error;
 }
 
 export function eventReducer(state: EventState, action: EventAction): EventState {
@@ -42,6 +58,11 @@ export function eventReducer(state: EventState, action: EventAction): EventState
           dateBegin: null,
           dateEnd: null,
         },
+      };
+    case 'EVENT_UPDATE':
+      return {
+        isSaving: true,
+        event: state.event,
       };
     default:
       return state;

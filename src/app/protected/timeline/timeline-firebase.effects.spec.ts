@@ -102,7 +102,7 @@ describe('TimelineFirebaseEffects', () => {
 
         effects.get.subscribe((action: TimelineGetErrorAction) => {
           expect(action.type).toBe('TIMELINE_GET_ERROR');
-          expect(action.payload).toBe('some error');
+          expect(action.payload).toEqual(new Error('some error'));
           done();
         });
       });
@@ -148,7 +148,7 @@ describe('TimelineFirebaseEffects', () => {
 
           effects.save.subscribe((action: TimelineSaveSuccessAction) => {
             expect(action.type).toBe('TIMELINE_SAVE_ERROR');
-            expect(action.payload).toBe('some error');
+            expect(action.payload).toEqual(new Error('some error'));
             done();
           });
           tick(SAVE_DEBOUNCE_TIME);

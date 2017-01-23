@@ -10,7 +10,8 @@ import {
   TimelinesCreateAction,
   TimelinesCreateSuccessAction,
   TimelinesDeleteAction,
-  TimelinesDeleteSuccessAction
+  TimelinesDeleteSuccessAction,
+  TimelinesCreateErrorAction,
 } from './timelines.reducer';
 import { FirebaseTimeline } from '../timeline/timeline-firebase.effects';
 
@@ -151,7 +152,7 @@ describe('TimelinesFirebaseEffects', () => {
 
         mockFirebaseList.push = () => Promise.reject('some error');
 
-        effects.create.subscribe((action: TimelinesCreateSuccessAction) => {
+        effects.create.subscribe((action: TimelinesCreateErrorAction) => {
           expect(action.type).toBe('TIMELINES_CREATE_ERROR');
           expect(action.payload).toEqual(new Error('some error'));
           done();

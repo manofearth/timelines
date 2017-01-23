@@ -13,12 +13,12 @@ import {
   TimelineSaveErrorAction,
   TimelineChangedAction,
 } from './timeline.reducer';
-import { ProtectedFirebaseObjectEffects } from '../shared/protected-firebase-object.effects';
+import { ProtectedFirebaseEffects, toError } from '../shared/protected-firebase.effects';
 
 export const SAVE_DEBOUNCE_TIME = 1000;
 
 @Injectable()
-export class TimelineFirebaseEffects extends ProtectedFirebaseObjectEffects<
+export class TimelineFirebaseEffects extends ProtectedFirebaseEffects<
   TimelineActionType, TimelineAction, FirebaseTimeline> {
 
   @Effect() get: Observable<TimelineGetSuccessAction | TimelineGetErrorAction> = this
@@ -30,7 +30,7 @@ export class TimelineFirebaseEffects extends ProtectedFirebaseObjectEffects<
       }))
       .catch((error: Error): Observable<TimelineGetErrorAction> => Observable.of<TimelineGetErrorAction>({
         type: 'TIMELINE_GET_ERROR',
-        payload: error,
+        payload: toError(error),
       }))
     );
 
@@ -48,7 +48,7 @@ export class TimelineFirebaseEffects extends ProtectedFirebaseObjectEffects<
         }))
         .catch((error: Error): Observable<TimelineSaveErrorAction> => Observable.of<TimelineSaveErrorAction>({
           type: 'TIMELINE_SAVE_ERROR',
-          payload: error,
+          payload: toError(error),
         }))
     );
 
@@ -56,6 +56,9 @@ export class TimelineFirebaseEffects extends ProtectedFirebaseObjectEffects<
     super(actions, fire);
   }
 
+  protected getFirebaseNodeName(): string {
+    return 'timelines';
+  }
 }
 
 export interface FirebaseTimeline {
