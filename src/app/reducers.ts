@@ -5,7 +5,7 @@ import { storeFreeze } from 'ngrx-store-freeze';
 import { timelinesReducer, TimelinesState } from './protected/timelines/timelines.reducer';
 import { environment } from '../environments/environment';
 import { TimelineState, timelineReducer } from './protected/timeline/timeline.reducer';
-import { EventState } from './protected/event/event.reducer';
+import { EventState, eventReducer } from './protected/event/event.reducer';
 
 export interface AppState {
   auth: AuthState;
@@ -34,6 +34,7 @@ export const initialState: AppState = {
   },
   event: {
     isSaving: false,
+    error: null,
     event: null,
   },
 };
@@ -42,12 +43,14 @@ interface AppReducers {
   auth: ActionReducer<AuthState>;
   timelines: ActionReducer<TimelinesState>;
   timeline: ActionReducer<TimelineState>;
+  event: ActionReducer<EventState>;
 }
 
 const reducers: AppReducers = {
   auth: authReducer,
   timelines: timelinesReducer,
   timeline: timelineReducer,
+  event: eventReducer,
 };
 
 const developmentReducer: ActionReducer<AppState> = compose(storeFreeze, combineReducers)(reducers);

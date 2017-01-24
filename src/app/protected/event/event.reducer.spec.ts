@@ -1,4 +1,14 @@
-import { EventCreateAction, EventState, eventReducer, EventUpdateAction } from './event.reducer';
+import {
+  EventCreateAction,
+  EventState,
+  eventReducer,
+  EventUpdateAction,
+  EventUpdateSuccessAction,
+  EventUpdateErrorAction,
+  EventInsertErrorAction,
+  EventInsertSuccessAction,
+  EventInsertAction
+} from './event.reducer';
 
 describe('eventReducer', () => {
 
@@ -8,13 +18,19 @@ describe('eventReducer', () => {
       payload: 'some event title',
     };
 
-    const state: any = Object.freeze(<EventState>{ event: null });
+    const state: EventState = Object.freeze<EventState>({
+      isSaving: false,
+      error: null,
+      event: null,
+    });
+
 
     const newState = eventReducer(state, action);
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<EventState> {
       isSaving: false,
+      error: null,
       event: {
         id: null,
         title: 'some event title',
@@ -24,14 +40,15 @@ describe('eventReducer', () => {
     });
   });
 
-  it('on EVENT_UPDATE should mark as saving', () => {
+  it('on EVENT_UPDATE should set event model and mark as saving', () => {
     const action: EventUpdateAction = {
       type: 'EVENT_UPDATE',
-      payload: <any> 'some event',
+      payload: <any> 'some new event',
     };
 
-    const state: any = Object.freeze(<EventState>{
+    const state: EventState = Object.freeze<EventState>({
       isSaving: false,
+      error: null,
       event: <any> 'some event',
     });
 
@@ -40,12 +57,117 @@ describe('eventReducer', () => {
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<EventState>{
       isSaving: true,
+      error: null,
+      event: <any> 'some new event',
+    });
+  });
+
+  it('on EVENT_UPDATE_SUCCESS should mark as not saving and erase error', () => {
+    const action: EventUpdateSuccessAction = {
+      type: 'EVENT_UPDATE_SUCCESS',
+    };
+
+    const state: EventState = Object.freeze({
+      isSaving: true,
+      error: new Error('some error'),
+      event: <any> 'some event',
+    });
+
+    const newState = eventReducer(state, action);
+
+    expect(newState).not.toBe(state);
+    expect(newState).toEqual(<EventState>{
+      isSaving: false,
+      error: null,
       event: <any> 'some event',
     });
   });
 
-  it('on EVENT_UPDATE_SUCCESS should mark as not saving ', () => {
+  it('on EVENT_UPDATE_ERROR should mark as not saving and set error', () => {
+    const action: EventUpdateErrorAction = {
+      type: 'EVENT_UPDATE_ERROR',
+      payload: <any> 'some error',
+    };
 
+    const state: EventState = Object.freeze({
+      isSaving: true,
+      error: null,
+      event: <any> 'some event',
+    });
+
+    const newState = eventReducer(state, action);
+
+    expect(newState).not.toBe(state);
+    expect(newState).toEqual(<EventState>{
+      isSaving: false,
+      error: <any> 'some error',
+      event: <any> 'some event',
+    });
   });
 
+  it('on EVENT_INSERT should set event model and mark as saving', () => {
+    const action: EventInsertAction = {
+      type: 'EVENT_INSERT',
+      payload: <any> 'some new event',
+    };
+
+    const state: EventState = Object.freeze<EventState>({
+      isSaving: false,
+      error: null,
+      event: <any> 'some event',
+    });
+
+    const newState = eventReducer(state, action);
+
+    expect(newState).not.toBe(state);
+    expect(newState).toEqual(<EventState>{
+      isSaving: true,
+      error: null,
+      event: <any> 'some new event',
+    });
+  });
+
+  it('on EVENT_INSERT_SUCCESS should set event id, mark as not saving and erase error', () => {
+    const action: EventInsertSuccessAction = {
+      type: 'EVENT_INSERT_SUCCESS',
+      payload: 'generated key',
+    };
+
+    const state: EventState = Object.freeze({
+      isSaving: true,
+      error: new Error('some error'),
+      event: <any> { id: null },
+    });
+
+    const newState = eventReducer(state, action);
+
+    expect(newState).not.toBe(state);
+    expect(newState).toEqual(<EventState>{
+      isSaving: false,
+      error: null,
+      event: { id: 'generated key' },
+    });
+  });
+
+  it('on EVENT_INSERT_ERROR should mark as not saving and set error', () => {
+    const action: EventInsertErrorAction = {
+      type: 'EVENT_INSERT_ERROR',
+      payload: <any> 'some error',
+    };
+
+    const state: EventState = Object.freeze({
+      isSaving: true,
+      error: null,
+      event: <any> 'some event',
+    });
+
+    const newState = eventReducer(state, action);
+
+    expect(newState).not.toBe(state);
+    expect(newState).toEqual(<EventState>{
+      isSaving: false,
+      error: <any> 'some error',
+      event: <any> 'some event',
+    });
+  });
 });

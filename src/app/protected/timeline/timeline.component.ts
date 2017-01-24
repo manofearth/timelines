@@ -7,9 +7,10 @@ import { TimelineGetAction, TimelineState, Timeline, TimelineChangedAction } fro
 import { ActivatedRoute, Params } from '@angular/router';
 import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { EventComponent } from '../event/event.component';
-import { EventCreateAction, EventState } from '../event/event.reducer';
+import { EventCreateAction } from '../event/event.reducer';
+import { TimelineEvent } from '../shared/timeline-event';
 
 @Component({
   templateUrl: './timeline.component.html',
@@ -27,15 +28,19 @@ export class TimelineComponent implements OnInit, OnDestroy {
   private routeParamsSubscription: Subscription;
   private timelineStateSubscription: Subscription;
   private formChangesSubscription: Subscription;
-  private timelineEventStateSubscription: Subscription;
+  private timelineEventSubscription: Subscription;
+
+  private timelineEventModal: NgbModalRef;
 
   //noinspection OverlyComplexFunctionJS
-  constructor(private store: Store<AppState>,
-              private route: ActivatedRoute,
-              private fb: FormBuilder,
-              private changeDetector: ChangeDetectorRef,
-              private titleService: Title,
-              private modalService: NgbModal) {
+  constructor(
+    private store: Store<AppState>,
+    private route: ActivatedRoute,
+    private fb: FormBuilder,
+    private changeDetector: ChangeDetectorRef,
+    private titleService: Title,
+    private modalService: NgbModal
+  ) {
   }
 
   ngOnInit() {
@@ -66,11 +71,21 @@ export class TimelineComponent implements OnInit, OnDestroy {
 
       });
 
-    this.timelineEventStateSubscription = this.store
-      .select('event')
-      .filter((event: EventState) => event.event !== null)
-      .subscribe((ignore: EventState) => {
-        this.modalService.open(EventComponent, { size: 'lg' });
+    this.timelineEventSubscription = this.store
+      .select('event', 'event')
+      .filter((event: TimelineEvent) => event !== null)
+      .subscribe(() => {
+        if (!this.timelineEventModal) {
+          this.timelineEventModal = this.modalService.open(EventComponent, { size: 'lg' });
+          this.timelineEventModal.result.then(
+            () => {
+              this.timelineEventModal = null;
+            },
+            () => {
+              this.timelineEventModal = null;
+            }
+          );
+        }
       });
 
   }
@@ -78,7 +93,7 @@ export class TimelineComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.routeParamsSubscription.unsubscribe();
     this.timelineStateSubscription.unsubscribe();
-    this.timelineEventStateSubscription.unsubscribe();
+    this.timelineEventSubscription.unsubscribe();
   }
 
   createTimelineEvent(title: string) {

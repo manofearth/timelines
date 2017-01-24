@@ -3,6 +3,7 @@ import { Action } from '@ngrx/store';
 
 export interface EventState {
   isSaving: boolean;
+  error: Error;
   event: TimelineEvent;
 }
 
@@ -52,6 +53,7 @@ export function eventReducer(state: EventState, action: EventAction): EventState
     case 'EVENT_CREATE':
       return {
         isSaving: false,
+        error: null,
         event: {
           id: null,
           title: action.payload,
@@ -60,8 +62,29 @@ export function eventReducer(state: EventState, action: EventAction): EventState
         },
       };
     case 'EVENT_UPDATE':
+    case 'EVENT_INSERT':
       return {
         isSaving: true,
+        error: null,
+        event: action.payload,
+      };
+    case 'EVENT_UPDATE_SUCCESS':
+      return {
+        isSaving: false,
+        error: null,
+        event: state.event,
+      };
+    case 'EVENT_INSERT_SUCCESS':
+      return {
+        isSaving: false,
+        error: null,
+        event: Object.assign({}, state.event, { id: action.payload }),
+      };
+    case 'EVENT_UPDATE_ERROR':
+    case 'EVENT_INSERT_ERROR':
+      return {
+        isSaving: false,
+        error: action.payload,
         event: state.event,
       };
     default:

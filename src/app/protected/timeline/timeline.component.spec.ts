@@ -38,8 +38,9 @@ describe('TimelineComponent', () => {
         },
       };
       mockModalService = <any>{
-        open: () => {
-        },
+        open: () => ({
+          result: Promise.resolve(),
+        }),
       };
       const mockChangeDetector: ChangeDetectorRef = <any>{
         markForCheck: () => {
@@ -122,14 +123,19 @@ describe('TimelineComponent', () => {
         });
       });
 
-      it('should open event dialog on state.event init', () => {
-        spyOn(mockModalService, 'open');
+      it('should open event dialog on state.event init and not reopen it again', () => {
+        spyOn(mockModalService, 'open').and.callThrough();
 
         stateChanges.next({
           event: 'some event',
           timeline: { timeline: {} },
         });
+        stateChanges.next({
+          event: 'some other event',
+          timeline: { timeline: {} },
+        });
 
+        expect(mockModalService.open).toHaveBeenCalledTimes(1); // todo should not work
         expect(mockModalService.open).toHaveBeenCalledWith(EventComponent, { size: 'lg' });
       });
 
@@ -166,7 +172,11 @@ describe('TimelineComponent', () => {
           },
           {
             provide: NgbModal,
-            useValue: { open: () => {} },
+            useValue: {
+              open: () => ({
+                result: Promise.resolve(),
+              })
+            },
           },
           {
             provide: APP_BASE_HREF,

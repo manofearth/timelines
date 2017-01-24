@@ -62,7 +62,7 @@ export class EventComponent implements OnInit, OnDestroy {
   save() {
     this.closeAfterSave = true;
     this.store.dispatch({
-      type: 'EVENT_UPDATE',
+      type: 'EVENT_INSERT',
       payload: this.form.value,
     });
   }
@@ -86,7 +86,7 @@ export interface EventForm extends FormGroup {
   setValue(value: TimelineEvent);
 }
 
-interface EventFormErrors {
+export interface EventFormErrors {
   required?: true;
   dateEndLessDateBegin?: true;
 }

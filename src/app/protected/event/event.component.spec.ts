@@ -99,12 +99,12 @@ describe('EventComponent', () => {
 
     });
 
-    it('should dispatch EVENT_UPDATE action on save() and switch to "close after save" mode', () => {
+    it('should dispatch EVENT_INSERT action on save() and switch to "close after save" mode', () => {
 
       spyOn(mockDispatcher, 'next');
 
       nextEventState({
-        id: 'some-event-id',
+        id: null,
         title: 'some event',
         dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
         dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
@@ -116,9 +116,9 @@ describe('EventComponent', () => {
 
       expect(component.closeAfterSave).toBe(true);
       expect(mockDispatcher.next).toHaveBeenCalledWith({
-        type: 'EVENT_UPDATE',
+        type: 'EVENT_INSERT',
         payload: {
-          id: 'some-event-id',
+          id: null,
           title: 'some event',
           dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
           dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
@@ -138,6 +138,7 @@ describe('EventComponent', () => {
 
       nextState({
         isSaving: false,
+        error: null,
         event: event,
       });
 
@@ -147,11 +148,13 @@ describe('EventComponent', () => {
 
       nextState({
         isSaving: true,
+        error: null,
         event: event,
       });
 
       nextState({
         isSaving: false,
+        error: null,
         event: event,
       });
 
@@ -275,6 +278,7 @@ describe('EventComponent', () => {
 
   });
 
+  //noinspection NestedFunctionJS
   function nextState(state: EventState) {
     stateChanges.next({
       auth: null,
@@ -288,6 +292,7 @@ describe('EventComponent', () => {
   function nextEventState(event: TimelineEvent) {
     nextState({
       isSaving: false,
+      error: null,
       event: event,
     });
   }
