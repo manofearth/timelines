@@ -9,8 +9,7 @@ import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { EventComponent } from '../event/event.component';
-import { EventCreateAction } from '../event/event.reducer';
-import { TimelineEvent } from '../shared/timeline-event';
+import { EventCreateAction, EventState } from '../event/event.reducer';
 
 @Component({
   templateUrl: './timeline.component.html',
@@ -72,19 +71,21 @@ export class TimelineComponent implements OnInit, OnDestroy {
       });
 
     this.timelineEventSubscription = this.store
-      .select('event', 'event')
-      .filter((event: TimelineEvent) => event !== null)
-      .subscribe(() => {
-        if (!this.timelineEventModal) {
+      .select('event')
+      .subscribe((event: EventState) => {
+        if (event && !this.timelineEventModal) {
           this.timelineEventModal = this.modalService.open(EventComponent, { size: 'lg' });
           this.timelineEventModal.result.then(
             () => {
+              console.log('resolve');
               this.timelineEventModal = null;
             },
             () => {
               this.timelineEventModal = null;
-            }
-          );
+            });
+        } else if (!event && this.timelineEventModal) {
+          this.timelineEventModal.close();
+          this.timelineEventModal = null;
         }
       });
 

@@ -9,7 +9,7 @@ import { TimelineState, TimelineGetAction } from './timeline.reducer';
 import { AppState } from '../../reducers';
 import { Title } from '@angular/platform-browser';
 import { FormBuilder } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { EventComponent } from '../event/event.component';
 
 describe('TimelineComponent', () => {
@@ -22,6 +22,7 @@ describe('TimelineComponent', () => {
     let mockTitleService: Title;
     let mockModalService: NgbModal;
     let mockDispatcher: Observer<Action>;
+    let mockModalRef: NgbModalRef;
 
     beforeEach(() => {
       stateChanges = new Subject<AppState>();
@@ -37,10 +38,13 @@ describe('TimelineComponent', () => {
         setTitle: () => {
         },
       };
+      mockModalRef = <any> {
+        close: () => {
+        },
+        result: Promise.resolve(),
+      };
       mockModalService = <any>{
-        open: () => ({
-          result: Promise.resolve(),
-        }),
+        open: () => mockModalRef,
       };
       const mockChangeDetector: ChangeDetectorRef = <any>{
         markForCheck: () => {
@@ -123,21 +127,69 @@ describe('TimelineComponent', () => {
         });
       });
 
-      it('should open event dialog on state.event init and not reopen it again', () => {
+      it('should open event dialog if "current event" appears in state and not reopen it on event changes', () => {
         spyOn(mockModalService, 'open').and.callThrough();
 
         stateChanges.next({
-          event: 'some event',
+          event: { event: 'some event' },
           timeline: { timeline: {} },
         });
         stateChanges.next({
-          event: 'some other event',
+          event: { event: 'some other event' },
           timeline: { timeline: {} },
         });
 
-        expect(mockModalService.open).toHaveBeenCalledTimes(1); // todo should not work
+        expect(mockModalService.open).toHaveBeenCalledTimes(1);
         expect(mockModalService.open).toHaveBeenCalledWith(EventComponent, { size: 'lg' });
       });
+
+      it('should close opened event dialog if "current event" disappears from state', () => {
+        spyOn(mockModalRef, 'close');
+
+        stateChanges.next({
+          event: { event: 'some event' },
+          timeline: { timeline: {} },
+        });
+
+        expect(mockModalRef.close).not.toHaveBeenCalled();
+
+        stateChanges.next({
+          event: null,
+          timeline: { timeline: {} },
+        });
+
+        expect(mockModalRef.close).toHaveBeenCalled();
+      });
+
+      fit('should open event dialog, and open it again after close', async(() => {
+
+        const promiseResolver = new Subject();
+        const p = promiseResolver.toPromise();
+        spyOn(mockModalService, 'open').and.returnValue({
+          result: p,
+        });
+
+        p.then(() => {
+          console.log('expect');
+          expect(mockModalService.open).toHaveBeenCalledTimes(2);
+        });
+
+        console.log('open');
+        stateChanges.next({
+          event: { event: 'some event' },
+          timeline: { timeline: {} },
+        }); // dialog opened
+
+        console.log('next');
+        promiseResolver.next(); // dialog closed
+
+        console.log('open 2');
+        stateChanges.next({
+          event: { event: 'some event' },
+          timeline: { timeline: {} },
+        }); // dialog opened again
+
+      }));
 
       afterEach(() => {
         component.ngOnDestroy();
