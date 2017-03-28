@@ -2,7 +2,7 @@ version: "3"
 
 services:
   node:
-    image: node:boron
+    build: ./docker/node
     ports:
       - 4200:4200
     volumes:
