@@ -4,7 +4,8 @@ services:
   node:
     build: ./docker/node
     ports:
-      - 4200:4200
+      - 4200:4200 # for ng serve
+      - 9876:9876 # for ng test
     volumes:
       - .:/usr/src/app
       - node_modules:/usr/src/app/node_modules

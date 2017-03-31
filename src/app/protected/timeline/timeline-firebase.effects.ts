@@ -34,7 +34,7 @@ export class TimelineFirebaseEffects extends ProtectedFirebaseEffects<
       }))
     );
 
-  @Effect() save: Observable<TimelineSaveSuccessAction> = this
+  @Effect() save: Observable<TimelineSaveSuccessAction | TimelineSaveErrorAction> = this
     .authorizedActionsOfType('TIMELINE_CHANGED')
     .debounceTime(SAVE_DEBOUNCE_TIME)
     .switchMap((action: TimelineChangedAction) =>

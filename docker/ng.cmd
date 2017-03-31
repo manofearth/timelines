@@ -1,2 +1,2 @@
 cd %~dp0..
-docker-compose run --rm node ng %*
+docker-compose run --rm -p 9876:9876 -p 4200:4200 node ng %*

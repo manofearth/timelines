@@ -161,7 +161,7 @@ describe('TimelineComponent', () => {
         expect(mockModalRef.close).toHaveBeenCalled();
       });
 
-      fit('should open event dialog, and open it again after close', async(() => {
+      it('should open event dialog, and open it again after close', async(() => {
 
         const promiseResolver = new Subject();
         const p = promiseResolver.toPromise();
@@ -253,6 +253,6 @@ describe('TimelineComponent', () => {
 
     afterEach(() => {
       component.ngOnDestroy();
-    })
+    });
   });
 });

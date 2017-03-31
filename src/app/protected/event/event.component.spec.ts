@@ -9,7 +9,6 @@ import { By } from '@angular/platform-browser';
 import { DateDirective } from '../date/date.directive';
 import { DateParser } from '../shared/date-parser/date-parser.service';
 import { Logger } from '../../shared/logger.service';
-import { dispatchEvent } from '@angular/platform-browser/testing/browser_util';
 import { CommonModule } from '@angular/common';
 import { Store, Action } from '@ngrx/store';
 import { AppState } from '../../reducers';
@@ -250,9 +249,10 @@ describe('EventComponent', () => {
         dateBegin: null, // required
         dateEnd: null,   // required
       });
-      dispatchEvent(formGroups[0].query(By.css('input')).nativeElement, 'blur'); // touch
-      dispatchEvent(formGroups[1].query(By.css('input')).nativeElement, 'blur'); // touch
-      dispatchEvent(formGroups[2].query(By.css('input')).nativeElement, 'blur'); // touch
+
+      formGroups[0].query(By.css('input')).nativeElement.dispatchEvent(new Event('blur'));
+      formGroups[1].query(By.css('input')).nativeElement.dispatchEvent(new Event('blur'));
+      formGroups[2].query(By.css('input')).nativeElement.dispatchEvent(new Event('blur'));
       fixture.detectChanges();
 
       expect(formGroups[0].classes['has-danger']).toBe(true); // danger appearance
