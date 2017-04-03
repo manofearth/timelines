@@ -19,17 +19,7 @@ export class SelectorComponent implements OnInit {
     this.inputControl = new FormControl();
   }
 
-  onKeyDown(keyCode: number) {
-    if (keyCode === KEY_ENTER) {
-      this.emitCreateEvent();
-    }
-  }
-
-  onCreateButtonClick() {
-    this.emitCreateEvent();
-  }
-
-  private emitCreateEvent() {
+  emitCreateEvent() {
     this.create.emit(this.inputControl.value);
   }
 }
