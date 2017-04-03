@@ -23,5 +23,3 @@ export class SelectorComponent implements OnInit {
     this.create.emit(this.inputControl.value);
   }
 }
-
-export const KEY_ENTER = 13;
