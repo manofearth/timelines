@@ -1,11 +1,16 @@
 <!--suppress QuirksModeInspectionTool -->
-<nav class="navbar navbar-light bg-faded">
-  <ul class="nav navbar-nav">
-    <li class="nav-item" routerLinkActive="active"><a class="nav-link" [routerLink]="'/timelines'">Ленты</a></li>
-    <li class="nav-item" routerLinkActive="active"><a class="nav-link" [routerLink]="'/events'">События</a></li>
-  </ul>
-  <div class="nav navbar-nav float-md-right">
-    <tl-logout></tl-logout>
+<nav class="navbar navbar-toggleable-sm navbar-light bg-faded">
+  <button class="navbar-toggler navbar-toggler-left" type="button" data-toggle="collapse" data-target="#navbarNav">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item" routerLinkActive="active"><a class="nav-link" [routerLink]="'/timelines'">Ленты</a></li>
+      <li class="nav-item" routerLinkActive="active"><a class="nav-link" [routerLink]="'/events'">События</a></li>
+    </ul>
+    <div>
+      <tl-logout></tl-logout>
+    </div>
   </div>
 </nav>
 <router-outlet></router-outlet>

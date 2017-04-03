@@ -71,13 +71,12 @@ export class TimelineComponent implements OnInit, OnDestroy {
       });
 
     this.timelineEventSubscription = this.store
-      .select('event')
+      .select('event', 'event')
       .subscribe((event: EventState) => {
         if (event && !this.timelineEventModal) {
           this.timelineEventModal = this.modalService.open(EventComponent, { size: 'lg' });
           this.timelineEventModal.result.then(
             () => {
-              console.log('resolve');
               this.timelineEventModal = null;
             },
             () => {

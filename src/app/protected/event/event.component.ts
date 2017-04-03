@@ -13,7 +13,7 @@ import { AppState } from '../../reducers';
 @Component({
   templateUrl: './event.component.html',
   styleUrls: ['./event.component.css'],
-  //changeDetection: ChangeDetectionStrategy.OnPush, //can't make OnPush - shallow test unexpectedly hangs up
+  // changeDetection: ChangeDetectionStrategy.OnPush, // can't make OnPush - shallow test unexpectedly hangs up
 })
 export class EventComponent implements OnInit, OnDestroy {
 
@@ -62,13 +62,17 @@ export class EventComponent implements OnInit, OnDestroy {
   save() {
     this.closeAfterSave = true;
     this.store.dispatch({
-      type: 'EVENT_INSERT',
+      type: this.isNew() ? 'EVENT_INSERT' : 'EVENT_UPDATE',
       payload: this.form.value,
     });
   }
 
   dismiss() {
     this.activeModal.dismiss();
+  }
+
+  private isNew(): boolean {
+    return this.form.controls.id.value === null;
   }
 }
 
@@ -78,6 +82,7 @@ export interface DateFormControl extends FormControl {
 
 export interface EventForm extends FormGroup {
   controls: {
+    id: FormControl;
     title: FormControl;
     dateBegin: DateFormControl;
     dateEnd: DateFormControl;

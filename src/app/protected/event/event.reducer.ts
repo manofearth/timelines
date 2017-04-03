@@ -78,7 +78,7 @@ export function eventReducer(state: EventState, action: EventAction): EventState
       return {
         isSaving: false,
         error: null,
-        event: Object.assign({}, state.event, { id: action.payload }),
+        event: { ...state.event, id: action.payload },
       };
     case 'EVENT_UPDATE_ERROR':
     case 'EVENT_INSERT_ERROR':

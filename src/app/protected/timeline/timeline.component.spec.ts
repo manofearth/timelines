@@ -170,20 +170,16 @@ describe('TimelineComponent', () => {
         });
 
         p.then(() => {
-          console.log('expect');
           expect(mockModalService.open).toHaveBeenCalledTimes(2);
         });
 
-        console.log('open');
         stateChanges.next({
           event: { event: 'some event' },
           timeline: { timeline: {} },
         }); // dialog opened
 
-        console.log('next');
         promiseResolver.next(); // dialog closed
 
-        console.log('open 2');
         stateChanges.next({
           event: { event: 'some event' },
           timeline: { timeline: {} },
