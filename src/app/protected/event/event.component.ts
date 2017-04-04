@@ -19,12 +19,15 @@ export class EventComponent implements OnInit, OnDestroy {
 
   form: EventForm;
   closeAfterSave: boolean = false;
+  saveWasAttempted: boolean = false;
   private eventStateSubscription: Subscription;
   private isSavingStateSubscription: Subscription;
 
-  constructor(private fb: FormBuilder,
-              public activeModal: NgbActiveModal,
-              private store: Store<AppState>) {
+  constructor(
+    private fb: FormBuilder,
+    public activeModal: NgbActiveModal,
+    private store: Store<AppState>
+  ) {
   }
 
   ngOnInit() {
@@ -40,7 +43,7 @@ export class EventComponent implements OnInit, OnDestroy {
     this.isSavingStateSubscription = this.store
       .select('event', 'isSaving')
       .subscribe((isSaving: boolean) => {
-        if(this.closeAfterSave && !isSaving) {
+        if (this.closeAfterSave && !isSaving) {
           this.activeModal.close();
         }
       });
@@ -52,7 +55,8 @@ export class EventComponent implements OnInit, OnDestroy {
   }
 
   invalidControl(controlName: string): boolean {
-    return this.form.controls[controlName].invalid && this.form.controls[controlName].touched;
+    return this.form.controls[controlName].invalid
+      && (this.saveWasAttempted || this.form.controls[controlName].touched);
   }
 
   dateEndLessDateBegin(): boolean {
@@ -60,11 +64,15 @@ export class EventComponent implements OnInit, OnDestroy {
   }
 
   save() {
-    this.closeAfterSave = true;
-    this.store.dispatch({
-      type: this.isNew() ? 'EVENT_INSERT' : 'EVENT_UPDATE',
-      payload: this.form.value,
-    });
+    this.saveWasAttempted = true;
+
+    if (this.form.valid) {
+      this.closeAfterSave = true;
+      this.store.dispatch({
+        type: this.isNew() ? 'EVENT_INSERT' : 'EVENT_UPDATE',
+        payload: this.form.value,
+      });
+    }
   }
 
   dismiss() {

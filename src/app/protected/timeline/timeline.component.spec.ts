@@ -154,7 +154,7 @@ describe('TimelineComponent', () => {
         expect(mockModalRef.close).not.toHaveBeenCalled();
 
         stateChanges.next({
-          event: null,
+          event: { event: null },
           timeline: { timeline: {} },
         });
 

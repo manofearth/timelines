@@ -1,4 +1,4 @@
-import { SelectorComponent, KEY_ENTER } from './selector.component';
+import { SelectorComponent } from './selector.component';
 import { ComponentFixture, async, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 
@@ -12,23 +12,21 @@ describe('SelectorComponent', () => {
       component.ngOnInit();
     });
 
-    it('should emit "create" event if user press "enter" key or "create" button', () => {
+    describe('emitCreateEvent()', () => {
 
-      let subscriberSpy: jasmine.Spy = jasmine.createSpy('subscriber');
+      it('should emit "create" event', () => {
 
-      component.create.subscribe(subscriberSpy);
+        let subscriberSpy: jasmine.Spy = jasmine.createSpy('subscriber');
 
-      component.inputControl.setValue('some user input');
+        component.create.subscribe(subscriberSpy);
 
-      component.onKeyDown(KEY_ENTER);
-      component.onKeyDown(1); // some not "enter" key pressed, should not emit event
-      component.onCreateButtonClick();
+        component.inputControl.setValue('some user input');
 
-      expect(subscriberSpy.calls.count()).toBe(2);
-      expect(subscriberSpy.calls.allArgs()).toEqual([
-        ['some user input'],
-        ['some user input'],
-      ]);
+        component.emitCreateEvent();
+
+        expect(subscriberSpy).toHaveBeenCalledWith('some user input');
+
+      });
     });
   });
 

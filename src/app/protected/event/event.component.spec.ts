@@ -99,63 +99,110 @@ describe('EventComponent', () => {
     });
 
     describe('save()', () => {
-      it('should switch to "close after save" mode', () => {
+
+      it('should switch to "save was attempted" mode', () => {
         nextEventState({
           id: null,
           title: null,
           dateBegin: null,
           dateEnd: null,
         });
-        expect(component.closeAfterSave).toBe(false);
+        expect(component.saveWasAttempted).toBe(false);
         component.save();
-        expect(component.closeAfterSave).toBe(true);
+        expect(component.saveWasAttempted).toBe(true);
       });
 
-      it('should dispatch EVENT_INSERT action for new "timeline event"', () => {
+      describe('if not valid', () => {
 
-        spyOn(mockDispatcher, 'next');
-
-        nextEventState({
-          id: null, // new timeline event
-          title: 'some event',
-          dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
-          dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
+        it('should not switch to "close after save" mode', () => {
+          nextEventState({
+            id: null,
+            title: null,
+            dateBegin: null,
+            dateEnd: null,
+          });
+          expect(component.closeAfterSave).toBe(false);
+          component.save();
+          expect(component.closeAfterSave).toBe(false);
         });
 
-        component.save();
+        it('should not dispatch any actions', () => {
 
-        expect(mockDispatcher.next).toHaveBeenCalledWith({
-          type: 'EVENT_INSERT',
-          payload: {
+          spyOn(mockDispatcher, 'next');
+
+          nextEventState({
+            id: null,
+            title: 'some event',
+            dateBegin: null, // required
+            dateEnd: null,   // required
+          });
+
+          component.save();
+
+          expect(mockDispatcher.next).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('if valid', () => {
+
+        it('should switch to "close after save" mode', () => {
+          nextEventState({
             id: null,
             title: 'some event',
             dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
             dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
-          },
-        });
-      });
-
-      it('should dispatch EVENT_UPDATE action for existent "timeline event"', () => {
-
-        spyOn(mockDispatcher, 'next');
-
-        nextEventState({
-          id: 'some uid', // existent timeline event
-          title: 'some event',
-          dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
-          dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
+          });
+          expect(component.closeAfterSave).toBe(false);
+          component.save();
+          expect(component.closeAfterSave).toBe(true);
         });
 
-        component.save();
+        it('should dispatch EVENT_INSERT action for new "timeline event"', () => {
 
-        expect(mockDispatcher.next).toHaveBeenCalledWith({
-          type: 'EVENT_UPDATE',
-          payload: {
-            id: 'some uid',
+          spyOn(mockDispatcher, 'next');
+
+          nextEventState({
+            id: null, // new timeline event
             title: 'some event',
             dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
             dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
-          },
+          });
+
+          component.save();
+
+          expect(mockDispatcher.next).toHaveBeenCalledWith({
+            type: 'EVENT_INSERT',
+            payload: {
+              id: null,
+              title: 'some event',
+              dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
+              dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
+            },
+          });
+        });
+
+        it('should dispatch EVENT_UPDATE action for existent "timeline event"', () => {
+
+          spyOn(mockDispatcher, 'next');
+
+          nextEventState({
+            id: 'some uid', // existent timeline event
+            title: 'some event',
+            dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
+            dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
+          });
+
+          component.save();
+
+          expect(mockDispatcher.next).toHaveBeenCalledWith({
+            type: 'EVENT_UPDATE',
+            payload: {
+              id: 'some uid',
+              title: 'some event',
+              dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
+              dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
+            },
+          });
         });
       });
     });
