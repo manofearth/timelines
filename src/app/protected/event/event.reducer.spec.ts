@@ -7,7 +7,7 @@ import {
   EventUpdateErrorAction,
   EventInsertErrorAction,
   EventInsertSuccessAction,
-  EventInsertAction
+  EventInsertAction,
 } from './event.reducer';
 
 describe('eventReducer', () => {
@@ -19,7 +19,7 @@ describe('eventReducer', () => {
     };
 
     const state: EventState = Object.freeze<EventState>({
-      isSaving: false,
+      status: null,
       error: null,
       event: null,
     });
@@ -29,7 +29,7 @@ describe('eventReducer', () => {
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<EventState> {
-      isSaving: false,
+      status: 'NEW',
       error: null,
       event: {
         id: null,
@@ -47,7 +47,7 @@ describe('eventReducer', () => {
     };
 
     const state: EventState = Object.freeze<EventState>({
-      isSaving: false,
+      status: 'UPDATED',
       error: null,
       event: <any> 'some event',
     });
@@ -56,7 +56,7 @@ describe('eventReducer', () => {
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<EventState>{
-      isSaving: true,
+      status: 'UPDATING',
       error: null,
       event: <any> 'some new event',
     });
@@ -67,8 +67,8 @@ describe('eventReducer', () => {
       type: 'EVENT_UPDATE_SUCCESS',
     };
 
-    const state: EventState = Object.freeze({
-      isSaving: true,
+    const state: EventState = Object.freeze<EventState>({
+      status: 'ERROR',
       error: new Error('some error'),
       event: <any> 'some event',
     });
@@ -77,7 +77,7 @@ describe('eventReducer', () => {
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<EventState>{
-      isSaving: false,
+      status: 'UPDATED',
       error: null,
       event: <any> 'some event',
     });
@@ -89,8 +89,8 @@ describe('eventReducer', () => {
       payload: <any> 'some error',
     };
 
-    const state: EventState = Object.freeze({
-      isSaving: true,
+    const state: EventState = Object.freeze<EventState>({
+      status: 'UPDATING',
       error: null,
       event: <any> 'some event',
     });
@@ -99,7 +99,7 @@ describe('eventReducer', () => {
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<EventState>{
-      isSaving: false,
+      status: 'ERROR',
       error: <any> 'some error',
       event: <any> 'some event',
     });
@@ -112,7 +112,7 @@ describe('eventReducer', () => {
     };
 
     const state: EventState = Object.freeze<EventState>({
-      isSaving: false,
+      status: 'UPDATED',
       error: null,
       event: <any> 'some event',
     });
@@ -121,7 +121,7 @@ describe('eventReducer', () => {
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<EventState>{
-      isSaving: true,
+      status: 'INSERTING',
       error: null,
       event: <any> 'some new event',
     });
@@ -133,8 +133,8 @@ describe('eventReducer', () => {
       payload: 'generated key',
     };
 
-    const state: EventState = Object.freeze({
-      isSaving: true,
+    const state: EventState = Object.freeze<EventState>({
+      status: 'INSERTING',
       error: new Error('some error'),
       event: <any> { id: null },
     });
@@ -143,7 +143,7 @@ describe('eventReducer', () => {
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<EventState>{
-      isSaving: false,
+      status: 'INSERTED',
       error: null,
       event: { id: 'generated key' },
     });
@@ -155,8 +155,8 @@ describe('eventReducer', () => {
       payload: <any> 'some error',
     };
 
-    const state: EventState = Object.freeze({
-      isSaving: true,
+    const state: EventState = Object.freeze<EventState>({
+      status: 'INSERTING',
       error: null,
       event: <any> 'some event',
     });
@@ -165,7 +165,7 @@ describe('eventReducer', () => {
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<EventState>{
-      isSaving: false,
+      status: 'ERROR',
       error: <any> 'some error',
       event: <any> 'some event',
     });

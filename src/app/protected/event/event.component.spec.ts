@@ -218,7 +218,7 @@ describe('EventComponent', () => {
       };
 
       nextState({
-        isSaving: false,
+        status: 'UPDATED',
         error: null,
         event: event,
       });
@@ -228,13 +228,13 @@ describe('EventComponent', () => {
       component.closeAfterSave = true;
 
       nextState({
-        isSaving: true,
+        status: 'UPDATING',
         error: null,
         event: event,
       });
 
       nextState({
-        isSaving: false,
+        status: 'UPDATED',
         error: null,
         event: event,
       });
@@ -373,7 +373,7 @@ describe('EventComponent', () => {
   //noinspection NestedFunctionJS
   function nextEventState(event: TimelineEvent) {
     nextState({
-      isSaving: false,
+      status: 'UPDATED',
       error: null,
       event: event,
     });

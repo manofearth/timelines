@@ -2,10 +2,12 @@ import { TimelineEvent } from '../shared/timeline-event';
 import { Action } from '@ngrx/store';
 
 export interface EventState {
-  isSaving: boolean;
+  status: EventStatus;
   error: Error;
   event: TimelineEvent;
 }
+
+export type EventStatus = 'NEW' | 'INSERTING' | 'INSERTED' | 'UPDATING' | 'UPDATED' | 'ERROR';
 
 export type EventActionType = 'EVENT_CREATE' | 'EVENT_UPDATE' | 'EVENT_UPDATE_SUCCESS' | 'EVENT_UPDATE_ERROR'
   | 'EVENT_INSERT' | 'EVENT_INSERT_SUCCESS' | 'EVENT_INSERT_ERROR';
@@ -52,7 +54,7 @@ export function eventReducer(state: EventState, action: EventAction): EventState
   switch (action.type) {
     case 'EVENT_CREATE':
       return {
-        isSaving: false,
+        status: 'NEW',
         error: null,
         event: {
           id: null,
@@ -62,28 +64,33 @@ export function eventReducer(state: EventState, action: EventAction): EventState
         },
       };
     case 'EVENT_UPDATE':
+      return {
+        status: 'UPDATING',
+        error: null,
+        event: action.payload,
+      };
     case 'EVENT_INSERT':
       return {
-        isSaving: true,
+        status: 'INSERTING',
         error: null,
         event: action.payload,
       };
     case 'EVENT_UPDATE_SUCCESS':
       return {
-        isSaving: false,
+        status: 'UPDATED',
         error: null,
         event: state.event,
       };
     case 'EVENT_INSERT_SUCCESS':
       return {
-        isSaving: false,
+        status: 'INSERTED',
         error: null,
         event: { ...state.event, id: action.payload },
       };
     case 'EVENT_UPDATE_ERROR':
     case 'EVENT_INSERT_ERROR':
       return {
-        isSaving: false,
+        status: 'ERROR',
         error: action.payload,
         event: state.event,
       };

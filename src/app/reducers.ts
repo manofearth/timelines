@@ -33,7 +33,7 @@ export const initialState: AppState = {
     timeline: null,
   },
   event: {
-    isSaving: false,
+    status: null,
     error: null,
     event: null,
   },

@@ -139,7 +139,7 @@ describe('TimelinesFirebaseEffects', () => {
 
       it('should emit TIMELINES_CREATE_SUCCESS', (done: DoneFn) => {
 
-        mockFirebaseList.push = () => Promise.resolve({ key: 'generated key' });
+        mockFirebaseList.push = <any> (() => Promise.resolve({ key: 'generated key' }));
 
         effects.create.subscribe((action: TimelinesCreateSuccessAction) => {
           expect(action.type).toBe('TIMELINES_CREATE_SUCCESS');

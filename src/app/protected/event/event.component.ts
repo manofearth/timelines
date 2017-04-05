@@ -9,6 +9,7 @@ import { ifEmptyObject } from '../../shared/helpers';
 import { TimelineDate } from '../shared/date';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
+import { EventStatus } from './event.reducer';
 
 @Component({
   templateUrl: './event.component.html',
@@ -41,9 +42,9 @@ export class EventComponent implements OnInit, OnDestroy {
     });
 
     this.isSavingStateSubscription = this.store
-      .select('event', 'isSaving')
-      .subscribe((isSaving: boolean) => {
-        if (this.closeAfterSave && !isSaving) {
+      .select('event', 'status')
+      .subscribe((status: EventStatus) => {
+        if (this.closeAfterSave && (status === 'INSERTED' || status === 'UPDATED')) {
           this.activeModal.close();
         }
       });
