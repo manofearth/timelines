@@ -240,6 +240,7 @@ describe('EventComponent', () => {
       });
 
       expect(mockModal.close).toHaveBeenCalledTimes(1);
+      expect(mockModal.close).toHaveBeenCalledWith(event);
     });
 
     afterEach(() => {

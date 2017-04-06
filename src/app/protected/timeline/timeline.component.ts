@@ -7,10 +7,9 @@ import { TimelineGetAction, TimelineState, Timeline, TimelineChangedAction } fro
 import { ActivatedRoute, Params } from '@angular/router';
 import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EventComponent } from '../event/event.component';
 import { EventCreateAction } from '../event/event.reducer';
-import { TimelineEvent } from '../shared/timeline-event';
 
 @Component({
   templateUrl: './timeline.component.html',
@@ -28,9 +27,6 @@ export class TimelineComponent implements OnInit, OnDestroy {
   private routeParamsSubscription: Subscription;
   private timelineStateSubscription: Subscription;
   private formChangesSubscription: Subscription;
-  private timelineEventSubscription: Subscription;
-
-  private timelineEventModal: NgbModalRef = null;
 
   //noinspection OverlyComplexFunctionJS
   constructor(
@@ -71,28 +67,19 @@ export class TimelineComponent implements OnInit, OnDestroy {
 
       });
 
-    this.timelineEventSubscription = this.store
-      .select('event', 'event')
-      .subscribe((event: TimelineEvent) => {
-        if (event && !this.eventModalOpened()) {
-          this.openEventModal();
-        } else if (!event && this.eventModalOpened()) {
-          this.closeEventModal();
-        }
-      });
-
   }
 
   ngOnDestroy() {
     this.routeParamsSubscription.unsubscribe();
     this.timelineStateSubscription.unsubscribe();
-    this.timelineEventSubscription.unsubscribe();
   }
 
-  createTimelineEvent(title: string) {
+  createAndOpenTimelineEvent(title: string) {
     this.store.dispatch(<EventCreateAction>{
       type: 'EVENT_CREATE',
       payload: title,
+    });
+    this.modalService.open(EventComponent, { size: 'lg' }).result.then(() => {
     });
   }
 
@@ -112,26 +99,6 @@ export class TimelineComponent implements OnInit, OnDestroy {
 
   private updateTitle() {
     this.titleService.setTitle((this.isSaving ? '*' : '') + this.timeline.title);
-  }
-
-  private closeEventModal() {
-    this.timelineEventModal.close();
-    this.timelineEventModal = null;
-  }
-
-  private openEventModal() {
-    this.timelineEventModal = this.modalService.open(EventComponent, { size: 'lg' });
-    this.timelineEventModal.result.then(
-      () => {
-        this.timelineEventModal = null;
-      },
-      () => {
-        this.timelineEventModal = null;
-      });
-  }
-
-  private eventModalOpened() {
-    return this.timelineEventModal !== null;
   }
 
 }

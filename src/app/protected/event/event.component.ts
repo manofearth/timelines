@@ -45,7 +45,7 @@ export class EventComponent implements OnInit, OnDestroy {
       .select('event', 'status')
       .subscribe((status: EventStatus) => {
         if (this.closeAfterSave && (status === 'INSERTED' || status === 'UPDATED')) {
-          this.activeModal.close();
+          this.activeModal.close(this.form.value);
         }
       });
   }
