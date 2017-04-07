@@ -7,7 +7,7 @@ import {
   EventUpdateErrorAction,
   EventInsertSuccessAction,
   EventInsertErrorAction,
-  EventInsertAction,
+  EventInsertAction, EventInsertAndAttachToTimelineAction,
 } from './event.reducer';
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
@@ -24,8 +24,7 @@ export class EventFirebaseEffects extends ProtectedFirebaseEffects<EventActionTy
     .switchMap((action: EventUpdateAction) =>
       Observable
         .fromPromise(
-          <Promise<void>>this.getFirebaseObject(action.payload.id)
-            .update(toFirebaseEventUpdateObject(action.payload))
+          <Promise<void>>this.getFirebaseObject(action.payload.id).update(toFirebaseEventUpdateObject(action.payload))
         )
         .map((): EventUpdateSuccessAction => ({
           type: 'EVENT_UPDATE_SUCCESS',
@@ -39,12 +38,43 @@ export class EventFirebaseEffects extends ProtectedFirebaseEffects<EventActionTy
   @Effect() insert: Observable<EventInsertSuccessAction | EventInsertErrorAction> = this
     .authorizedActionsOfType('EVENT_INSERT')
     .switchMap((action: EventInsertAction) =>
-      Observable.fromPromise(<any>this.getFirebaseList().push(toFirebaseEventUpdateObject(action.payload)))
-        .map((ref: { key: string}): EventInsertSuccessAction => ({
+      Observable
+        .fromPromise(
+          <any>this.getFirebaseList().push(toFirebaseEventUpdateObject(action.payload))
+        )
+        .map((ref: { key: string }): EventInsertSuccessAction => ({
           type: 'EVENT_INSERT_SUCCESS',
           payload: ref.key,
         }))
-        .catch((error: Error|string): Observable<EventInsertErrorAction> =>
+        .catch((error: Error | string): Observable<EventInsertErrorAction> =>
+          Observable.of<EventInsertErrorAction>({
+            type: 'EVENT_INSERT_ERROR',
+            payload: toError(error),
+          })
+        )
+    );
+
+  @Effect() insertAndAttachToTimeline: Observable<EventInsertSuccessAction | EventInsertErrorAction> = this
+    .authorizedActionsOfType('EVENT_INSERT_AND_ATTACH_TO_TIMELINE')
+    .switchMap((action: EventInsertAndAttachToTimelineAction) =>
+      Observable
+        .fromPromise(
+          <any>this.getFirebaseList().push(toFirebaseEventUpdateObject(action.payload.event))
+        )
+        .mergeMap((ref: { key: string }) =>
+          Observable
+            .fromPromise(<Promise<void>>
+              this.fire.database.object(
+                this.getFirebaseUserPath() + '/timelines/' + action.payload.timeline.id + '/1' + ref.key
+              ).set(true)
+            )
+            .map(() => <any>({ key: 55 /* test should fail */ }))
+        )
+        .map((ref: { key: string }): EventInsertSuccessAction => ({
+          type: 'EVENT_INSERT_SUCCESS',
+          payload: ref.key,
+        }))
+        .catch((error: Error | string): Observable<EventInsertErrorAction> =>
           Observable.of<EventInsertErrorAction>({
             type: 'EVENT_INSERT_ERROR',
             payload: toError(error),

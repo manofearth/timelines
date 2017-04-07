@@ -43,7 +43,11 @@ export abstract class ProtectedFirebaseEffects<TActionType extends string, TActi
   protected abstract getFirebaseNodeName(): string
 
   private getFirebaseNodePath(): string {
-    return '/private/' + this.auth.uid + '/' + this.getFirebaseNodeName();
+    return this.getFirebaseUserPath() + '/' + this.getFirebaseNodeName();
+  }
+
+  protected getFirebaseUserPath() {
+    return '/private/' + this.auth.uid;
   }
 
 }

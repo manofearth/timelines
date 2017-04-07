@@ -9,7 +9,8 @@ import { ifEmptyObject } from '../../shared/helpers';
 import { TimelineDate } from '../shared/date';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
-import { EventStatus } from './event.reducer';
+import { EventInsertAndAttachToTimelineAction, EventStatus } from './event.reducer';
+import { ObjectWithId } from '../../shared/interfaces';
 
 @Component({
   templateUrl: './event.component.html',
@@ -21,6 +22,7 @@ export class EventComponent implements OnInit, OnDestroy {
   form: EventForm;
   closeAfterSave: boolean = false;
   saveWasAttempted: boolean = false;
+  attachToTimeline: ObjectWithId = null;
   private eventStateSubscription: Subscription;
   private isSavingStateSubscription: Subscription;
 
@@ -68,11 +70,14 @@ export class EventComponent implements OnInit, OnDestroy {
     this.saveWasAttempted = true;
 
     if (this.form.valid) {
+
       this.closeAfterSave = true;
-      this.store.dispatch({
-        type: this.isNew() ? 'EVENT_INSERT' : 'EVENT_UPDATE',
-        payload: this.form.value,
-      });
+
+      if (this.isNew() && this.attachToTimeline !== null) {
+        this.dispatchInsertAndAttachToTimelineAction();
+      } else {
+        this.dispatchInsertAction();
+      }
     }
   }
 
@@ -82,6 +87,23 @@ export class EventComponent implements OnInit, OnDestroy {
 
   private isNew(): boolean {
     return this.form.controls.id.value === null;
+  }
+
+  private dispatchInsertAction() {
+    this.store.dispatch({
+      type: this.isNew() ? 'EVENT_INSERT' : 'EVENT_UPDATE',
+      payload: this.form.value,
+    });
+  }
+
+  private dispatchInsertAndAttachToTimelineAction() {
+    this.store.dispatch(<EventInsertAndAttachToTimelineAction>{
+      type: 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE',
+      payload: {
+        timeline: this.attachToTimeline,
+        event: this.form.value,
+      },
+    });
   }
 }
 

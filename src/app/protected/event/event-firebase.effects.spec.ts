@@ -6,23 +6,28 @@ import { Actions } from '@ngrx/effects';
 import { EventFirebaseEffects, FirebaseTimelineEvent } from './event-firebase.effects';
 import {
   EventUpdateAction, EventUpdateSuccessAction, EventInsertAction,
-  EventInsertSuccessAction, EventInsertErrorAction
+  EventInsertSuccessAction, EventInsertErrorAction, EventInsertAndAttachToTimelineAction
 } from './event.reducer';
 
 class MockFirebaseObject extends ReplaySubject<FirebaseTimelineEvent> {
-  //noinspection JSMethodCanBeStatic
+  //noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
   update() {
+    return Promise.resolve();
+  }
+
+  //noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
+  set() {
     return Promise.resolve();
   }
 }
 
 class MockFirebaseList extends ReplaySubject<FirebaseTimelineEvent[]> {
-  //noinspection JSMethodCanBeStatic
+  //noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
   push() {
     return Promise.resolve();
   }
 
-  //noinspection JSMethodCanBeStatic
+  //noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
   remove() {
     return Promise.resolve();
   }
@@ -74,6 +79,9 @@ describe('EventFirebaseEffects', () => {
       effects.insert.subscribe(() => {
         fail('should not emit actions');
       });
+      effects.insertAndAttachToTimeline.subscribe(() => {
+        fail('should not emit actions');
+      });
       effects.update.subscribe(() => {
         fail('should not emit actions');
       });
@@ -84,7 +92,7 @@ describe('EventFirebaseEffects', () => {
   describe('when logged in', () => {
 
     beforeEach(() => {
-      authStateChanges.next(<any>{ uid: 'some-uid' });
+      authStateChanges.next(<any>{ uid: 'some-user-id' });
     });
 
     describe('on EVENT_UPDATE', () => {
@@ -104,7 +112,7 @@ describe('EventFirebaseEffects', () => {
       it('should query firebase database', () => {
         spyOn(mockFirebase.database, 'object').and.callThrough();
         effects.update.subscribe();
-        expect(mockFirebase.database.object).toHaveBeenCalledWith('/private/some-uid/events/some-event-id');
+        expect(mockFirebase.database.object).toHaveBeenCalledWith('/private/some-user-id/events/some-event-id');
       });
 
       it('should update firebase database object', () => {
@@ -160,7 +168,7 @@ describe('EventFirebaseEffects', () => {
       it('should query firebase database', () => {
         spyOn(mockFirebase.database, 'list').and.callThrough();
         effects.insert.subscribe();
-        expect(mockFirebase.database.list).toHaveBeenCalledWith('/private/some-uid/events');
+        expect(mockFirebase.database.list).toHaveBeenCalledWith('/private/some-user-id/events');
       });
 
       it('should push new timeline-event to firebase database list', () => {
@@ -194,6 +202,34 @@ describe('EventFirebaseEffects', () => {
           done();
         });
       });
+    });
+
+    describe('on EVENT_INSERT_AND_ATTACH_TO_TIMELINE', () => {
+      beforeEach(() => {
+        runner.next(<EventInsertAndAttachToTimelineAction>{
+          type: 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE',
+          payload: {
+            timeline: { id: 'some-timeline-id' },
+            event: {
+              id: null,
+              title: 'some title',
+              dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
+              dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
+            },
+          },
+        });
+      });
+
+      it('should query firebase database', () => {
+        spyOn(mockFirebase.database, 'list').and.callThrough();
+        spyOn(mockFirebase.database, 'object').and.callThrough();
+        mockFirebaseList.push = <any>( () => Promise.resolve({ key: 'some-event-id'}) );
+
+        effects.insertAndAttachToTimeline.first().subscribe();
+        expect(mockFirebase.database.list).toHaveBeenCalledWith('/private/some-user-id/events');
+        expect(mockFirebase.database.object).toHaveBeenCalledWith('/private/some-user-id/timelines/some-timeline-id/events/some-event-id');
+      });
+
     });
   });
 

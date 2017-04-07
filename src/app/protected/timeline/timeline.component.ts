@@ -24,7 +24,6 @@ export class TimelineComponent implements OnInit, OnDestroy {
   error: Error;
   form: TimelineForm;
 
-  private routeParamsSubscription: Subscription;
   private timelineStateSubscription: Subscription;
   private formChangesSubscription: Subscription;
 
@@ -41,12 +40,12 @@ export class TimelineComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    this.routeParamsSubscription = this.route.params.subscribe((params: Params) => {
+    this.route.params.subscribe((params: Params) => {
       this.store.dispatch(<TimelineGetAction>{
         type: 'TIMELINE_GET',
         payload: params['id'],
       });
-    });
+    }); // no need to unsubscribe router observables - router takes care of it
 
     this.timelineStateSubscription = this.store
       .select('timeline')
@@ -70,7 +69,6 @@ export class TimelineComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.routeParamsSubscription.unsubscribe();
     this.timelineStateSubscription.unsubscribe();
   }
 

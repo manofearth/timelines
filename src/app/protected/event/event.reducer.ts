@@ -1,5 +1,6 @@
 import { TimelineEvent } from '../shared/timeline-event';
 import { Action } from '@ngrx/store';
+import { ObjectWithId } from '../../shared/interfaces';
 
 export interface EventState {
   status: EventStatus;
@@ -10,15 +11,15 @@ export interface EventState {
 export type EventStatus = 'NEW' | 'INSERTING' | 'INSERTED' | 'UPDATING' | 'UPDATED' | 'ERROR';
 
 export type EventActionType = 'EVENT_CREATE' | 'EVENT_UPDATE' | 'EVENT_UPDATE_SUCCESS' | 'EVENT_UPDATE_ERROR'
-  | 'EVENT_INSERT' | 'EVENT_INSERT_SUCCESS' | 'EVENT_INSERT_ERROR';
+  | 'EVENT_INSERT' | 'EVENT_INSERT_SUCCESS' | 'EVENT_INSERT_ERROR' | 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE';
 
 export interface EventAction extends Action {
   type: EventActionType;
 }
 
 export interface EventCreateAction extends EventAction {
-    type: 'EVENT_CREATE';
-    payload: string;
+  type: 'EVENT_CREATE';
+  payload: string;
 }
 
 export interface EventUpdateAction extends EventAction {
@@ -38,6 +39,14 @@ export interface EventUpdateErrorAction extends EventAction {
 export interface EventInsertAction extends EventAction {
   type: 'EVENT_INSERT';
   payload: TimelineEvent;
+}
+
+export interface EventInsertAndAttachToTimelineAction extends EventAction {
+  type: 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE';
+  payload: {
+    timeline: ObjectWithId;
+    event: TimelineEvent;
+  };
 }
 
 export interface EventInsertSuccessAction extends EventAction {
@@ -70,6 +79,7 @@ export function eventReducer(state: EventState, action: EventAction): EventState
         event: action.payload,
       };
     case 'EVENT_INSERT':
+    case 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE':
       return {
         status: 'INSERTING',
         error: null,
