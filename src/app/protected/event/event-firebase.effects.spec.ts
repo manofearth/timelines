@@ -192,7 +192,7 @@ describe('EventFirebaseEffects', () => {
         });
       });
 
-      it('should emit TIMELINES_CREATE_ERROR', (done: DoneFn) => {
+      it('should emit EVENT_INSERT_ERROR', (done: DoneFn) => {
 
         mockFirebaseList.push = <any> (() => Promise.reject('some error'));
 
@@ -220,14 +220,46 @@ describe('EventFirebaseEffects', () => {
         });
       });
 
-      it('should query firebase database', () => {
+      it('should push new timeline-event, attach it to timeline and emit EVENT_INSERT_SUCCESS action', (done: DoneFn) => {
         spyOn(mockFirebase.database, 'list').and.callThrough();
         spyOn(mockFirebase.database, 'object').and.callThrough();
-        mockFirebaseList.push = <any>( () => Promise.resolve({ key: 'some-event-id'}) );
+        spyOn(mockFirebaseList, 'push').and.returnValue(Promise.resolve({ key: 'generated-event-id'}));
+        spyOn(mockFirebaseObject, 'set').and.callThrough();
 
-        effects.insertAndAttachToTimeline.first().subscribe();
-        expect(mockFirebase.database.list).toHaveBeenCalledWith('/private/some-user-id/events');
-        expect(mockFirebase.database.object).toHaveBeenCalledWith('/private/some-user-id/timelines/some-timeline-id/events/some-event-id');
+        effects.insertAndAttachToTimeline.first().subscribe((action) => {
+          expect(mockFirebase.database.list).toHaveBeenCalledWith('/private/some-user-id/events');
+          expect(mockFirebase.database.object).toHaveBeenCalledWith('/private/some-user-id/timelines/some-timeline-id/events/generated-event-id');
+          expect(mockFirebaseList.push).toHaveBeenCalledWith({
+            title: 'some title',
+            dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
+            dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
+          });
+          expect(mockFirebaseObject.set).toHaveBeenCalledWith(true);
+          expect(action.type).toBe('EVENT_INSERT_SUCCESS');
+          expect(action.payload).toBe('generated-event-id');
+          done();
+        });
+      });
+
+      it('should emit EVENT_INSERT_ERROR', (done: DoneFn) => {
+
+        mockFirebaseList.push = <any> (() => Promise.reject('some error'));
+
+        effects.insertAndAttachToTimeline.first().subscribe((action: EventInsertErrorAction) => {
+          expect(action.type).toBe('EVENT_INSERT_ERROR');
+          expect(action.payload).toEqual(new Error('some error'));
+          done();
+        });
+
+        mockFirebaseList.push = <any> (() => Promise.resolve({ key: 'generated-event-id'}));
+        mockFirebaseObject.set = <any> (() => Promise.reject('some error'));
+
+        effects.insertAndAttachToTimeline.first().subscribe((action: EventInsertErrorAction) => {
+          expect(action.type).toBe('EVENT_INSERT_ERROR');
+          expect(action.payload).toEqual(new Error('some error'));
+          done();
+        });
+
       });
 
     });

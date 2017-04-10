@@ -61,16 +61,16 @@ export class EventFirebaseEffects extends ProtectedFirebaseEffects<EventActionTy
         .fromPromise(
           <any>this.getFirebaseList().push(toFirebaseEventUpdateObject(action.payload.event))
         )
-        .mergeMap((ref: { key: string }) =>
+        .mergeMap((ref: firebase.database.ThenableReference) =>
           Observable
             .fromPromise(<Promise<void>>
               this.fire.database.object(
-                this.getFirebaseUserPath() + '/timelines/' + action.payload.timeline.id + '/1' + ref.key
+                this.getFirebaseUserPath() + '/timelines/' + action.payload.timeline.id + '/events/' + ref.key
               ).set(true)
             )
-            .map(() => <any>({ key: 55 /* test should fail */ }))
+            .map(() => ref)
         )
-        .map((ref: { key: string }): EventInsertSuccessAction => ({
+        .map((ref: firebase.database.ThenableReference): EventInsertSuccessAction => ({
           type: 'EVENT_INSERT_SUCCESS',
           payload: ref.key,
         }))

@@ -77,8 +77,8 @@ export class TimelineComponent implements OnInit, OnDestroy {
       type: 'EVENT_CREATE',
       payload: title,
     });
-    this.modalService.open(EventComponent, { size: 'lg' }).result.then(() => {
-    });
+    const modal = this.modalService.open(EventComponent, { size: 'lg' });
+    modal.componentInstance.attachToTimeline = this.timeline;
   }
 
   private initForm(timeline: Timeline) {

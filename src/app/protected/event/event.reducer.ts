@@ -79,11 +79,16 @@ export function eventReducer(state: EventState, action: EventAction): EventState
         event: action.payload,
       };
     case 'EVENT_INSERT':
-    case 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE':
       return {
         status: 'INSERTING',
         error: null,
         event: action.payload,
+      };
+    case 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE':
+      return {
+        status: 'INSERTING',
+        error: null,
+        event: action.payload.event,
       };
     case 'EVENT_UPDATE_SUCCESS':
       return {

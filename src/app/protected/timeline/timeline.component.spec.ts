@@ -42,6 +42,7 @@ describe('TimelineComponent', () => {
         close: () => {
         },
         result: Promise.resolve(),
+        componentInstance: {},
       };
       mockModalService = <any>{
         open: () => mockModalRef,
@@ -66,8 +67,10 @@ describe('TimelineComponent', () => {
       });
       it('should open modal service', () => {
         spyOn(mockModalService, 'open').and.callThrough();
+        component.timeline = <any> 'timeline stub';
         component.createAndOpenTimelineEvent('some event title');
         expect(mockModalService.open).toHaveBeenCalledWith(EventComponent, { size: 'lg' });
+        expect(mockModalRef.componentInstance.attachToTimeline).toBe('timeline stub');
       });
     });
 
