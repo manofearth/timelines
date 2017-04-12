@@ -1,11 +1,13 @@
 export { Observable } from 'rxjs/Observable';
 export { Observer } from 'rxjs/Observer';
-export { Subscription } from 'rxjs/Subscription';
+export { Subscription, TeardownLogic } from 'rxjs/Subscription';
 export { Subject } from 'rxjs/Subject';
 export { ReplaySubject } from 'rxjs/ReplaySubject';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/observable/fromPromise';
+import 'rxjs/add/observable/create';
+import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/filter';

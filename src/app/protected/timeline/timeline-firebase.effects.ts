@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
 import { AngularFire } from 'angularfire2';
-import { Observable } from '../../shared/rxjs';
+import { Observable, Observer, TeardownLogic, Subscription } from '../../shared/rxjs';
 import {
   TimelineGetSuccessAction,
   TimelineGetErrorAction,
@@ -14,6 +14,7 @@ import {
   TimelineChangedAction,
 } from './timeline.reducer';
 import { ProtectedFirebaseEffects, toError } from '../shared/protected-firebase.effects';
+import { FirebaseTimelineEvent } from '../event/event-firebase.effects';
 
 export const SAVE_DEBOUNCE_TIME = 1000;
 
@@ -24,9 +25,27 @@ export class TimelineFirebaseEffects extends ProtectedFirebaseEffects<
   @Effect() get: Observable<TimelineGetSuccessAction | TimelineGetErrorAction> = this
     .authorizedActionsOfType('TIMELINE_GET')
     .switchMap((action: TimelineGetAction) => this.getFirebaseObject(action.payload)
-      .map((firebaseTimeline: FirebaseTimeline): TimelineGetSuccessAction => ({
+      .switchMap((firebaseTimeline: FirebaseTimeline): Observable<Timeline> =>
+        Observable.create((observer: Observer<Timeline>): TeardownLogic => {
+          const eventsObservables: Observable<FirebaseTimelineEvent>[] = Object.keys(firebaseTimeline.events).map(
+            (eventId: string) => this.fire.database.object(this.getFirebaseUserPath() + '/events/' + eventId).first()
+          );
+
+          const subscription: Subscription = Observable
+            .forkJoin(...eventsObservables)
+            .subscribe((firebaseEvents: FirebaseTimelineEvent[]) => {
+              observer.next(toTimeline(firebaseTimeline, firebaseEvents));
+              observer.complete();
+            });
+
+          return () => {
+            subscription.unsubscribe();
+          };
+        })
+      )
+      .map((timeline: Timeline): TimelineGetSuccessAction => ({
         type: 'TIMELINE_GET_SUCCESS',
-        payload: toTimeline(firebaseTimeline),
+        payload: timeline,
       }))
       .catch((error: Error): Observable<TimelineGetErrorAction> => Observable.of<TimelineGetErrorAction>({
         type: 'TIMELINE_GET_ERROR',
@@ -64,16 +83,21 @@ export class TimelineFirebaseEffects extends ProtectedFirebaseEffects<
 export interface FirebaseTimeline {
   $key: string;
   title: string;
+  events: {[key: string]: true};
 }
 
 export interface FirebaseTimelineUpdateObject {
   title: string;
 }
 
-export function toTimeline(firebaseTimeline: FirebaseTimeline): Timeline {
+export function toTimeline(firebaseTimeline: FirebaseTimeline, firebaseEvents: FirebaseTimelineEvent[]): Timeline {
   return {
     id: firebaseTimeline.$key,
     title: firebaseTimeline.title,
+    events: firebaseEvents.map((firebaseEvent: FirebaseTimelineEvent) => ({
+      id: firebaseEvent.$key,
+      title: firebaseEvent.title,
+    }))
   };
 }
 

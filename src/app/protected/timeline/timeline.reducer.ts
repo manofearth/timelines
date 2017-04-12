@@ -2,6 +2,10 @@ import { Action } from '@ngrx/store';
 export interface Timeline {
   id: string;
   title: string;
+  events: {
+    id: string,
+    title: string
+  }[];
 }
 
 export interface TimelineState {
