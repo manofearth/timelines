@@ -1,4 +1,5 @@
 import { Action } from '@ngrx/store';
+
 export interface Timeline {
   id: string;
   title: string;
@@ -6,6 +7,16 @@ export interface Timeline {
     id: string,
     title: string
   }[];
+}
+
+export interface TimelineForList {
+  id: string;
+  title: string;
+}
+
+export interface TimelineChangedPayload {
+  id: string;
+  title: string;
 }
 
 export interface TimelineState {
@@ -39,7 +50,7 @@ export interface TimelineGetErrorAction extends TimelineActionBase {
 
 export interface TimelineChangedAction extends TimelineActionBase {
   type: 'TIMELINE_CHANGED';
-  payload: Timeline;
+  payload: TimelineChangedPayload;
 }
 
 export interface TimelineSaveSuccessAction extends TimelineActionBase {
@@ -75,7 +86,7 @@ export function timelineReducer(state: TimelineState, action: TimelineAction): T
         isLoading: state.isLoading,
         isSaving: true,
         error: null,
-        timeline: action.payload,
+        timeline: { ...state.timeline, ...action.payload },
       };
     case 'TIMELINE_SAVE_SUCCESS':
       return {

@@ -8,7 +8,7 @@ import { Store } from '@ngrx/store';
 import { TimelinesGetAction, TimelinesState, TimelinesCreateAction, TimelinesDeleteAction } from './timelines.reducer';
 import { AppState } from '../../reducers';
 import { Router } from '@angular/router';
-import { Timeline } from '../timeline/timeline.reducer';
+import { Timeline, TimelineForList } from '../timeline/timeline.reducer';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Title } from '@angular/platform-browser';
 
@@ -21,7 +21,7 @@ import { Title } from '@angular/platform-browser';
 export class TimelinesComponent implements OnInit, OnDestroy {
 
   modeOpenNew: boolean = false;
-  timelines: Timeline[];
+  timelines: TimelineForList[];
   error: Error;
   isLoading: boolean;
   timelineToDelete: Timeline;

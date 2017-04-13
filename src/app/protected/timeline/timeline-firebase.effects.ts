@@ -12,6 +12,7 @@ import {
   TimelineSaveSuccessAction,
   TimelineSaveErrorAction,
   TimelineChangedAction,
+  TimelineChangedPayload,
 } from './timeline.reducer';
 import { ProtectedFirebaseEffects, toError } from '../shared/protected-firebase.effects';
 import { FirebaseTimelineEvent } from '../event/event-firebase.effects';
@@ -19,28 +20,34 @@ import { FirebaseTimelineEvent } from '../event/event-firebase.effects';
 export const SAVE_DEBOUNCE_TIME = 1000;
 
 @Injectable()
-export class TimelineFirebaseEffects extends ProtectedFirebaseEffects<
-  TimelineActionType, TimelineAction, FirebaseTimeline> {
+export class TimelineFirebaseEffects extends ProtectedFirebaseEffects<TimelineActionType, TimelineAction, FirebaseTimeline> {
 
   @Effect() get: Observable<TimelineGetSuccessAction | TimelineGetErrorAction> = this
     .authorizedActionsOfType('TIMELINE_GET')
     .switchMap((action: TimelineGetAction) => this.getFirebaseObject(action.payload)
       .switchMap((firebaseTimeline: FirebaseTimeline): Observable<Timeline> =>
         Observable.create((observer: Observer<Timeline>): TeardownLogic => {
-          const eventsObservables: Observable<FirebaseTimelineEvent>[] = Object.keys(firebaseTimeline.events).map(
-            (eventId: string) => this.fire.database.object(this.getFirebaseUserPath() + '/events/' + eventId).first()
-          );
 
-          const subscription: Subscription = Observable
-            .forkJoin(...eventsObservables)
-            .subscribe((firebaseEvents: FirebaseTimelineEvent[]) => {
-              observer.next(toTimeline(firebaseTimeline, firebaseEvents));
-              observer.complete();
-            });
+          if (firebaseTimeline.events) {
+            const eventsObservables: Observable<FirebaseTimelineEvent>[] = Object.keys(firebaseTimeline.events).map(
+              (eventId: string) => this.fire.database.object(this.getFirebaseUserPath() + '/events/' + eventId).first()
+            );
 
-          return () => {
-            subscription.unsubscribe();
-          };
+            const subscription: Subscription = Observable
+              .forkJoin(...eventsObservables)
+              .subscribe((firebaseEvents: FirebaseTimelineEvent[]) => {
+                observer.next(toTimeline(firebaseTimeline, firebaseEvents));
+                observer.complete();
+              });
+
+            return () => {
+              subscription.unsubscribe();
+            };
+          } else {
+            observer.next(toTimeline(firebaseTimeline, []));
+            observer.complete();
+          }
+
         })
       )
       .map((timeline: Timeline): TimelineGetSuccessAction => ({
@@ -83,14 +90,14 @@ export class TimelineFirebaseEffects extends ProtectedFirebaseEffects<
 export interface FirebaseTimeline {
   $key: string;
   title: string;
-  events: {[key: string]: true};
+  events?: { [key: string]: true };
 }
 
 export interface FirebaseTimelineUpdateObject {
   title: string;
 }
 
-export function toTimeline(firebaseTimeline: FirebaseTimeline, firebaseEvents: FirebaseTimelineEvent[]): Timeline {
+function toTimeline(firebaseTimeline: FirebaseTimeline, firebaseEvents: FirebaseTimelineEvent[]): Timeline {
   return {
     id: firebaseTimeline.$key,
     title: firebaseTimeline.title,
@@ -101,7 +108,7 @@ export function toTimeline(firebaseTimeline: FirebaseTimeline, firebaseEvents: F
   };
 }
 
-function toFirebaseTimelineUpdateObject(timeline: Timeline): FirebaseTimelineUpdateObject {
+function toFirebaseTimelineUpdateObject(timeline: TimelineChangedPayload): FirebaseTimelineUpdateObject {
   return {
     title: timeline.title,
   };

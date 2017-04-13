@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFire } from 'angularfire2';
 import { Actions, Effect } from '@ngrx/effects';
 import { Observable } from '../../shared/rxjs';
-import { FirebaseTimeline, toTimeline } from '../timeline/timeline-firebase.effects';
+import { FirebaseTimeline } from '../timeline/timeline-firebase.effects';
 import {
   TimelinesGetSuccessAction,
   TimelinesGetAction,
@@ -17,6 +17,7 @@ import {
   TimelinesDeleteAction,
 } from './timelines.reducer';
 import { ProtectedFirebaseEffects, toError } from '../shared/protected-firebase.effects';
+import { TimelineForList } from '../timeline/timeline.reducer';
 
 @Injectable()
 export class TimelinesFirebaseEffects extends ProtectedFirebaseEffects<TimelinesActionType, TimelinesAction, FirebaseTimeline> {
@@ -39,15 +40,18 @@ export class TimelinesFirebaseEffects extends ProtectedFirebaseEffects<Timelines
         }))
       );
 
-  @Effect() create: Observable<TimelinesCreateSuccessAction|TimelinesCreateErrorAction> =
+  @Effect() create: Observable<TimelinesCreateSuccessAction | TimelinesCreateErrorAction> =
     this.authorizedActionsOfType('TIMELINES_CREATE')
       .switchMap((action: TimelinesCreateAction) =>
-        Observable.fromPromise(<any>this.getFirebaseList().push({ title: 'Новая лента' }))
+        Observable.fromPromise(<any>
+          this.getFirebaseList().push({
+            title: 'Новая лента',
+          }))
           .map((ref: { key: string }): TimelinesCreateSuccessAction => ({
             type: 'TIMELINES_CREATE_SUCCESS',
             payload: ref.key,
           }))
-          .catch((error: Error|string): Observable<TimelinesCreateErrorAction> =>
+          .catch((error: Error | string): Observable<TimelinesCreateErrorAction> =>
             Observable.of<TimelinesCreateErrorAction>({
               type: 'TIMELINES_CREATE_ERROR',
               payload: toError(error),
@@ -79,4 +83,11 @@ export class TimelinesFirebaseEffects extends ProtectedFirebaseEffects<Timelines
     return 'timelines';
   }
 
+}
+
+function toTimeline(firebaseTimeline: FirebaseTimeline): TimelineForList {
+  return {
+    id: firebaseTimeline.$key,
+    title: firebaseTimeline.title,
+  };
 }

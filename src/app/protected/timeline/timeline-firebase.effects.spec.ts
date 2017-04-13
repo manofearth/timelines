@@ -1,10 +1,12 @@
 //noinspection TypeScriptPreferShortImport
-import { ReplaySubject } from '../../shared/rxjs';
+import { ReplaySubject, Observable } from '../../shared/rxjs';
 import {
   TimelineGetAction,
   TimelineGetSuccessAction,
   TimelineChangedAction,
-  TimelineGetErrorAction, TimelineSaveSuccessAction
+  TimelineGetErrorAction,
+  TimelineSaveSuccessAction,
+  Timeline,
 } from './timeline.reducer';
 import { Actions } from '@ngrx/effects';
 import { TimelineFirebaseEffects, FirebaseTimeline, SAVE_DEBOUNCE_TIME } from './timeline-firebase.effects';
@@ -25,7 +27,8 @@ describe('TimelineFirebaseEffects', () => {
   let runner: EffectsRunner;
   let firebase: AngularFire;
   let authStateChanges: ReplaySubject<FirebaseAuthState>;
-  let mockFirebaseObject: MockFirebaseObject;
+  let mockFirebaseTimelineObject: MockFirebaseObject;
+  let mockFirebaseObjects: { [path: string]: MockFirebaseObject };
 
   beforeEach(() => {
 
@@ -33,11 +36,18 @@ describe('TimelineFirebaseEffects', () => {
 
     runner = new EffectsRunner();
 
-    mockFirebaseObject = new MockFirebaseObject();
+    mockFirebaseTimelineObject = new MockFirebaseObject();
+    mockFirebaseObjects = {};
     firebase = <any>{
       auth: authStateChanges,
       database: {
-        object: () => mockFirebaseObject,
+        object: (path: string) => {
+          if ( /^\/private\/.+\/timelines\/.+$/.test(path) ) {
+            return mockFirebaseTimelineObject;
+          } else {
+            return mockFirebaseObjects[path];
+          }
+        },
       },
     };
 
@@ -73,7 +83,7 @@ describe('TimelineFirebaseEffects', () => {
   describe('when logged in', () => {
 
     beforeEach(() => {
-      authStateChanges.next(<any>{ uid: 'some-uid' });
+      authStateChanges.next(<any>{ uid: 'some-user-uid' });
     });
 
     describe('on TIMELINE_GET', () => {
@@ -87,18 +97,36 @@ describe('TimelineFirebaseEffects', () => {
 
       it('should emit TIMELINE_GET_SUCCESS', (done: DoneFn) => {
 
-        mockFirebaseObject.next({ $key: '1', title: 'Timeline 1' });
+        mockFirebaseTimelineObject.next({
+          $key: '1',
+          title: 'Timeline 1',
+          events: {
+            'event1-uid': true,
+            'event2-uid': true,
+          }
+        });
+        mockFirebaseObjects['/private/some-user-uid/events/event1-uid'] = <any>
+          Observable.of({ $key: 'event1-uid', title: 'Event 1'} );
+        mockFirebaseObjects['/private/some-user-uid/events/event2-uid'] = <any>
+          Observable.of({ $key: 'event2-uid', title: 'Event 2'} );
 
         effects.get.subscribe((action: TimelineGetSuccessAction) => {
           expect(action.type).toBe('TIMELINE_GET_SUCCESS');
-          expect(action.payload).toEqual({ id: '1', title: 'Timeline 1' });
+          expect(action.payload).toEqual(<Timeline>{
+            id: '1',
+            title: 'Timeline 1',
+            events: [
+              { id: 'event1-uid', title: 'Event 1' },
+              { id: 'event2-uid', title: 'Event 2' },
+            ]
+          });
           done();
         });
       });
 
       it('should emit TIMELINE_GET_ERROR', (done: DoneFn) => {
 
-        mockFirebaseObject.error('some error');
+        mockFirebaseTimelineObject.error('some error');
 
         effects.get.subscribe((action: TimelineGetErrorAction) => {
           expect(action.type).toBe('TIMELINE_GET_ERROR');
@@ -121,16 +149,16 @@ describe('TimelineFirebaseEffects', () => {
       }));
 
       it('should update firebase database object', fakeAsync(() => {
-        spyOn(mockFirebaseObject, 'update').and.callThrough();
+        spyOn(mockFirebaseTimelineObject, 'update').and.callThrough();
         effects.save.subscribe();
         tick(SAVE_DEBOUNCE_TIME);
-        expect(mockFirebaseObject.update).toHaveBeenCalledWith({ title: 'some title' });
+        expect(mockFirebaseTimelineObject.update).toHaveBeenCalledWith({ title: 'some title' });
       }));
 
       it('should emit TIMELINE_SAVE_SUCCESS', (done: DoneFn) => {
 
         fakeAsync(() => {
-          mockFirebaseObject.update = () => Promise.resolve();
+          mockFirebaseTimelineObject.update = () => Promise.resolve();
 
           effects.save.subscribe((action: TimelineSaveSuccessAction) => {
             expect(action.type).toBe('TIMELINE_SAVE_SUCCESS');
@@ -144,7 +172,7 @@ describe('TimelineFirebaseEffects', () => {
       it('should emit TIMELINE_SAVE_ERROR', (done: DoneFn) => {
 
         fakeAsync(() => {
-          mockFirebaseObject.update = () => Promise.reject('some error');
+          mockFirebaseTimelineObject.update = () => Promise.reject('some error');
 
           effects.save.subscribe((action: TimelineSaveSuccessAction) => {
             expect(action.type).toBe('TIMELINE_SAVE_ERROR');

@@ -3,13 +3,17 @@ import { Subscription } from '../../shared/rxjs';
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
-import { TimelineGetAction, TimelineState, Timeline, TimelineChangedAction } from './timeline.reducer';
+import {
+  TimelineGetAction, TimelineState, Timeline, TimelineChangedAction, TimelineForList,
+  TimelineChangedPayload
+} from './timeline.reducer';
 import { ActivatedRoute, Params } from '@angular/router';
 import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EventComponent } from '../event/event.component';
 import { EventCreateAction } from '../event/event.reducer';
+import { TimelineEvent } from '../shared/timeline-event';
 
 @Component({
   templateUrl: './timeline.component.html',
@@ -111,7 +115,7 @@ export interface TimelineFormValue {
   title: string;
 }
 
-function toTimeline(oldTimeline: Timeline, formValue: TimelineFormValue): Timeline {
+function toTimeline(oldTimeline: Timeline, formValue: TimelineFormValue): TimelineChangedPayload {
   return {
     id: oldTimeline.id,
     title: formValue.title,

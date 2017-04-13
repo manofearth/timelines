@@ -1,11 +1,11 @@
 import { Action } from '@ngrx/store';
-import { Timeline } from '../timeline/timeline.reducer';
+import { Timeline, TimelineForList } from '../timeline/timeline.reducer';
 
 export interface TimelinesState {
   isLoading: boolean;
   error: Error;
   newTimelineId: string;
-  timelines: Timeline[];
+  timelines: TimelineForList[];
 }
 
 export type TimelinesActionType = 'TIMELINES_GET' | 'TIMELINES_GET_SUCCESS'
@@ -23,7 +23,7 @@ export interface TimelinesGetAction extends TimelinesActionBase {
 
 export interface TimelinesGetSuccessAction extends TimelinesActionBase {
   type: 'TIMELINES_GET_SUCCESS';
-  payload: Timeline[];
+  payload: TimelineForList[];
 }
 
 export interface TimelinesGetErrorAction extends TimelinesActionBase {

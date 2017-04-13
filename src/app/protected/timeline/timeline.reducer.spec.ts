@@ -16,7 +16,14 @@ describe('timeline reducer', () => {
 
     const action: TimelineGetSuccessAction = {
       type: 'TIMELINE_GET_SUCCESS',
-      payload: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'Second World War' },
+      payload: {
+        id: '-KYM3lCiVvKVV-mJt3eB',
+        title: 'Second World War',
+        events: [
+          { id: 'some-event-id-1', title: 'some event 1' },
+          { id: 'some-event-id-2', title: 'some event 2' },
+        ]
+      },
     };
 
     const newState: TimelineState = timelineReducer(state, action);
@@ -26,7 +33,14 @@ describe('timeline reducer', () => {
       isLoading: false,
       isSaving: false,
       error: null,
-      timeline: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'Second World War' },
+      timeline: {
+        id: '-KYM3lCiVvKVV-mJt3eB',
+        title: 'Second World War',
+        events: [
+          { id: 'some-event-id-1', title: 'some event 1' },
+          { id: 'some-event-id-2', title: 'some event 2' },
+        ]
+      },
     });
   });
 
@@ -36,7 +50,14 @@ describe('timeline reducer', () => {
       isLoading: true,
       isSaving: false,
       error: new Error('some error'),
-      timeline: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'Second World War' },
+      timeline: {
+        id: '-KYM3lCiVvKVV-mJt3eB',
+        title: 'Second World War',
+        events: [
+          { id: 'some-event-id-1', title: 'some event 1' },
+          { id: 'some-event-id-2', title: 'some event 2' },
+        ]
+      },
     });
 
     const action: TimelineGetErrorAction = {
@@ -51,7 +72,14 @@ describe('timeline reducer', () => {
       isLoading: false,
       isSaving: false,
       error: new Error('some error'),
-      timeline: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'Second World War' },
+      timeline: {
+        id: '-KYM3lCiVvKVV-mJt3eB',
+        title: 'Second World War',
+        events: [
+          { id: 'some-event-id-1', title: 'some event 1' },
+          { id: 'some-event-id-2', title: 'some event 2' },
+        ]
+      },
     });
   });
 
@@ -61,7 +89,7 @@ describe('timeline reducer', () => {
       isLoading: true,
       isSaving: false,
       error: new Error('some error'),
-      timeline: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'Second World War' },
+      timeline: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'Second World War', events: [] },
     });
 
     const action: TimelineChangedAction = {
@@ -76,7 +104,7 @@ describe('timeline reducer', () => {
       isLoading: true,
       isSaving: true,
       error: null,
-      timeline: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'First World War' },
+      timeline: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'First World War', events: [] },
     });
   });
 
@@ -86,7 +114,7 @@ describe('timeline reducer', () => {
       isLoading: true,
       isSaving: true,
       error: new Error('some error'),
-      timeline: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'Second World War' },
+      timeline: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'Second World War', events: [] },
     });
 
     const action: TimelineSaveSuccessAction = {
@@ -100,7 +128,7 @@ describe('timeline reducer', () => {
       isLoading: true,
       isSaving: false,
       error: null,
-      timeline: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'Second World War' },
+      timeline: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'Second World War', events: [] },
     });
   });
 
@@ -110,7 +138,7 @@ describe('timeline reducer', () => {
       isLoading: true,
       isSaving: true,
       error: null,
-      timeline: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'Second World War' },
+      timeline: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'Second World War', events: [] },
     });
 
     const action: TimelineSaveErrorAction = {
@@ -125,7 +153,7 @@ describe('timeline reducer', () => {
       isLoading: true,
       isSaving: false,
       error: new Error('some error'),
-      timeline: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'Second World War' },
+      timeline: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'Second World War', events: [] },
     });
   });
 });
