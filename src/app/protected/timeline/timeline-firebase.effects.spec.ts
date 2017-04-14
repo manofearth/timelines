@@ -27,8 +27,7 @@ describe('TimelineFirebaseEffects', () => {
   let runner: EffectsRunner;
   let firebase: AngularFire;
   let authStateChanges: ReplaySubject<FirebaseAuthState>;
-  let mockFirebaseTimelineObject: MockFirebaseObject;
-  let mockFirebaseObjects: { [path: string]: MockFirebaseObject };
+  let mockFirebaseObjectResponses: { [path: string]: MockFirebaseObject };
 
   beforeEach(() => {
 
@@ -36,24 +35,16 @@ describe('TimelineFirebaseEffects', () => {
 
     runner = new EffectsRunner();
 
-    mockFirebaseTimelineObject = new MockFirebaseObject();
-    mockFirebaseObjects = {};
+    mockFirebaseObjectResponses = {};
     firebase = <any>{
       auth: authStateChanges,
       database: {
-        object: (path: string) => {
-          if ( /^\/private\/.+\/timelines\/.+$/.test(path) ) {
-            return mockFirebaseTimelineObject;
-          } else {
-            return mockFirebaseObjects[path];
-          }
-        },
+        object: (path: string): MockFirebaseObject => mockFirebaseObjectResponses[path],
       },
     };
 
     effects = new TimelineFirebaseEffects(new Actions(runner), firebase);
   });
-
 
   describe('when not logged in', () => {
 
@@ -97,18 +88,19 @@ describe('TimelineFirebaseEffects', () => {
 
       it('should emit TIMELINE_GET_SUCCESS', (done: DoneFn) => {
 
-        mockFirebaseTimelineObject.next({
-          $key: '1',
-          title: 'Timeline 1',
-          events: {
-            'event1-uid': true,
-            'event2-uid': true,
-          }
-        });
-        mockFirebaseObjects['/private/some-user-uid/events/event1-uid'] = <any>
-          Observable.of({ $key: 'event1-uid', title: 'Event 1'} );
-        mockFirebaseObjects['/private/some-user-uid/events/event2-uid'] = <any>
-          Observable.of({ $key: 'event2-uid', title: 'Event 2'} );
+        mockFirebaseObjectResponses['/private/some-user-uid/timelines/some-timeline-id'] = <any>
+          Observable.of({
+            $key: '1',
+            title: 'Timeline 1',
+            events: {
+              'event1-uid': true,
+              'event2-uid': true,
+            }
+          });
+        mockFirebaseObjectResponses['/private/some-user-uid/events/event1-uid'] = <any>
+          Observable.of({ $key: 'event1-uid', title: 'Event 1' });
+        mockFirebaseObjectResponses['/private/some-user-uid/events/event2-uid'] = <any>
+          Observable.of({ $key: 'event2-uid', title: 'Event 2' });
 
         effects.get.subscribe((action: TimelineGetSuccessAction) => {
           expect(action.type).toBe('TIMELINE_GET_SUCCESS');
@@ -124,9 +116,10 @@ describe('TimelineFirebaseEffects', () => {
         });
       });
 
-      it('should emit TIMELINE_GET_ERROR', (done: DoneFn) => {
+      it('should emit TIMELINE_GET_ERROR if error when accessing *timeline* object', (done: DoneFn) => {
 
-        mockFirebaseTimelineObject.error('some error');
+        mockFirebaseObjectResponses['/private/some-user-uid/timelines/some-timeline-id'] = <any>
+          Observable.throw('some error');
 
         effects.get.subscribe((action: TimelineGetErrorAction) => {
           expect(action.type).toBe('TIMELINE_GET_ERROR');
@@ -134,11 +127,40 @@ describe('TimelineFirebaseEffects', () => {
           done();
         });
       });
+
+      it('should emit TIMELINE_GET_ERROR if error when accessing *event* object', (done: DoneFn) => {
+
+        mockFirebaseObjectResponses['/private/some-user-uid/timelines/some-timeline-id'] = <any>
+          Observable.of({
+            $key: '1',
+            title: 'Timeline 1',
+            events: {
+              'event1-uid': true,
+              'event2-uid': true,
+            }
+          });
+        mockFirebaseObjectResponses['/private/some-user-uid/events/event1-uid'] = <any>
+          Observable.of({ $key: 'event1-uid', title: 'Event 1' });
+        mockFirebaseObjectResponses['/private/some-user-uid/events/event2-uid'] = <any>
+          Observable.throw('some error'); // Error is here
+
+        effects.get.subscribe((action: TimelineGetErrorAction) => {
+          expect(action.type).toBe('TIMELINE_GET_ERROR');
+          expect(action.payload).toEqual(new Error('some error'));
+          done();
+        });
+      });
+
+
     });
 
     describe('on TIMELINE_CHANGED', () => {
 
+      let mockFirebaseTimelineObject: MockFirebaseObject;
+
       beforeEach(fakeAsync(() => {
+        mockFirebaseTimelineObject = new MockFirebaseObject();
+        mockFirebaseObjectResponses['/private/some-user-uid/timelines/some-timeline-id'] = mockFirebaseTimelineObject;
         runner.next(<TimelineChangedAction>{
           type: 'TIMELINE_CHANGED',
           payload: {
@@ -201,6 +223,7 @@ describe('TimelineFirebaseEffects', () => {
     it('should not query firebase database repeatedly if user or object key not changed', fakeAsync(() => {
 
       authStateChanges.next(<any>{ uid: 'first-user-uid' });
+      mockFirebaseObjectResponses['/private/first-user-uid/timelines/first-timeline-id'] = new MockFirebaseObject();
 
       runner.next(<TimelineGetAction>{
         type: 'TIMELINE_GET',
@@ -229,6 +252,10 @@ describe('TimelineFirebaseEffects', () => {
     it('should query firebase database repeatedly if object key changed', fakeAsync(() => {
 
       authStateChanges.next(<any>{ uid: 'first-user-uid' });
+      mockFirebaseObjectResponses['/private/first-user-uid/timelines/first-timeline-id'] = new MockFirebaseObject();
+      mockFirebaseObjectResponses['/private/first-user-uid/timelines/second-timeline-id'] = new MockFirebaseObject();
+      mockFirebaseObjectResponses['/private/first-user-uid/timelines/third-timeline-id'] = new MockFirebaseObject();
+      mockFirebaseObjectResponses['/private/first-user-uid/timelines/fourth-timeline-id'] = new MockFirebaseObject();
 
       runner.next(<TimelineGetAction>{
         type: 'TIMELINE_GET',
@@ -259,6 +286,11 @@ describe('TimelineFirebaseEffects', () => {
     }));
 
     it('should query firebase database repeatedly if user changed', fakeAsync(() => {
+
+      mockFirebaseObjectResponses['/private/first-user-uid/timelines/first-timeline-id'] = new MockFirebaseObject();
+      mockFirebaseObjectResponses['/private/second-user-uid/timelines/first-timeline-id'] = new MockFirebaseObject();
+      mockFirebaseObjectResponses['/private/third-user-uid/timelines/first-timeline-id'] = new MockFirebaseObject();
+      mockFirebaseObjectResponses['/private/fourth-user-uid/timelines/first-timeline-id'] = new MockFirebaseObject();
 
       authStateChanges.next(<any>{ uid: 'first-user-uid' });
       runner.next(<TimelineGetAction>{
