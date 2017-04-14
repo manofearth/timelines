@@ -1,13 +1,14 @@
 import { Observable } from '../../shared/rxjs';
 import {
   EventActionType,
-  EventAction,
   EventUpdateAction,
   EventUpdateSuccessAction,
   EventUpdateErrorAction,
   EventInsertSuccessAction,
   EventInsertErrorAction,
-  EventInsertAction, EventInsertAndAttachToTimelineAction,
+  EventInsertAction,
+  EventInsertAndAttachToTimelineAction,
+  EventAction,
 } from './event.reducer';
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';

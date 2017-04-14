@@ -1,12 +1,10 @@
 import { Action } from '@ngrx/store';
+import { TimelineEventForList } from '../shared/timeline-event';
 
 export interface Timeline {
   id: string;
   title: string;
-  events: {
-    id: string,
-    title: string
-  }[];
+  events: TimelineEventForList[];
 }
 
 export interface TimelineForList {

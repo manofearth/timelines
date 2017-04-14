@@ -10,7 +10,7 @@
   <table class="table table-hover">
     <tbody>
     <tr *ngFor="let event of timeline.events">
-      <td>{{ event.title }}</td>
+      <td><button class="btn btn-link" (click)="openTimelineEvent(event)">{{ event.title }}</button></td>
     </tr>
     </tbody>
   </table>

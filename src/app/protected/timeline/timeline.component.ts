@@ -4,16 +4,18 @@ import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRe
 import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
 import {
-  TimelineGetAction, TimelineState, Timeline, TimelineChangedAction, TimelineForList,
-  TimelineChangedPayload
+  TimelineGetAction,
+  TimelineState,
+  Timeline,
+  TimelineChangedAction,
+  TimelineChangedPayload,
 } from './timeline.reducer';
 import { ActivatedRoute, Params } from '@angular/router';
 import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EventComponent } from '../event/event.component';
-import { EventCreateAction } from '../event/event.reducer';
-import { TimelineEvent } from '../shared/timeline-event';
+import { EventCreateAction, EventGetAction } from '../event/event.reducer';
 
 @Component({
   templateUrl: './timeline.component.html',
@@ -83,6 +85,14 @@ export class TimelineComponent implements OnInit, OnDestroy {
     });
     const modal = this.modalService.open(EventComponent, { size: 'lg' });
     modal.componentInstance.attachToTimeline = this.timeline;
+  }
+
+  openTimelineEvent(id: string) {
+    this.store.dispatch(<EventGetAction> {
+      type: 'EVENT_GET',
+      payload: id,
+    });
+    this.modalService.open(EventComponent, { size: 'lg' });
   }
 
   private initForm(timeline: Timeline) {

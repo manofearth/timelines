@@ -18,7 +18,8 @@
 - [x] Edit event dialog
 - [x] Edit event. Date field
 - [x] Save event
-- [ ] Edit timeline. Events list
+- [x] Edit timeline. Events list
+- [ ] Edit timeline. Edit event
 - [ ] Chart
 - [ ] Chart. Scaling
 - [ ] Edit timeline. Search event before creating

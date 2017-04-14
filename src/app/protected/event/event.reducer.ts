@@ -11,37 +11,52 @@ export interface EventState {
 export type EventStatus = 'NEW' | 'INSERTING' | 'INSERTED' | 'UPDATING' | 'UPDATED' | 'ERROR';
 
 export type EventActionType = 'EVENT_CREATE' | 'EVENT_UPDATE' | 'EVENT_UPDATE_SUCCESS' | 'EVENT_UPDATE_ERROR'
-  | 'EVENT_INSERT' | 'EVENT_INSERT_SUCCESS' | 'EVENT_INSERT_ERROR' | 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE';
+  | 'EVENT_INSERT' | 'EVENT_INSERT_SUCCESS' | 'EVENT_INSERT_ERROR' | 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE'
+  | 'EVENT_GET' | 'EVENT_GET_SUCCESS' | 'EVENT_GET_ERROR';
 
-export interface EventAction extends Action {
+export interface EventActionBase extends Action {
   type: EventActionType;
 }
 
-export interface EventCreateAction extends EventAction {
-  type: 'EVENT_CREATE';
-  payload: string;
+export interface EventGetAction extends EventActionBase {
+  type: 'EVENT_GET';
+  payload: string; // id
 }
 
-export interface EventUpdateAction extends EventAction {
+export interface EventCreateAction extends EventActionBase {
+  type: 'EVENT_CREATE';
+  payload: string; // title
+}
+
+export interface EventUpdateAction extends EventActionBase {
   type: 'EVENT_UPDATE';
   payload: TimelineEvent;
 }
 
-export interface EventUpdateSuccessAction extends EventAction {
+export interface EventUpdateSuccessAction extends EventActionBase {
   type: 'EVENT_UPDATE_SUCCESS';
 }
 
-export interface EventUpdateErrorAction extends EventAction {
+export interface EventUpdateErrorAction extends EventActionBase {
   type: 'EVENT_UPDATE_ERROR';
   payload: Error;
 }
 
-export interface EventInsertAction extends EventAction {
+export interface EventInsertAction extends EventActionBase {
   type: 'EVENT_INSERT';
   payload: TimelineEvent;
 }
 
-export interface EventInsertAndAttachToTimelineAction extends EventAction {
+export interface EventInsertSuccessAction extends EventActionBase {
+  type: 'EVENT_INSERT_SUCCESS';
+}
+
+export interface EventInsertErrorAction extends EventActionBase {
+  type: 'EVENT_INSERT_ERROR';
+  payload: Error;
+}
+
+export interface EventInsertAndAttachToTimelineAction extends EventActionBase {
   type: 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE';
   payload: {
     timeline: ObjectWithId;
@@ -49,14 +64,9 @@ export interface EventInsertAndAttachToTimelineAction extends EventAction {
   };
 }
 
-export interface EventInsertSuccessAction extends EventAction {
-  type: 'EVENT_INSERT_SUCCESS';
-}
-
-export interface EventInsertErrorAction extends EventAction {
-  type: 'EVENT_INSERT_ERROR';
-  payload: Error;
-}
+export type EventAction = EventGetAction | EventCreateAction | EventUpdateAction | EventUpdateSuccessAction
+  | EventUpdateErrorAction | EventInsertAction | EventInsertSuccessAction | EventInsertErrorAction
+  | EventInsertAndAttachToTimelineAction;
 
 export function eventReducer(state: EventState, action: EventAction): EventState {
 

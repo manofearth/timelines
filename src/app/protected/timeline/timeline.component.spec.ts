@@ -53,7 +53,8 @@ describe('TimelineComponent', () => {
       };
       const formBuilder: FormBuilder = new FormBuilder();
 
-      component = new TimelineComponent(mockStore, mockRoute, formBuilder, mockChangeDetector, mockTitleService, mockModalService);
+      component = new TimelineComponent(
+        mockStore, mockRoute, formBuilder, mockChangeDetector, mockTitleService, mockModalService);
     });
 
     describe('createAndOpenTimelineEvent()', () => {
@@ -71,6 +72,23 @@ describe('TimelineComponent', () => {
         component.createAndOpenTimelineEvent('some event title');
         expect(mockModalService.open).toHaveBeenCalledWith(EventComponent, { size: 'lg' });
         expect(mockModalRef.componentInstance.attachToTimeline).toBe('timeline stub');
+      });
+    });
+
+    describe('openTimelineEvent()', () => {
+      it('should dispatch EVENT_GET action', () => {
+        spyOn(mockStore, 'dispatch');
+        component.openTimelineEvent('some-event-id');
+        expect(mockStore.dispatch).toHaveBeenCalledWith({
+          type: 'EVENT_GET',
+          payload: 'some-event-id',
+        });
+      });
+      it('should open modal service', () => {
+        spyOn(mockModalService, 'open');
+        component.timeline = <any> 'timeline stub';
+        component.openTimelineEvent('some-event-id');
+        expect(mockModalService.open).toHaveBeenCalledWith(EventComponent, { size: 'lg' });
       });
     });
 
