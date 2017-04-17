@@ -5,7 +5,8 @@
   <h4 class="modal-title">Событие</h4>
 </div>
 <div class="modal-body container-fluid">
-  <form [formGroup]="form">
+  <div *ngIf="!form">Загружается...</div>
+  <form *ngIf="form" [formGroup]="form">
     <div class="row">
       <div class="col-md-12 form-group" [class.has-danger]="invalidControl('title')">
         <input type="text" class="form-control" title="Имя события" placeholder="Имя события" formControlName="title">

@@ -9,6 +9,9 @@ import {
   EventInsertAction,
   EventInsertAndAttachToTimelineAction,
   EventAction,
+  EventGetSuccessAction,
+  EventGetErrorAction,
+  EventGetAction,
 } from './event.reducer';
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
@@ -83,6 +86,22 @@ export class EventFirebaseEffects extends ProtectedFirebaseEffects<EventActionTy
         )
     );
 
+  @Effect() get: Observable<EventGetSuccessAction | EventGetErrorAction> = this
+    .authorizedActionsOfType('EVENT_GET')
+    .switchMap((action: EventGetAction) =>
+      this.getFirebaseObject(action.payload)
+        .map((firebaseObject: FirebaseTimelineEvent): EventGetSuccessAction => ({
+          type: 'EVENT_GET_SUCCESS',
+          payload: toTimelineEvent(firebaseObject),
+        }))
+        .catch((error: Error | string): Observable<EventGetErrorAction> =>
+          Observable.of<EventGetErrorAction>({
+            type: 'EVENT_GET_ERROR',
+            payload: toError(error),
+          })
+        )
+    );
+
   constructor(actions: Actions, fire: AngularFire) {
     super(actions, fire);
   }
@@ -111,5 +130,14 @@ function toFirebaseEventUpdateObject(event: TimelineEvent): FirebaseEventUpdateO
     title: event.title,
     dateBegin: event.dateBegin,
     dateEnd: event.dateEnd,
+  };
+}
+
+function toTimelineEvent(firebaseEvent: FirebaseTimelineEvent): TimelineEvent {
+  return {
+    id: firebaseEvent.$key,
+    title: firebaseEvent.title,
+    dateBegin: firebaseEvent.dateBegin,
+    dateEnd: firebaseEvent.dateEnd,
   };
 }

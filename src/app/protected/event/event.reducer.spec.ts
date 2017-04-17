@@ -8,6 +8,9 @@ import {
   EventInsertErrorAction,
   EventInsertSuccessAction,
   EventInsertAction,
+  EventGetAction,
+  EventGetSuccessAction,
+  EventGetErrorAction,
 } from './event.reducer';
 
 describe('eventReducer', () => {
@@ -23,7 +26,6 @@ describe('eventReducer', () => {
       error: null,
       event: null,
     });
-
 
     const newState = eventReducer(state, action);
 
@@ -168,6 +170,72 @@ describe('eventReducer', () => {
       status: 'ERROR',
       error: <any> 'some error',
       event: <any> 'some event',
+    });
+  });
+
+  it('on EVENT_GET should mark as loading and erase error', () => {
+    const action: EventGetAction = {
+      type: 'EVENT_GET',
+      payload: 'some-event-id',
+    };
+
+    const state: EventState = Object.freeze<EventState>({
+      status: 'UPDATED',
+      error: <any> 'error stub',
+      event: <any> 'event stub',
+    });
+
+    const newState = eventReducer(state, action);
+
+    expect(newState).not.toBe(state);
+    expect(newState).toEqual(<EventState> {
+      status: 'LOADING',
+      error: null,
+      event: <any> 'event stub',
+    });
+  });
+
+  it('on EVENT_GET_SUCCESS should mark as loaded and set new event', () => {
+    const action: EventGetSuccessAction = {
+      type: 'EVENT_GET_SUCCESS',
+      payload: <any> 'some loaded event stub',
+    };
+
+    const state: EventState = Object.freeze<EventState>({
+      status: 'LOADING',
+      error: null,
+      event: <any> 'event stub',
+    });
+
+    const newState = eventReducer(state, action);
+
+    expect(newState).not.toBe(state);
+    expect(newState).toEqual(<EventState> {
+      status: 'LOADED',
+      error: null,
+      event: <any> 'some loaded event stub',
+    });
+  });
+
+  it('on EVENT_GET_ERROR should mark as erroneous and set error', () => {
+    const action: EventGetErrorAction = {
+      type: 'EVENT_GET_ERROR',
+      payload: <any> 'some error stub',
+    };
+
+    const state: EventState = Object.freeze<EventState>({
+      status: 'LOADING',
+      error: null,
+      event: <any> 'event stub',
+    });
+
+    const newState = eventReducer(state, action);
+
+    expect(newState).not.toBe(state);
+    expect(newState).toEqual(<EventState> {
+      status: 'ERROR',
+      error: <any> 'some error stub',
+      event: <any> 'event stub',
     });
   });
 });

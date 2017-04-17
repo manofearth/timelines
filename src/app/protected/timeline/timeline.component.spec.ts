@@ -66,7 +66,7 @@ describe('TimelineComponent', () => {
           payload: 'some event title',
         });
       });
-      it('should open modal service', () => {
+      it('should open modal', () => {
         spyOn(mockModalService, 'open').and.callThrough();
         component.timeline = <any> 'timeline stub';
         component.createAndOpenTimelineEvent('some event title');
@@ -84,7 +84,7 @@ describe('TimelineComponent', () => {
           payload: 'some-event-id',
         });
       });
-      it('should open modal service', () => {
+      it('should open modal', () => {
         spyOn(mockModalService, 'open');
         component.timeline = <any> 'timeline stub';
         component.openTimelineEvent('some-event-id');

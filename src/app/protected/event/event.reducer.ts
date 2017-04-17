@@ -8,7 +8,7 @@ export interface EventState {
   event: TimelineEvent;
 }
 
-export type EventStatus = 'NEW' | 'INSERTING' | 'INSERTED' | 'UPDATING' | 'UPDATED' | 'ERROR';
+export type EventStatus = 'NEW' | 'INSERTING' | 'INSERTED' | 'UPDATING' | 'UPDATED' | 'ERROR' | 'LOADING' | 'LOADED';
 
 export type EventActionType = 'EVENT_CREATE' | 'EVENT_UPDATE' | 'EVENT_UPDATE_SUCCESS' | 'EVENT_UPDATE_ERROR'
   | 'EVENT_INSERT' | 'EVENT_INSERT_SUCCESS' | 'EVENT_INSERT_ERROR' | 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE'
@@ -21,6 +21,16 @@ export interface EventActionBase extends Action {
 export interface EventGetAction extends EventActionBase {
   type: 'EVENT_GET';
   payload: string; // id
+}
+
+export interface EventGetSuccessAction extends EventActionBase {
+  type: 'EVENT_GET_SUCCESS';
+  payload: TimelineEvent;
+}
+
+export interface EventGetErrorAction extends EventActionBase {
+  type: 'EVENT_GET_ERROR';
+  payload: Error;
 }
 
 export interface EventCreateAction extends EventActionBase {
@@ -66,11 +76,29 @@ export interface EventInsertAndAttachToTimelineAction extends EventActionBase {
 
 export type EventAction = EventGetAction | EventCreateAction | EventUpdateAction | EventUpdateSuccessAction
   | EventUpdateErrorAction | EventInsertAction | EventInsertSuccessAction | EventInsertErrorAction
-  | EventInsertAndAttachToTimelineAction;
+  | EventInsertAndAttachToTimelineAction | EventGetSuccessAction | EventGetErrorAction;
 
 export function eventReducer(state: EventState, action: EventAction): EventState {
 
   switch (action.type) {
+    case 'EVENT_GET':
+      return {
+        status: 'LOADING',
+        error: null,
+        event: state.event,
+      };
+    case 'EVENT_GET_SUCCESS':
+      return {
+        status: 'LOADED',
+        error: state.error,
+        event: action.payload,
+      };
+    case 'EVENT_GET_ERROR':
+      return {
+        status: 'ERROR',
+        error: action.payload,
+        event: state.event,
+      };
     case 'EVENT_CREATE':
       return {
         status: 'NEW',

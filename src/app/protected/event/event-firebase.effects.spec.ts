@@ -1,13 +1,20 @@
 //noinspection TypeScriptPreferShortImport
 import { ReplaySubject } from '../../shared/rxjs';
 import { EffectsRunner } from '@ngrx/effects/testing';
-import { AngularFire, FirebaseAuthState, FirebaseObjectObservable, FirebaseListObservable } from 'angularfire2';
+import { AngularFire, FirebaseAuthState } from 'angularfire2';
 import { Actions } from '@ngrx/effects';
 import { EventFirebaseEffects, FirebaseTimelineEvent } from './event-firebase.effects';
 import {
-  EventUpdateAction, EventUpdateSuccessAction, EventInsertAction,
-  EventInsertSuccessAction, EventInsertErrorAction, EventInsertAndAttachToTimelineAction
+  EventUpdateAction,
+  EventUpdateSuccessAction,
+  EventInsertAction,
+  EventInsertSuccessAction,
+  EventInsertErrorAction,
+  EventInsertAndAttachToTimelineAction,
+  EventGetAction,
+  EventGetSuccessAction,
 } from './event.reducer';
+import { TimelineEvent } from '../shared/timeline-event';
 
 class MockFirebaseObject extends ReplaySubject<FirebaseTimelineEvent> {
   //noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
@@ -39,16 +46,16 @@ describe('EventFirebaseEffects', () => {
   let runner: EffectsRunner;
   let authStateChanges: ReplaySubject<FirebaseAuthState>;
   let mockFirebase: AngularFire;
-  let mockFirebaseObject: FirebaseObjectObservable<FirebaseTimelineEvent>;
-  let mockFirebaseList: FirebaseListObservable<FirebaseTimelineEvent[]>;
+  let mockFirebaseObject: MockFirebaseObject;
+  let mockFirebaseList: MockFirebaseList;
 
   beforeEach(() => {
 
     authStateChanges = new ReplaySubject<FirebaseAuthState>();
     runner = new EffectsRunner();
 
-    mockFirebaseObject = <any> new MockFirebaseObject();
-    mockFirebaseList = <any> new MockFirebaseList();
+    mockFirebaseObject = new MockFirebaseObject();
+    mockFirebaseList = new MockFirebaseList();
     mockFirebase = <any>{
       auth: authStateChanges,
       database: {
@@ -83,6 +90,9 @@ describe('EventFirebaseEffects', () => {
         fail('should not emit actions');
       });
       effects.update.subscribe(() => {
+        fail('should not emit actions');
+      });
+      effects.get.subscribe(() => {
         fail('should not emit actions');
       });
     });
@@ -262,6 +272,51 @@ describe('EventFirebaseEffects', () => {
 
       });
 
+    });
+
+    describe('on EVENT_GET', () => {
+      beforeEach(() => {
+        runner.next(<EventGetAction> {
+          type: 'EVENT_GET',
+          payload: 'some-event-id',
+        });
+      });
+
+      it('should query firebase database', () => {
+        spyOn(mockFirebase.database, 'object').and.callThrough();
+        effects.get.subscribe();
+        expect(mockFirebase.database.object).toHaveBeenCalledWith('/private/some-user-id/events/some-event-id');
+      });
+
+      it('should emit EVENT_GET_SUCCESS', (done: DoneFn) => {
+        mockFirebaseObject.next({
+          $key: 'some-event-id',
+          title: 'Some Event',
+          dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
+          dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
+        });
+
+        effects.get.subscribe((result: EventGetSuccessAction) => {
+          expect(result.type).toBe('EVENT_GET_SUCCESS');
+          expect(result.payload).toEqual(<TimelineEvent>{
+            id: 'some-event-id',
+            title: 'Some Event',
+            dateBegin: { days: 0, title: '01.01.0001 до н.э.' },
+            dateEnd: { days: 1, title: '01.01.0001 до н.э.' },
+          });
+          done();
+        });
+      });
+
+      it('should emit EVENT_GET_ERROR', (done: DoneFn) => {
+        mockFirebaseObject.error('some error');
+
+        effects.get.subscribe((result: EventGetSuccessAction) => {
+          expect(result.type).toBe('EVENT_GET_ERROR');
+          expect(result.payload).toEqual(new Error('some error'));
+          done();
+        });
+      });
     });
   });
 

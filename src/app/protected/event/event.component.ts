@@ -35,12 +35,14 @@ export class EventComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.eventStateSubscription = this.store.select('event', 'event').subscribe((event: TimelineEvent) => {
-      this.form = <EventForm> this.fb.group({
-        id: event.id,
-        title: [event.title, Validators.required],
-        dateBegin: [event.dateBegin, Validators.required],
-        dateEnd: [event.dateEnd, Validators.required],
-      }, { validator: validateEventForm });
+      if (event !== null) {
+        this.form = <EventForm> this.fb.group({
+          id: event.id,
+          title: [event.title, Validators.required],
+          dateBegin: [event.dateBegin, Validators.required],
+          dateEnd: [event.dateEnd, Validators.required],
+        }, { validator: validateEventForm });
+      }
     });
 
     this.isSavingStateSubscription = this.store
