@@ -15,7 +15,7 @@ import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EventComponent } from '../event/event.component';
-import { EventCreateAction, EventGetAction } from '../event/event.reducer';
+import { EventCreateAction, EventEraseAction, EventGetAction } from '../event/event.reducer';
 
 @Component({
   templateUrl: './timeline.component.html',
@@ -83,7 +83,16 @@ export class TimelineComponent implements OnInit, OnDestroy {
       type: 'EVENT_CREATE',
       payload: title,
     });
+
     const modal = this.modalService.open(EventComponent, { size: 'lg' });
+    modal.result.then(
+      () => {
+        this.dispatchEventEraseAction();
+      },
+      () => {
+        this.dispatchEventEraseAction();
+      },
+    );
     modal.componentInstance.attachToTimeline = this.timeline;
   }
 
@@ -92,7 +101,25 @@ export class TimelineComponent implements OnInit, OnDestroy {
       type: 'EVENT_GET',
       payload: id,
     });
-    this.modalService.open(EventComponent, { size: 'lg' });
+    this.modalService.open(EventComponent, { size: 'lg' }).result.then(
+      () => {
+        // refresh timeline events by getting whole timeline from base
+        this.store.dispatch(<TimelineGetAction> {
+          type: 'TIMELINE_GET',
+          payload: this.timeline.id,
+        });
+        this.dispatchEventEraseAction();
+      },
+      () => {
+        this.dispatchEventEraseAction();
+      },
+    );
+  }
+
+  private dispatchEventEraseAction() {
+    this.store.dispatch(<EventEraseAction> {
+      type: 'EVENT_ERASE',
+    });
   }
 
   private initForm(timeline: Timeline) {

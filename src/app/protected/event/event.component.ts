@@ -36,22 +36,16 @@ export class EventComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.eventStateSubscription = this.store.select('event', 'event').subscribe((event: TimelineEvent) => {
       if (event !== null) {
-        this.form = <EventForm> this.fb.group({
-          id: event.id,
-          title: [event.title, Validators.required],
-          dateBegin: [event.dateBegin, Validators.required],
-          dateEnd: [event.dateEnd, Validators.required],
-        }, { validator: validateEventForm });
+        this.initForm(event);
       }
     });
 
-    this.isSavingStateSubscription = this.store
-      .select('event', 'status')
-      .subscribe((status: EventStatus) => {
-        if (this.closeAfterSave && (status === 'INSERTED' || status === 'UPDATED')) {
-          this.activeModal.close(this.form.value);
-        }
-      });
+    this.isSavingStateSubscription = this.store.select('event', 'status').subscribe((status: EventStatus) => {
+      if (this.closeAfterSave && (status === 'INSERTED' || status === 'UPDATED')) {
+        this.activeModal.close(this.form.value);
+      }
+    });
+
   }
 
   ngOnDestroy() {
@@ -85,6 +79,15 @@ export class EventComponent implements OnInit, OnDestroy {
 
   dismiss() {
     this.activeModal.dismiss();
+  }
+
+  private initForm(event: TimelineEvent) {
+    this.form = <EventForm> this.fb.group({
+      id: event.id,
+      title: [event.title, Validators.required],
+      dateBegin: [event.dateBegin, Validators.required],
+      dateEnd: [event.dateEnd, Validators.required],
+    }, { validator: validateEventForm });
   }
 
   private isNew(): boolean {

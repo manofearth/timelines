@@ -33,7 +33,7 @@ export interface TimelineActionBase extends Action {
 
 export interface TimelineGetAction extends TimelineActionBase {
   type: 'TIMELINE_GET';
-  payload: string;
+  payload: string; // id
 }
 
 export interface TimelineGetSuccessAction extends TimelineActionBase {

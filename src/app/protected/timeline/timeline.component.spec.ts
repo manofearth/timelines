@@ -1,5 +1,5 @@
 import { Observable, Subject, Observer } from '../../shared/rxjs';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, flushMicrotasks, TestBed } from '@angular/core/testing';
 import { TimelineComponent } from './timeline.component';
 import { NO_ERRORS_SCHEMA, ChangeDetectorRef } from '@angular/core';
 import { Store, Action } from '@ngrx/store';
@@ -11,6 +11,7 @@ import { Title } from '@angular/platform-browser';
 import { FormBuilder } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { EventComponent } from '../event/event.component';
+import { EventGetAction } from '../event/event.reducer';
 
 describe('TimelineComponent', () => {
 
@@ -79,17 +80,27 @@ describe('TimelineComponent', () => {
       it('should dispatch EVENT_GET action', () => {
         spyOn(mockStore, 'dispatch');
         component.openTimelineEvent('some-event-id');
-        expect(mockStore.dispatch).toHaveBeenCalledWith({
+        expect(mockStore.dispatch).toHaveBeenCalledWith(<EventGetAction> {
           type: 'EVENT_GET',
           payload: 'some-event-id',
         });
       });
       it('should open modal', () => {
-        spyOn(mockModalService, 'open');
+        spyOn(mockModalService, 'open').and.callThrough();
         component.timeline = <any> 'timeline stub';
         component.openTimelineEvent('some-event-id');
         expect(mockModalService.open).toHaveBeenCalledWith(EventComponent, { size: 'lg' });
       });
+      it('should dispatch TIMELINE_GET action on modal close', fakeAsync(() => {
+        spyOn(mockStore, 'dispatch');
+        component.timeline = <any> { id: 'some-timeline-id' };
+        component.openTimelineEvent('some-event-id');
+        flushMicrotasks();
+        expect(mockStore.dispatch).toHaveBeenCalledWith(<TimelineGetAction> {
+          type: 'TIMELINE_GET',
+          payload: 'some-timeline-id',
+        });
+      }));
     });
 
     it('should dispatch TIMELINE_GET on init', () => {

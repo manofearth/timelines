@@ -12,7 +12,7 @@ export type EventStatus = 'NEW' | 'INSERTING' | 'INSERTED' | 'UPDATING' | 'UPDAT
 
 export type EventActionType = 'EVENT_CREATE' | 'EVENT_UPDATE' | 'EVENT_UPDATE_SUCCESS' | 'EVENT_UPDATE_ERROR'
   | 'EVENT_INSERT' | 'EVENT_INSERT_SUCCESS' | 'EVENT_INSERT_ERROR' | 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE'
-  | 'EVENT_GET' | 'EVENT_GET_SUCCESS' | 'EVENT_GET_ERROR';
+  | 'EVENT_GET' | 'EVENT_GET_SUCCESS' | 'EVENT_GET_ERROR' | 'EVENT_ERASE';
 
 export interface EventActionBase extends Action {
   type: EventActionType;
@@ -74,9 +74,13 @@ export interface EventInsertAndAttachToTimelineAction extends EventActionBase {
   };
 }
 
+export interface EventEraseAction extends EventActionBase {
+  type: 'EVENT_ERASE';
+}
+
 export type EventAction = EventGetAction | EventCreateAction | EventUpdateAction | EventUpdateSuccessAction
   | EventUpdateErrorAction | EventInsertAction | EventInsertSuccessAction | EventInsertErrorAction
-  | EventInsertAndAttachToTimelineAction | EventGetSuccessAction | EventGetErrorAction;
+  | EventInsertAndAttachToTimelineAction | EventGetSuccessAction | EventGetErrorAction | EventEraseAction;
 
 export function eventReducer(state: EventState, action: EventAction): EventState {
 
@@ -146,6 +150,12 @@ export function eventReducer(state: EventState, action: EventAction): EventState
         status: 'ERROR',
         error: action.payload,
         event: state.event,
+      };
+    case 'EVENT_ERASE':
+      return {
+        status: null,
+        error: null,
+        event: null,
       };
     default:
       return state;
