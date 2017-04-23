@@ -19,10 +19,11 @@
 - [x] Edit event. Date field
 - [x] Save event
 - [x] Edit timeline. Events list
-- [ ] Edit timeline. Edit event
+- [x] Edit timeline. Edit event
 - [ ] Chart
 - [ ] Chart. Scaling
 - [ ] Edit timeline. Search event before creating
+- [ ] Edit timeline. Detach event
 - [ ] Edit timeline. Events groups
 - [ ] Edit timeline. Add events group
 - [ ] Edit timeline. Edit events group

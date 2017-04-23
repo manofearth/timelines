@@ -11,7 +11,7 @@ import { Title } from '@angular/platform-browser';
 import { FormBuilder } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { EventComponent } from '../event/event.component';
-import { EventGetAction } from '../event/event.reducer';
+import { EventEraseAction, EventGetAction } from '../event/event.reducer';
 
 describe('TimelineComponent', () => {
 
@@ -59,46 +59,92 @@ describe('TimelineComponent', () => {
     });
 
     describe('createAndOpenTimelineEvent()', () => {
-      it('should dispatch EVENT_CREATE action', () => {
+
+      it('should dispatch EVENT_CREATE action', fakeAsync(() => {
         spyOn(mockStore, 'dispatch');
         component.createAndOpenTimelineEvent('some event title');
         expect(mockStore.dispatch).toHaveBeenCalledWith({
           type: 'EVENT_CREATE',
           payload: 'some event title',
         });
-      });
-      it('should open modal', () => {
+      }));
+
+      it('should open modal', fakeAsync(() => {
         spyOn(mockModalService, 'open').and.callThrough();
         component.timeline = <any> 'timeline stub';
         component.createAndOpenTimelineEvent('some event title');
         expect(mockModalService.open).toHaveBeenCalledWith(EventComponent, { size: 'lg' });
         expect(mockModalRef.componentInstance.attachToTimeline).toBe('timeline stub');
-      });
+      }));
+
+      it('should dispatch EVENT_ERASE action on modal close', fakeAsync(() => {
+        spyOn(mockStore, 'dispatch');
+        component.createAndOpenTimelineEvent('some event title');
+        flushMicrotasks(); // to resolve modal.result promise
+        expect(mockStore.dispatch).toHaveBeenCalledWith(<EventEraseAction> {
+          type: 'EVENT_ERASE',
+        });
+      }));
+
+      it('should dispatch EVENT_ERASE action on modal dismiss', fakeAsync(() => {
+        spyOn(mockStore, 'dispatch');
+        mockModalRef.result = Promise.reject('some reject reason');
+        component.createAndOpenTimelineEvent('some event title');
+        flushMicrotasks(); // to resolve modal.result promise
+        expect(mockStore.dispatch).toHaveBeenCalledWith(<EventEraseAction> {
+          type: 'EVENT_ERASE',
+        });
+      }));
     });
 
     describe('openTimelineEvent()', () => {
-      it('should dispatch EVENT_GET action', () => {
+
+      beforeEach(() => {
+        component.timeline = <any> { id: 'some-timeline-id' };
+      });
+
+      it('should dispatch EVENT_GET action', fakeAsync(() => {
         spyOn(mockStore, 'dispatch');
         component.openTimelineEvent('some-event-id');
         expect(mockStore.dispatch).toHaveBeenCalledWith(<EventGetAction> {
           type: 'EVENT_GET',
           payload: 'some-event-id',
         });
-      });
-      it('should open modal', () => {
+      }));
+
+      it('should open modal', fakeAsync(() => {
         spyOn(mockModalService, 'open').and.callThrough();
         component.timeline = <any> 'timeline stub';
         component.openTimelineEvent('some-event-id');
         expect(mockModalService.open).toHaveBeenCalledWith(EventComponent, { size: 'lg' });
-      });
+      }));
+
       it('should dispatch TIMELINE_GET action on modal close', fakeAsync(() => {
         spyOn(mockStore, 'dispatch');
-        component.timeline = <any> { id: 'some-timeline-id' };
         component.openTimelineEvent('some-event-id');
-        flushMicrotasks();
+        flushMicrotasks(); // to resolve modal.result promise
         expect(mockStore.dispatch).toHaveBeenCalledWith(<TimelineGetAction> {
           type: 'TIMELINE_GET',
           payload: 'some-timeline-id',
+        });
+      }));
+
+      it('should dispatch EVENT_ERASE action on modal close', fakeAsync(() => {
+        spyOn(mockStore, 'dispatch');
+        component.openTimelineEvent('some-event-id');
+        flushMicrotasks(); // to resolve modal.result promise
+        expect(mockStore.dispatch).toHaveBeenCalledWith(<EventEraseAction> {
+          type: 'EVENT_ERASE',
+        });
+      }));
+
+      it('should dispatch EVENT_ERASE action on modal dismiss', fakeAsync(() => {
+        spyOn(mockStore, 'dispatch');
+        mockModalRef.result = Promise.reject('some reject reason');
+        component.openTimelineEvent('some-event-id');
+        flushMicrotasks(); // to resolve modal.result promise
+        expect(mockStore.dispatch).toHaveBeenCalledWith(<EventEraseAction> {
+          type: 'EVENT_ERASE',
         });
       }));
     });
