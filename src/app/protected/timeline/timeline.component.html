@@ -1,6 +1,7 @@
 <div *ngIf="isLoading" class="alert alert-info">Загружается...</div>
 <div *ngIf="error" class="alert alert-danger">{{ error.message }}</div>
 <div *ngIf="timeline" class="container-fluid">
+  <tl-chart></tl-chart>
   <form [formGroup]="form">
     <div class="row">
       <input class="form-control title" id="input-title" type="text" title="Название" formControlName="title">

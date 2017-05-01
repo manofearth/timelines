@@ -12,6 +12,8 @@ import { EventComponent } from './event/event.component';
 import { SelectorComponent } from './shared/selector/selector.component';
 import { DateParser } from './shared/date-parser/date-parser.service';
 import { DateDirective } from './date/date.directive';
+import { ChartComponent } from './chart/chart.component';
+import { D3Service } from './d3/d3.service';
 
 const routes: Routes = [
   {
@@ -48,10 +50,12 @@ const routes: Routes = [
     EventComponent,
     SelectorComponent,
     DateDirective,
+    ChartComponent,
   ],
   providers: [
     TimelineCanDeactivate,
     DateParser,
+    D3Service,
   ],
   entryComponents: [
     EventComponent,
