@@ -14,6 +14,7 @@ import { DateParser } from './shared/date-parser/date-parser.service';
 import { DateDirective } from './date/date.directive';
 import { ChartComponent } from './chart/chart.component';
 import { D3Service } from './d3/d3.service';
+import { WindowService } from './window/window.service';
 
 const routes: Routes = [
   {
@@ -56,6 +57,7 @@ const routes: Routes = [
     TimelineCanDeactivate,
     DateParser,
     D3Service,
+    WindowService,
   ],
   entryComponents: [
     EventComponent,
