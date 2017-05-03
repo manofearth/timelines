@@ -104,6 +104,8 @@ function toTimeline(firebaseTimeline: FirebaseTimeline, firebaseEvents: Firebase
     events: firebaseEvents.map((firebaseEvent: FirebaseTimelineEvent) => ({
       id: firebaseEvent.$key,
       title: firebaseEvent.title,
+      dateBegin: firebaseEvent.dateBegin,
+      dateEnd: firebaseEvent.dateEnd,
     }))
   };
 }
