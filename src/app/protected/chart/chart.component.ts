@@ -7,6 +7,7 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
+  ViewEncapsulation,
 } from '@angular/core';
 import { D3Service } from '../d3/d3.service';
 import { WindowService } from '../window/window.service';
@@ -19,6 +20,7 @@ import { TimelineEventForTimeline } from '../timeline/timeline.reducer';
   templateUrl: './chart.component.html',
   styleUrls: ['./chart.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
 })
 export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
 
@@ -26,6 +28,8 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('svg') svg: ElementRef;
 
   private windowResizeSubscription: Subscription;
+  private _data: TimelineEventForTimeline[];
+  private canvasHeight = 170;
 
   constructor(
     private d3: D3Service,
@@ -35,10 +39,10 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngOnInit(): void {
 
-    this.refreshSvgSizes();
+    this.redraw();
 
     this.windowResizeSubscription = this.window.resize$.subscribe(() => {
-      this.refreshSvgSizes();
+      this.redraw();
     });
   }
 
@@ -47,41 +51,73 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngAfterViewChecked(): void {
-    this.refreshSvgSizes();
+    this.redraw();
   }
 
   get width(): number {
-    return this.window.getComputedWidthAsInt(this.container.nativeElement);
+    return this.container.nativeElement.clientWidth - 5;
   }
 
   get height(): number {
-    return this.window.getComputedHeightAsInt(this.container.nativeElement);
+    return this.canvasHeight;
   }
 
   @Input('data')
   set data(data: TimelineEventForTimeline[]) {
-    const selection = this
-      .selectSvg()
-      .selectAll('rect')
-      .data(data);
-
-    selection
-      .enter()
-      .append('rect')
-      .merge(selection) // enter + update
-      .attr('x', (d: TimelineEventForTimeline, i) => (d.dateBegin.days / 10).toFixed(0))
-      .attr('y', (d, i) => i * 21)
-      .attr('width', (d: TimelineEventForTimeline, i) => ((d.dateEnd.days - d.dateBegin.days) / 10).toFixed(0))
-      .attr('height', 20);
+    this._data = data;
+    this.redraw();
   }
 
   private selectSvg(): Selection<Element, any, null, undefined> {
     return this.d3.select(this.svg.nativeElement);
   }
 
-  private refreshSvgSizes() {
+  private redraw() {
     this.selectSvg()
       .attr('width', this.width)
       .attr('height', this.height);
+
+    const xScale = this.d3.scaleLinear()
+      .domain(eventsDomain(this._data))
+      .rangeRound([0, this.width]);
+
+    const yScale = this.d3.scaleLinear()
+      .domain([0, this._data.length])
+      .rangeRound([0, this.height]);
+
+    const selection = this
+      .selectSvg()
+      .selectAll('rect')
+      .data(this._data);
+
+    selection
+      .enter()
+      .append('rect')
+      .classed('bar', true)
+      .merge(selection) // enter + update
+      .attr('x', (d: TimelineEventForTimeline) => xScale(d.dateBegin.days))
+      .attr('y', (d, i) => yScale(i))
+      .attr('width', (d: TimelineEventForTimeline) =>
+        xScale(d.dateEnd.days) - xScale(d.dateBegin.days)
+      )
+      .attr('height', (d, i) => yScale(i+1) - yScale(i) - 2);
   }
+}
+
+function eventsDomain(events: TimelineEventForTimeline[]): [number, number] {
+  const min = events
+    .map((event: TimelineEventForTimeline): number => event.dateBegin.days)
+    .reduce(
+      (prev: number, cur: number): number => Math.min(prev, cur),
+      0
+    );
+
+  const max = events
+    .map((event: TimelineEventForTimeline): number => event.dateEnd.days)
+    .reduce(
+      (prev: number, cur: number): number => Math.max(prev, cur),
+      0
+    );
+
+  return [min, max];
 }
