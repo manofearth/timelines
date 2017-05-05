@@ -73,38 +73,41 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private redraw() {
+
+    const data: TimelineEventForTimelineWithYPosition[] = toEventWithYPosition(this._data);
+
     this.selectSvg()
       .attr('width', this.width)
       .attr('height', this.height);
 
     const xScale = this.d3.scaleLinear()
-      .domain(eventsDomain(this._data))
+      .domain(eventsXDomain(data))
       .rangeRound([0, this.width]);
 
     const yScale = this.d3.scaleLinear()
-      .domain([0, this._data.length])
+      .domain(eventsYDomain(data))
       .rangeRound([0, this.height]);
 
     const selection = this
       .selectSvg()
       .selectAll('rect')
-      .data(this._data);
+      .data(data);
 
     selection
       .enter()
       .append('rect')
       .classed('bar', true)
       .merge(selection) // enter + update
-      .attr('x', (d: TimelineEventForTimeline) => xScale(d.dateBegin.days))
-      .attr('y', (d, i) => yScale(i))
+      .attr('x', (d: TimelineEventForTimelineWithYPosition) => xScale(d.dateBegin.days))
+      .attr('y', (d: TimelineEventForTimelineWithYPosition) => yScale(d.ypos))
       .attr('width', (d: TimelineEventForTimeline) =>
         xScale(d.dateEnd.days) - xScale(d.dateBegin.days)
       )
-      .attr('height', (d, i) => yScale(i+1) - yScale(i) - 2);
+      .attr('height', (d, i) => yScale(i + 1) - yScale(i) - 2);
   }
 }
 
-function eventsDomain(events: TimelineEventForTimeline[]): [number, number] {
+function eventsXDomain(events: TimelineEventForTimeline[]): [number, number] {
   const min = events
     .map((event: TimelineEventForTimeline): number => event.dateBegin.days)
     .reduce(
@@ -120,4 +123,39 @@ function eventsDomain(events: TimelineEventForTimeline[]): [number, number] {
     );
 
   return [min, max];
+}
+
+function eventsYDomain(events: TimelineEventForTimelineWithYPosition[]): [number, number] {
+  return [
+    0,
+    events
+      .map((event: TimelineEventForTimelineWithYPosition) => event.ypos)
+      .reduce((prev: number, cur: number) => Math.max(prev, cur))
+  ];
+}
+
+function toEventWithYPosition(events: TimelineEventForTimeline[]): TimelineEventForTimelineWithYPosition[] {
+
+  const levels: TimelineEventForTimeline[][] = [];
+
+  return events.map((event: TimelineEventForTimeline): TimelineEventForTimelineWithYPosition => {
+    const levelIndex = levels.findIndex((level: TimelineEventForTimeline[]): boolean => {
+      return level.every((eventInLevel: TimelineEventForTimeline) => {
+        return eventInLevel.dateBegin.days >= event.dateEnd.days || eventInLevel.dateEnd.days <= event.dateBegin.days;
+      });
+    });
+
+    if (levelIndex === -1) {
+      levels.push([event]);
+      return { ...event, ypos: levels.length - 1 };
+    } else {
+      levels[levelIndex].push(event);
+      return { ...event, ypos: levelIndex };
+    }
+
+  });
+}
+
+interface  TimelineEventForTimelineWithYPosition extends TimelineEventForTimeline {
+  ypos: number;
 }
