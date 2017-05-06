@@ -9,6 +9,7 @@ import {
   Timeline,
   TimelineChangedAction,
   TimelineChangedPayload,
+  TimelineEventForTimeline,
 } from './timeline.reducer';
 import { ActivatedRoute, Params } from '@angular/router';
 import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
@@ -114,6 +115,10 @@ export class TimelineComponent implements OnInit, OnDestroy {
         this.dispatchEventEraseAction();
       },
     );
+  }
+
+  onBarSelect(event: TimelineEventForTimeline) {
+    this.openTimelineEvent(event.id);
   }
 
   private dispatchEventEraseAction() {

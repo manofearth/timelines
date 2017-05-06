@@ -3,9 +3,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
+  Output,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
@@ -26,6 +28,8 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   @ViewChild('container') container: ElementRef;
   @ViewChild('svg') svg: ElementRef;
+
+  @Output('onSelect') onSelect: EventEmitter<TimelineEventForTimeline> = new EventEmitter();
 
   private windowResizeSubscription: Subscription;
   private _data: TimelineEventForTimeline[];
@@ -82,28 +86,60 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     const xScale = this.d3.scaleLinear()
       .domain(eventsXDomain(data))
-      .rangeRound([0, this.width]);
+      .range([0, this.width]);
 
     const yScale = this.d3.scaleLinear()
       .domain(eventsYDomain(data))
-      .rangeRound([0, this.height]);
+      .range([0, this.height]);
 
-    const selection = this
+    const bars = this
       .selectSvg()
       .selectAll('rect')
       .data(data);
 
-    selection
+    bars.exit().remove();
+
+    bars
       .enter()
       .append('rect')
       .classed('bar', true)
-      .merge(selection) // enter + update
+      .on('click', (d: TimelineEventForTimeline) => {
+        this.onSelect.emit(d);
+      })
+      .merge(bars) // enter + update
       .attr('x', (d: TimelineEventForTimelineWithYPosition) => xScale(d.dateBegin.days))
-      .attr('y', (d: TimelineEventForTimelineWithYPosition) => yScale(d.ypos))
+      .attr('y', (d: TimelineEventForTimelineWithYPosition) => yScale(d.yPos))
       .attr('width', (d: TimelineEventForTimeline) =>
         xScale(d.dateEnd.days) - xScale(d.dateBegin.days)
       )
-      .attr('height', (d, i) => yScale(i + 1) - yScale(i) - 2);
+      .attr('height', (d: TimelineEventForTimelineWithYPosition) =>
+        yScale(d.yPos + 1) - yScale(d.yPos) - 2
+      );
+
+    const texts = this
+      .selectSvg()
+      .selectAll('text')
+      .data(data);
+
+    texts.exit().remove();
+
+    texts
+      .enter()
+      .append('text')
+      .classed('title', true)
+      .attr('alignment-baseline', 'middle')
+      .merge(texts) // enter + update
+      .text((d: TimelineEventForTimeline) => d.title)
+      .attr('x', (d: TimelineEventForTimelineWithYPosition) => xScale(d.dateBegin.days))
+      .attr('dx', 4)
+      .attr('y', (d: TimelineEventForTimelineWithYPosition) => yScale(d.yPos))
+      .attr('dy', (d: TimelineEventForTimelineWithYPosition) => (yScale(d.yPos + 1) - yScale(d.yPos) - 2) / 2)
+      .attr('width', (d: TimelineEventForTimeline) =>
+        xScale(d.dateEnd.days) - xScale(d.dateBegin.days)
+      )
+      .attr('height', (d: TimelineEventForTimelineWithYPosition) =>
+        yScale(d.yPos + 1) - yScale(d.yPos) - 2
+      );
   }
 }
 
@@ -129,7 +165,7 @@ function eventsYDomain(events: TimelineEventForTimelineWithYPosition[]): [number
   return [
     0,
     events
-      .map((event: TimelineEventForTimelineWithYPosition) => event.ypos)
+      .map((event: TimelineEventForTimelineWithYPosition) => event.yPos)
       .reduce((prev: number, cur: number) => Math.max(prev, cur))
   ];
 }
@@ -147,15 +183,15 @@ function toEventWithYPosition(events: TimelineEventForTimeline[]): TimelineEvent
 
     if (levelIndex === -1) {
       levels.push([event]);
-      return { ...event, ypos: levels.length - 1 };
+      return { ...event, yPos: levels.length - 1 };
     } else {
       levels[levelIndex].push(event);
-      return { ...event, ypos: levelIndex };
+      return { ...event, yPos: levelIndex };
     }
 
   });
 }
 
 interface  TimelineEventForTimelineWithYPosition extends TimelineEventForTimeline {
-  ypos: number;
+  yPos: number;
 }
