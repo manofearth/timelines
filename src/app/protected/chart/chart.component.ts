@@ -106,6 +106,12 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
       .on('click', (d: TimelineEventForTimeline) => {
         this.onSelect.emit(d);
       })
+      .on('mouseover', () => {
+        this.d3.selectEventTarget().classed('mouseover', true);
+      })
+      .on('mouseout', () => {
+        this.d3.selectEventTarget().classed('mouseover', false);
+      })
       .merge(bars) // enter + update
       .attr('x', (d: TimelineEventForTimelineWithYPosition) => xScale(d.dateBegin.days))
       .attr('y', (d: TimelineEventForTimelineWithYPosition) => yScale(d.yPos))
@@ -118,7 +124,7 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     const texts = this
       .selectSvg()
-      .selectAll('text')
+      .selectAll('text.title')
       .data(data);
 
     texts.exit().remove();
@@ -128,6 +134,7 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
       .append('text')
       .classed('title', true)
       .attr('alignment-baseline', 'middle')
+      .attr('pointer-events', 'none')
       .merge(texts) // enter + update
       .text((d: TimelineEventForTimeline) => d.title)
       .attr('x', (d: TimelineEventForTimelineWithYPosition) => xScale(d.dateBegin.days))
@@ -140,6 +147,11 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
       .attr('height', (d: TimelineEventForTimelineWithYPosition) =>
         yScale(d.yPos + 1) - yScale(d.yPos) - 2
       );
+
+    this.selectSvg().select('g')
+      .attr('transform', 'translate(0,' + (this.height - 20) + ')')
+      .call(this.d3.axisBottom(xScale));
+
   }
 }
 
