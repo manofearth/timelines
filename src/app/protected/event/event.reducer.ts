@@ -12,7 +12,8 @@ export type EventStatus = 'NEW' | 'INSERTING' | 'INSERTED' | 'UPDATING' | 'UPDAT
 
 export type EventActionType = 'EVENT_CREATE' | 'EVENT_UPDATE' | 'EVENT_UPDATE_SUCCESS' | 'EVENT_UPDATE_ERROR'
   | 'EVENT_INSERT' | 'EVENT_INSERT_SUCCESS' | 'EVENT_INSERT_ERROR' | 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE'
-  | 'EVENT_GET' | 'EVENT_GET_SUCCESS' | 'EVENT_GET_ERROR' | 'EVENT_ERASE';
+  | 'EVENT_GET' | 'EVENT_GET_SUCCESS' | 'EVENT_GET_ERROR' | 'EVENT_ERASE' | 'EVENT_DETACH' | 'EVENT_DETACH_SUCCESS'
+  | 'EVENT_DETACH_ERROR';
 
 export interface EventActionBase extends Action {
   type: EventActionType;
@@ -78,9 +79,27 @@ export interface EventEraseAction extends EventActionBase {
   type: 'EVENT_ERASE';
 }
 
+export interface EventDetachAction extends EventActionBase {
+  type: 'EVENT_DETACH';
+  payload: {
+    timelineId: string;
+    eventId: string;
+  };
+}
+
+export interface EventDetachSuccessAction extends EventActionBase {
+  type: 'EVENT_DETACH_SUCCESS';
+}
+
+export interface EventDetachErrorAction extends EventActionBase {
+  type: 'EVENT_DETACH_ERROR';
+  payload: Error;
+}
+
 export type EventAction = EventGetAction | EventCreateAction | EventUpdateAction | EventUpdateSuccessAction
   | EventUpdateErrorAction | EventInsertAction | EventInsertSuccessAction | EventInsertErrorAction
-  | EventInsertAndAttachToTimelineAction | EventGetSuccessAction | EventGetErrorAction | EventEraseAction;
+  | EventInsertAndAttachToTimelineAction | EventGetSuccessAction | EventGetErrorAction | EventEraseAction
+  | EventDetachAction | EventDetachSuccessAction | EventDetachErrorAction;
 
 export function eventReducer(state: EventState, action: EventAction): EventState {
 

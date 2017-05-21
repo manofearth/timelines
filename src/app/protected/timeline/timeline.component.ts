@@ -16,7 +16,7 @@ import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EventComponent } from '../event/event.component';
-import { EventCreateAction, EventEraseAction, EventGetAction } from '../event/event.reducer';
+import { EventCreateAction, EventDetachAction, EventEraseAction, EventGetAction } from '../event/event.reducer';
 
 @Component({
   templateUrl: './timeline.component.html',
@@ -115,6 +115,16 @@ export class TimelineComponent implements OnInit, OnDestroy {
         this.dispatchEventEraseAction();
       },
     );
+  }
+
+  detachEvent(event: TimelineEventForTimeline) {
+    this.store.dispatch(<EventDetachAction> {
+      type: 'EVENT_DETACH',
+      payload: {
+        timelineId: this.timeline.id,
+        eventId: event.id,
+      }
+    });
   }
 
   onBarSelect(event: TimelineEventForTimeline) {

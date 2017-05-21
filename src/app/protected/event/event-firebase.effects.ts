@@ -1,17 +1,20 @@
 import { Observable } from '../../shared/rxjs';
 import {
+  EventAction,
   EventActionType,
-  EventUpdateAction,
-  EventUpdateSuccessAction,
-  EventUpdateErrorAction,
-  EventInsertSuccessAction,
-  EventInsertErrorAction,
+  EventDetachAction,
+  EventDetachErrorAction,
+  EventDetachSuccessAction,
+  EventGetAction,
+  EventGetErrorAction,
+  EventGetSuccessAction,
   EventInsertAction,
   EventInsertAndAttachToTimelineAction,
-  EventAction,
-  EventGetSuccessAction,
-  EventGetErrorAction,
-  EventGetAction,
+  EventInsertErrorAction,
+  EventInsertSuccessAction,
+  EventUpdateAction,
+  EventUpdateErrorAction,
+  EventUpdateSuccessAction
 } from './event.reducer';
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
@@ -67,13 +70,13 @@ export class EventFirebaseEffects extends ProtectedFirebaseEffects<EventActionTy
         )
         .mergeMap((ref: firebase.database.ThenableReference) =>
           Observable.forkJoin(
-              this.fire.database.object(
-                this.getFirebaseUserPath() + '/timelines/' + action.payload.timeline.id + '/events/' + ref.key
-              ).set(true),
-              this.fire.database.object(
-                this.getFirebaseObjectPath(ref.key) + '/timelines/' + action.payload.timeline.id
-              ).set(true)
-            )
+            this.fire.database.object(
+              this.getTimelineAttachedEventPath(action.payload.timeline.id, ref.key)
+            ).set(true),
+            this.fire.database.object(
+              this.getEventAttachedTimelinePath(ref.key, action.payload.timeline.id)
+            ).set(true)
+          )
             .map(() => ref)
         )
         .map((ref: firebase.database.ThenableReference): EventInsertSuccessAction => ({
@@ -104,12 +107,43 @@ export class EventFirebaseEffects extends ProtectedFirebaseEffects<EventActionTy
         )
     );
 
+  @Effect() detach: Observable<EventDetachSuccessAction | EventDetachErrorAction> = this
+    .authorizedActionsOfType('EVENT_DETACH')
+    .mergeMap((action: EventDetachAction) =>
+      Observable
+        .forkJoin(
+          this.fire.database.object(
+            this.getTimelineAttachedEventPath(action.payload.timelineId, action.payload.eventId)
+          ).remove(),
+          this.fire.database.object(
+            this.getEventAttachedTimelinePath(action.payload.eventId, action.payload.timelineId)
+          ).remove()
+        )
+        .map((): EventDetachSuccessAction => ({
+          type: 'EVENT_DETACH_SUCCESS',
+        }))
+        .catch((error: Error | string): Observable<EventDetachErrorAction> =>
+          Observable.of<EventDetachErrorAction>({
+            type: 'EVENT_DETACH_ERROR',
+            payload: toError(error),
+          })
+        )
+    );
+
   constructor(actions: Actions, fire: AngularFire) {
     super(actions, fire);
   }
 
   protected getFirebaseNodeName(): string {
     return 'events';
+  }
+
+  private getEventAttachedTimelinePath(eventId: string, timelineId: string): string {
+    return this.getFirebaseObjectPath(eventId) + '/timelines/' + timelineId;
+  }
+
+  private getTimelineAttachedEventPath(timelineId: string, eventId: string): string {
+    return this.getFirebaseUserPath() + '/timelines/' + timelineId + '/events/' + eventId;
   }
 
 }

@@ -102,7 +102,10 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     this.selectSvg().select('g')
       .attr('transform', 'translate(0,' + (this.height - this.margins.bottom + 5) + ')')
-      .call(this.d3.axisBottom(axisXScale));
+      .call(
+        this.d3.axisBottom(axisXScale)
+          .tickFormat((v: number) => Number.isInteger(v) ? (v).toFixed(0) : '')
+      );
 
     const yScale = this.d3.scaleLinear()
       .domain(eventsYDomain(data))

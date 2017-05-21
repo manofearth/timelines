@@ -1,6 +1,12 @@
 import {
-  Component, OnInit, EventEmitter, Input, ChangeDetectionStrategy, Output, ViewChild,
-  ElementRef
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
