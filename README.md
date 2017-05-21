@@ -20,8 +20,7 @@
 - [x] Save event
 - [x] Edit timeline. Events list
 - [x] Edit timeline. Edit event
-- [ ] Chart
-- [ ] Chart. Scaling
+- [x] Chart
 - [ ] Edit timeline. Search event before creating
 - [ ] Edit timeline. Detach event
 - [ ] Edit timeline. Events groups
@@ -42,4 +41,5 @@
 - [ ] Info sources list
 - [ ] Info sources list. Create new
 - [ ] Info sources list. Delete
+- [ ] Chart. Scaling
 - [ ] Internationalization

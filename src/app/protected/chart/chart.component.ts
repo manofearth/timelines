@@ -9,7 +9,7 @@ import {
   OnInit,
   Output,
   ViewChild,
-  ViewEncapsulation,
+  ViewEncapsulation
 } from '@angular/core';
 import { D3Service } from '../d3/d3.service';
 import { WindowService } from '../window/window.service';
@@ -33,7 +33,13 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   private windowResizeSubscription: Subscription;
   private _data: TimelineEventForTimeline[];
-  private canvasHeight = 170;
+  private canvasHeight = 180;
+  private margins = {
+    top: 0,
+    bottom: 30,
+    left: 10,
+    right: 10,
+  };
 
   constructor(
     private d3: D3Service,
@@ -84,13 +90,22 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
       .attr('width', this.width)
       .attr('height', this.height);
 
+    const axisXDomain = eventsXDomain(data);
+
     const xScale = this.d3.scaleLinear()
-      .domain(eventsXDomain(data))
-      .range([0, this.width]);
+      .domain(axisXDomain)
+      .range([this.margins.left, this.width - this.margins.right]);
+
+    const axisScale = xScale
+      .domain(axisXDomain.map(v => v / DAYS_IN_GRIGORIAN_YEAR));
+
+    this.selectSvg().select('g')
+      .attr('transform', 'translate(0,' + (this.height - this.margins.bottom + 5) + ')')
+      .call(this.d3.axisBottom(axisScale));
 
     const yScale = this.d3.scaleLinear()
       .domain(eventsYDomain(data))
-      .range([0, this.height]);
+      .range([this.margins.top, this.height - this.margins.bottom]);
 
     const bars = this
       .selectSvg()
@@ -148,10 +163,6 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
         yScale(d.yPos + 1) - yScale(d.yPos) - 2
       );
 
-    this.selectSvg().select('g')
-      .attr('transform', 'translate(0,' + (this.height - 20) + ')')
-      .call(this.d3.axisBottom(xScale));
-
   }
 }
 
@@ -173,12 +184,14 @@ function eventsXDomain(events: TimelineEventForTimeline[]): [number, number] {
   return [min, max];
 }
 
+const DAYS_IN_GRIGORIAN_YEAR = 365.2425;
+
 function eventsYDomain(events: TimelineEventForTimelineWithYPosition[]): [number, number] {
   return [
     0,
     events
       .map((event: TimelineEventForTimelineWithYPosition) => event.yPos)
-      .reduce((prev: number, cur: number) => Math.max(prev, cur))
+      .reduce((prev: number, cur: number) => Math.max(prev, cur), 0) + 1
   ];
 }
 
