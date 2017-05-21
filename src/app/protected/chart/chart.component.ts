@@ -96,12 +96,13 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
       .domain(axisXDomain)
       .range([this.margins.left, this.width - this.margins.right]);
 
-    const axisScale = xScale
-      .domain(axisXDomain.map(v => v / DAYS_IN_GRIGORIAN_YEAR));
+    const axisXScale = this.d3.scaleLinear()
+      .domain(axisXDomain.map(v => v / DAYS_IN_GRIGORIAN_YEAR))
+      .range([this.margins.left, this.width - this.margins.right]);
 
     this.selectSvg().select('g')
       .attr('transform', 'translate(0,' + (this.height - this.margins.bottom + 5) + ')')
-      .call(this.d3.axisBottom(axisScale));
+      .call(this.d3.axisBottom(axisXScale));
 
     const yScale = this.d3.scaleLinear()
       .domain(eventsYDomain(data))

@@ -21,8 +21,8 @@
 - [x] Edit timeline. Events list
 - [x] Edit timeline. Edit event
 - [x] Chart
-- [ ] Edit timeline. Search event before creating
 - [ ] Edit timeline. Detach event
+- [ ] Edit timeline. Search event before creating
 - [ ] Edit timeline. Events groups
 - [ ] Edit timeline. Add events group
 - [ ] Edit timeline. Edit events group

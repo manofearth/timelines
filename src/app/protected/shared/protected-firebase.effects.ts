@@ -27,7 +27,7 @@ export abstract class ProtectedFirebaseEffects<TActionType extends string, TActi
 
   protected getFirebaseObject(key: string): FirebaseObjectObservable<TObject> {
     if (this.firebaseObjectKey !== key) {
-      this.firebaseObject = this.fire.database.object(this.getFirebaseNodePath() + '/' + key);
+      this.firebaseObject = this.fire.database.object(this.getFirebaseObjectPath(key));
       this.firebaseObjectKey = key;
     }
     return this.firebaseObject;
@@ -42,12 +42,16 @@ export abstract class ProtectedFirebaseEffects<TActionType extends string, TActi
 
   protected abstract getFirebaseNodeName(): string
 
-  private getFirebaseNodePath(): string {
-    return this.getFirebaseUserPath() + '/' + this.getFirebaseNodeName();
+  protected getFirebaseUserPath(): string {
+    return '/private/' + this.auth.uid;
   }
 
-  protected getFirebaseUserPath() {
-    return '/private/' + this.auth.uid;
+  protected getFirebaseObjectPath(key: string): string {
+    return this.getFirebaseNodePath() + '/' + key;
+  }
+
+  private getFirebaseNodePath(): string {
+    return this.getFirebaseUserPath() + '/' + this.getFirebaseNodeName();
   }
 
 }

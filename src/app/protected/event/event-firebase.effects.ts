@@ -66,10 +66,12 @@ export class EventFirebaseEffects extends ProtectedFirebaseEffects<EventActionTy
           <any>this.getFirebaseList().push(toFirebaseEventUpdateObject(action.payload.event))
         )
         .mergeMap((ref: firebase.database.ThenableReference) =>
-          Observable
-            .fromPromise(<Promise<void>>
+          Observable.forkJoin(
               this.fire.database.object(
                 this.getFirebaseUserPath() + '/timelines/' + action.payload.timeline.id + '/events/' + ref.key
+              ).set(true),
+              this.fire.database.object(
+                this.getFirebaseObjectPath(ref.key) + '/timelines/' + action.payload.timeline.id
               ).set(true)
             )
             .map(() => ref)
