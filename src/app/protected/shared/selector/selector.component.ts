@@ -1,4 +1,7 @@
-import { Component, OnInit, EventEmitter, Input, ChangeDetectionStrategy, Output } from '@angular/core';
+import {
+  Component, OnInit, EventEmitter, Input, ChangeDetectionStrategy, Output, ViewChild,
+  ElementRef
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -15,11 +18,19 @@ export class SelectorComponent implements OnInit {
 
   @Input('placeholder') placeholder: string;
 
+  @ViewChild('btnCreate') btnCreate: ElementRef;
+
   ngOnInit() {
     this.inputControl = new FormControl();
   }
 
   emitCreateEvent() {
     this.create.emit(this.inputControl.value);
+  }
+
+  onEnterKey() {
+    // workaround for bug: https://github.com/ng-bootstrap/ng-bootstrap/issues/1252#issuecomment-294338294
+    this.btnCreate.nativeElement.focus();
+    this.emitCreateEvent();
   }
 }

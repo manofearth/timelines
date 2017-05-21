@@ -5,8 +5,8 @@
       class="form-control"
       placeholder="{{placeholder}}"
       [formControl]="inputControl"
-      (keydown.enter)="emitCreateEvent()"
+      (keydown.enter)="onEnterKey()"
   >
-  <button type="button" class="btn btn-link create-button" (click)="emitCreateEvent()">Создать</button>
+  <button #btnCreate type="button" class="btn btn-link create-button" (click)="emitCreateEvent()">Создать</button>
 </div>
 
