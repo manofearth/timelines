@@ -18,26 +18,27 @@ import {
 } from './event.reducer';
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
-import { AngularFire } from 'angularfire2';
 import { TimelineEvent } from '../shared/timeline-event';
 import { TimelineDate } from '../shared/date';
 import { ProtectedFirebaseEffects, toError } from '../shared/protected-firebase.effects';
+import { EventsFirebaseService } from './events-firebase.service';
+import { AuthFirebaseService } from '../shared/auth-firebase.service';
 
 @Injectable()
-export class EventFirebaseEffects extends ProtectedFirebaseEffects<EventActionType, EventAction, TimelineEvent> {
+export class EventFirebaseEffects extends ProtectedFirebaseEffects<EventActionType, EventAction> {
 
   @Effect() update: Observable<EventUpdateSuccessAction | EventUpdateErrorAction> = this
     .authorizedActionsOfType('EVENT_UPDATE')
     .switchMap((action: EventUpdateAction) =>
       Observable
         .fromPromise(
-          <Promise<void>>this.getFirebaseObject(action.payload.id).update(toFirebaseEventUpdateObject(action.payload))
+          <Promise<void>>this.fireEvents.getObject(action.payload.id).update(toFirebaseEventUpdateObject(action.payload))
         )
         .map((): EventUpdateSuccessAction => ({
           type: 'EVENT_UPDATE_SUCCESS',
         }))
         .catch((error: Error): Observable<EventUpdateErrorAction> => Observable.of<EventUpdateErrorAction>({
-          type: 'EVENT_UPDATE_ERROR',
+          type:    'EVENT_UPDATE_ERROR',
           payload: error,
         }))
     );
@@ -47,15 +48,15 @@ export class EventFirebaseEffects extends ProtectedFirebaseEffects<EventActionTy
     .switchMap((action: EventInsertAction) =>
       Observable
         .fromPromise(
-          <any>this.getFirebaseList().push(toFirebaseEventUpdateObject(action.payload))
+          <any>this.fireEvents.getList().push(toFirebaseEventUpdateObject(action.payload))
         )
         .map((ref: { key: string }): EventInsertSuccessAction => ({
-          type: 'EVENT_INSERT_SUCCESS',
+          type:    'EVENT_INSERT_SUCCESS',
           payload: ref.key,
         }))
         .catch((error: Error | string): Observable<EventInsertErrorAction> =>
           Observable.of<EventInsertErrorAction>({
-            type: 'EVENT_INSERT_ERROR',
+            type:    'EVENT_INSERT_ERROR',
             payload: toError(error),
           })
         )
@@ -66,7 +67,7 @@ export class EventFirebaseEffects extends ProtectedFirebaseEffects<EventActionTy
     .switchMap((action: EventInsertAndAttachToTimelineAction) =>
       Observable
         .fromPromise(
-          <any>this.getFirebaseList().push(toFirebaseEventUpdateObject(action.payload.event))
+          <any>this.fireEvents.getList().push(toFirebaseEventUpdateObject(action.payload.event))
         )
         .mergeMap((ref: firebase.database.ThenableReference) =>
           Observable.forkJoin(
@@ -80,12 +81,12 @@ export class EventFirebaseEffects extends ProtectedFirebaseEffects<EventActionTy
             .map(() => ref)
         )
         .map((ref: firebase.database.ThenableReference): EventInsertSuccessAction => ({
-          type: 'EVENT_INSERT_SUCCESS',
+          type:    'EVENT_INSERT_SUCCESS',
           payload: ref.key,
         }))
         .catch((error: Error | string): Observable<EventInsertErrorAction> =>
           Observable.of<EventInsertErrorAction>({
-            type: 'EVENT_INSERT_ERROR',
+            type:    'EVENT_INSERT_ERROR',
             payload: toError(error),
           })
         )
@@ -94,14 +95,14 @@ export class EventFirebaseEffects extends ProtectedFirebaseEffects<EventActionTy
   @Effect() get: Observable<EventGetSuccessAction | EventGetErrorAction> = this
     .authorizedActionsOfType('EVENT_GET')
     .switchMap((action: EventGetAction) =>
-      this.getFirebaseObject(action.payload)
+      this.fireEvents.getObject(action.payload)
         .map((firebaseObject: FirebaseTimelineEvent): EventGetSuccessAction => ({
-          type: 'EVENT_GET_SUCCESS',
+          type:    'EVENT_GET_SUCCESS',
           payload: toTimelineEvent(firebaseObject),
         }))
         .catch((error: Error | string): Observable<EventGetErrorAction> =>
           Observable.of<EventGetErrorAction>({
-            type: 'EVENT_GET_ERROR',
+            type:    'EVENT_GET_ERROR',
             payload: toError(error),
           })
         )
@@ -124,18 +125,18 @@ export class EventFirebaseEffects extends ProtectedFirebaseEffects<EventActionTy
         }))
         .catch((error: Error | string): Observable<EventDetachErrorAction> =>
           Observable.of<EventDetachErrorAction>({
-            type: 'EVENT_DETACH_ERROR',
+            type:    'EVENT_DETACH_ERROR',
             payload: toError(error),
           })
         )
     );
 
-  constructor(actions: Actions, fire: AngularFire) {
-    super(actions, fire);
-  }
-
-  protected getFirebaseNodeName(): string {
-    return 'events';
+  constructor(
+    actions: Actions,
+    fireAuth: AuthFirebaseService,
+    private fireEvents: EventsFirebaseService,
+  ) {
+    super(actions, fireAuth);
   }
 
   private getEventAttachedTimelinePath(eventId: string, timelineId: string): string {
@@ -163,17 +164,17 @@ export interface FirebaseEventUpdateObject {
 
 function toFirebaseEventUpdateObject(event: TimelineEvent): FirebaseEventUpdateObject {
   return {
-    title: event.title,
+    title:     event.title,
     dateBegin: event.dateBegin,
-    dateEnd: event.dateEnd,
+    dateEnd:   event.dateEnd,
   };
 }
 
 function toTimelineEvent(firebaseEvent: FirebaseTimelineEvent): TimelineEvent {
   return {
-    id: firebaseEvent.$key,
-    title: firebaseEvent.title,
+    id:        firebaseEvent.$key,
+    title:     firebaseEvent.title,
     dateBegin: firebaseEvent.dateBegin,
-    dateEnd: firebaseEvent.dateEnd,
+    dateEnd:   firebaseEvent.dateEnd,
   };
 }

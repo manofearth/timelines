@@ -1,62 +1,22 @@
 import { Observable } from '../../shared/rxjs';
-import { FirebaseAuthState, AngularFire, FirebaseObjectObservable, FirebaseListObservable } from 'angularfire2';
 import { Actions } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
+import { AuthFirebaseService } from './auth-firebase.service';
 
-export abstract class ProtectedFirebaseEffects<TActionType extends string, TAction extends Action, TObject> {
+export abstract class ProtectedFirebaseEffects<TActionType extends string, TAction extends Action> {
 
-  private auth: FirebaseAuthState = null;
-  private firebaseObject: FirebaseObjectObservable<TObject> = null;
-  private firebaseObjectKey: string = null;
-  private firebaseList: FirebaseListObservable<TObject[]> = null;
-
-  constructor(private actions: Actions, protected fire: AngularFire) {
-    this.fire.auth.subscribe((auth: FirebaseAuthState) => {
-      this.auth = auth;
-      this.firebaseObject = null;
-      this.firebaseObjectKey = null;
-      this.firebaseList = null;
-    });
+  constructor(private actions: Actions, protected auth: AuthFirebaseService) {
   }
 
   protected authorizedActionsOfType(...types: TActionType[]): Observable<TAction> {
     return this.actions
       .ofType(...types)
-      .filter((action: TAction) => this.auth !== null);
-  }
-
-  protected getFirebaseObject(key: string): FirebaseObjectObservable<TObject> {
-    if (this.firebaseObjectKey !== key) {
-      this.firebaseObject = this.fire.database.object(this.getFirebaseObjectPath(key));
-      this.firebaseObjectKey = key;
-    }
-    return this.firebaseObject;
-  }
-
-  protected getFirebaseList(): FirebaseListObservable<TObject[]> {
-    if (!this.firebaseList) {
-      this.firebaseList = this.fire.database.list(this.getFirebaseNodePath());
-    }
-    return this.firebaseList;
-  }
-
-  protected abstract getFirebaseNodeName(): string
-
-  protected getFirebaseUserPath(): string {
-    return '/private/' + this.auth.uid;
-  }
-
-  protected getFirebaseObjectPath(key: string): string {
-    return this.getFirebaseNodePath() + '/' + key;
-  }
-
-  private getFirebaseNodePath(): string {
-    return this.getFirebaseUserPath() + '/' + this.getFirebaseNodeName();
+      .filter((action: TAction) => this.auth.isLoggedIn);
   }
 
 }
 
-export function toError(error: Error|string): Error {
+export function toError(error: Error | string): Error {
 
   if (error instanceof Error) {
     return error;

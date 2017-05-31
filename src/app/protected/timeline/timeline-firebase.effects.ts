@@ -1,36 +1,38 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
-import { AngularFire } from 'angularfire2';
-import { Observable, Observer, TeardownLogic, Subscription } from '../../shared/rxjs';
+import { Observable, Observer, Subscription, TeardownLogic } from '../../shared/rxjs';
 import {
-  TimelineGetSuccessAction,
-  TimelineGetErrorAction,
-  TimelineActionType,
-  TimelineAction,
-  TimelineGetAction,
   Timeline,
-  TimelineSaveSuccessAction,
-  TimelineSaveErrorAction,
+  TimelineAction,
+  TimelineActionType,
   TimelineChangedAction,
   TimelineChangedPayload,
+  TimelineGetAction,
+  TimelineGetErrorAction,
+  TimelineGetSuccessAction,
+  TimelineSaveErrorAction,
+  TimelineSaveSuccessAction
 } from './timeline.reducer';
 import { ProtectedFirebaseEffects, toError } from '../shared/protected-firebase.effects';
 import { FirebaseTimelineEvent } from '../event/event-firebase.effects';
+import { AuthFirebaseService } from '../shared/auth-firebase.service';
+import { TimelinesFirebaseService } from '../timelines/timelines-firebase.service';
+import { EventsFirebaseService } from '../event/events-firebase.service';
 
 export const SAVE_DEBOUNCE_TIME = 1000;
 
 @Injectable()
-export class TimelineFirebaseEffects extends ProtectedFirebaseEffects<TimelineActionType, TimelineAction, FirebaseTimeline> {
+export class TimelineFirebaseEffects extends ProtectedFirebaseEffects<TimelineActionType, TimelineAction> {
 
   @Effect() get: Observable<TimelineGetSuccessAction | TimelineGetErrorAction> = this
     .authorizedActionsOfType('TIMELINE_GET')
-    .switchMap((action: TimelineGetAction) => this.getFirebaseObject(action.payload)
+    .switchMap((action: TimelineGetAction) => this.fireTimelines.getObject(action.payload)
       .switchMap((firebaseTimeline: FirebaseTimeline): Observable<Timeline> =>
         Observable.create((observer: Observer<Timeline>): TeardownLogic => {
 
           if (firebaseTimeline.events) {
             const eventsObservables: Observable<FirebaseTimelineEvent>[] = Object.keys(firebaseTimeline.events).map(
-              (eventId: string) => this.fire.database.object(this.getFirebaseUserPath() + '/events/' + eventId).first()
+              (eventId: string) => this.fireEvents.getObject(eventId).first()
             );
 
             const subscription: Subscription = Observable
@@ -51,11 +53,11 @@ export class TimelineFirebaseEffects extends ProtectedFirebaseEffects<TimelineAc
         })
       )
       .map((timeline: Timeline): TimelineGetSuccessAction => ({
-        type: 'TIMELINE_GET_SUCCESS',
+        type:    'TIMELINE_GET_SUCCESS',
         payload: timeline,
       }))
       .catch((error: Error): Observable<TimelineGetErrorAction> => Observable.of<TimelineGetErrorAction>({
-        type: 'TIMELINE_GET_ERROR',
+        type:    'TIMELINE_GET_ERROR',
         payload: toError(error),
       }))
     );
@@ -66,25 +68,27 @@ export class TimelineFirebaseEffects extends ProtectedFirebaseEffects<TimelineAc
     .switchMap((action: TimelineChangedAction) =>
       Observable
         .fromPromise(
-          <Promise<void>>this.getFirebaseObject(action.payload.id)
+          <Promise<void>>this.fireTimelines.getObject(action.payload.id)
             .update(toFirebaseTimelineUpdateObject(action.payload))
         )
         .map((): TimelineSaveSuccessAction => ({
           type: 'TIMELINE_SAVE_SUCCESS',
         }))
         .catch((error: Error): Observable<TimelineSaveErrorAction> => Observable.of<TimelineSaveErrorAction>({
-          type: 'TIMELINE_SAVE_ERROR',
+          type:    'TIMELINE_SAVE_ERROR',
           payload: toError(error),
         }))
     );
 
-  constructor(actions: Actions, fire: AngularFire) {
-    super(actions, fire);
+  constructor(
+    actions: Actions,
+    fireAuth: AuthFirebaseService,
+    private fireTimelines: TimelinesFirebaseService,
+    private fireEvents: EventsFirebaseService,
+  ) {
+    super(actions, fireAuth);
   }
 
-  protected getFirebaseNodeName(): string {
-    return 'timelines';
-  }
 }
 
 export interface FirebaseTimeline {
@@ -99,13 +103,13 @@ export interface FirebaseTimelineUpdateObject {
 
 function toTimeline(firebaseTimeline: FirebaseTimeline, firebaseEvents: FirebaseTimelineEvent[]): Timeline {
   return {
-    id: firebaseTimeline.$key,
-    title: firebaseTimeline.title,
+    id:     firebaseTimeline.$key,
+    title:  firebaseTimeline.title,
     events: firebaseEvents.map((firebaseEvent: FirebaseTimelineEvent) => ({
-      id: firebaseEvent.$key,
-      title: firebaseEvent.title,
+      id:        firebaseEvent.$key,
+      title:     firebaseEvent.title,
       dateBegin: firebaseEvent.dateBegin,
-      dateEnd: firebaseEvent.dateEnd,
+      dateEnd:   firebaseEvent.dateEnd,
     }))
   };
 }
