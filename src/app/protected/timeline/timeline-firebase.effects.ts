@@ -16,7 +16,7 @@ import {
 import { ProtectedFirebaseEffects, toError } from '../shared/protected-firebase.effects';
 import { FirebaseTimelineEvent } from '../event/event-firebase.effects';
 import { AuthFirebaseService } from '../shared/auth-firebase.service';
-import { TimelinesFirebaseService } from '../timelines/timelines-firebase.service';
+import { FirebaseTimelineUpdateObject, TimelinesFirebaseService } from '../timelines/timelines-firebase.service';
 import { EventsFirebaseService } from '../event/events-firebase.service';
 
 export const SAVE_DEBOUNCE_TIME = 1000;
@@ -26,56 +26,55 @@ export class TimelineFirebaseEffects extends ProtectedFirebaseEffects<TimelineAc
 
   @Effect() get: Observable<TimelineGetSuccessAction | TimelineGetErrorAction> = this
     .authorizedActionsOfType('TIMELINE_GET')
-    .switchMap((action: TimelineGetAction) => this.fireTimelines.getObject(action.payload)
-      .switchMap((firebaseTimeline: FirebaseTimeline): Observable<Timeline> =>
-        Observable.create((observer: Observer<Timeline>): TeardownLogic => {
+    .switchMap((action: TimelineGetAction) =>
+      this.fireTimelines
+        .getObject(action.payload)
+        .switchMap((firebaseTimeline: FirebaseTimeline): Observable<Timeline> =>
+          Observable.create((observer: Observer<Timeline>): TeardownLogic => {
 
-          if (firebaseTimeline.events) {
-            const eventsObservables: Observable<FirebaseTimelineEvent>[] = Object.keys(firebaseTimeline.events).map(
-              (eventId: string) => this.fireEvents.getObject(eventId).first()
-            );
+            if (firebaseTimeline.events) {
+              const eventsObservables: Observable<FirebaseTimelineEvent>[] = Object.keys(firebaseTimeline.events).map(
+                (eventId: string) => this.fireEvents.getObject(eventId).first()
+              );
 
-            const subscription: Subscription = Observable
-              .forkJoin(...eventsObservables)
-              .subscribe((firebaseEvents: FirebaseTimelineEvent[]) => {
-                observer.next(toTimeline(firebaseTimeline, firebaseEvents));
-                observer.complete();
-              });
+              const subscription: Subscription = Observable
+                .forkJoin(...eventsObservables)
+                .subscribe((firebaseEvents: FirebaseTimelineEvent[]) => {
+                  observer.next(toTimeline(firebaseTimeline, firebaseEvents));
+                  observer.complete();
+                });
 
-            return () => {
-              subscription.unsubscribe();
-            };
-          } else {
-            observer.next(toTimeline(firebaseTimeline, []));
-            observer.complete();
-          }
+              return () => {
+                subscription.unsubscribe();
+              };
+            } else {
+              observer.next(toTimeline(firebaseTimeline, []));
+              observer.complete();
+            }
 
-        })
-      )
-      .map((timeline: Timeline): TimelineGetSuccessAction => ({
-        type:    'TIMELINE_GET_SUCCESS',
-        payload: timeline,
-      }))
-      .catch((error: Error): Observable<TimelineGetErrorAction> => Observable.of<TimelineGetErrorAction>({
-        type:    'TIMELINE_GET_ERROR',
-        payload: toError(error),
-      }))
+          })
+        )
+        .map((timeline: Timeline): TimelineGetSuccessAction => ({
+          type: 'TIMELINE_GET_SUCCESS',
+          payload: timeline,
+        }))
+        .catch((error: Error): Observable<TimelineGetErrorAction> => Observable.of<TimelineGetErrorAction>({
+          type: 'TIMELINE_GET_ERROR',
+          payload: toError(error),
+        }))
     );
 
   @Effect() save: Observable<TimelineSaveSuccessAction | TimelineSaveErrorAction> = this
     .authorizedActionsOfType('TIMELINE_CHANGED')
     .debounceTime(SAVE_DEBOUNCE_TIME)
     .switchMap((action: TimelineChangedAction) =>
-      Observable
-        .fromPromise(
-          <Promise<void>>this.fireTimelines.getObject(action.payload.id)
-            .update(toFirebaseTimelineUpdateObject(action.payload))
-        )
+      this.fireTimelines
+        .updateObject(action.payload.id, toFirebaseTimelineUpdateObject(action.payload))
         .map((): TimelineSaveSuccessAction => ({
           type: 'TIMELINE_SAVE_SUCCESS',
         }))
         .catch((error: Error): Observable<TimelineSaveErrorAction> => Observable.of<TimelineSaveErrorAction>({
-          type:    'TIMELINE_SAVE_ERROR',
+          type: 'TIMELINE_SAVE_ERROR',
           payload: toError(error),
         }))
     );
@@ -97,19 +96,15 @@ export interface FirebaseTimeline {
   events?: { [key: string]: true };
 }
 
-export interface FirebaseTimelineUpdateObject {
-  title: string;
-}
-
 function toTimeline(firebaseTimeline: FirebaseTimeline, firebaseEvents: FirebaseTimelineEvent[]): Timeline {
   return {
-    id:     firebaseTimeline.$key,
-    title:  firebaseTimeline.title,
+    id: firebaseTimeline.$key,
+    title: firebaseTimeline.title,
     events: firebaseEvents.map((firebaseEvent: FirebaseTimelineEvent) => ({
-      id:        firebaseEvent.$key,
-      title:     firebaseEvent.title,
+      id: firebaseEvent.$key,
+      title: firebaseEvent.title,
       dateBegin: firebaseEvent.dateBegin,
-      dateEnd:   firebaseEvent.dateEnd,
+      dateEnd: firebaseEvent.dateEnd,
     }))
   };
 }

@@ -1,20 +1,19 @@
 import { Injectable } from '@angular/core';
-import { AngularFire } from 'angularfire2';
 import { Actions, Effect } from '@ngrx/effects';
 import { Observable } from '../../shared/rxjs';
 import { FirebaseTimeline } from '../timeline/timeline-firebase.effects';
 import {
-  TimelinesGetSuccessAction,
-  TimelinesGetAction,
-  TimelinesGetErrorAction,
+  TimelinesAction,
   TimelinesActionType,
+  TimelinesCreateAction,
   TimelinesCreateErrorAction,
   TimelinesCreateSuccessAction,
-  TimelinesCreateAction,
-  TimelinesAction,
-  TimelinesDeleteSuccessAction,
-  TimelinesDeleteErrorAction,
   TimelinesDeleteAction,
+  TimelinesDeleteErrorAction,
+  TimelinesDeleteSuccessAction,
+  TimelinesGetAction,
+  TimelinesGetErrorAction,
+  TimelinesGetSuccessAction
 } from './timelines.reducer';
 import { ProtectedFirebaseEffects, toError } from '../shared/protected-firebase.effects';
 import { TimelineForList } from '../timeline/timeline.reducer';
@@ -25,30 +24,31 @@ import { TimelinesFirebaseService } from './timelines-firebase.service';
 export class TimelinesFirebaseEffects extends ProtectedFirebaseEffects<TimelinesActionType, TimelinesAction> {
 
 
-  @Effect() get: Observable<TimelinesGetSuccessAction|TimelinesGetErrorAction> =
+  @Effect() get: Observable<TimelinesGetSuccessAction | TimelinesGetErrorAction> =
     this.authorizedActionsOfType('TIMELINES_GET')
       .take(1)
-      .mergeMap((action: TimelinesGetAction) => this.fireTimelines
-        .getList()
-        .map((firebaseTimelines: FirebaseTimeline[]): TimelinesGetSuccessAction => {
-          return {
-            type: 'TIMELINES_GET_SUCCESS',
-            payload: firebaseTimelines.map(toTimeline),
-          }
-        })
-        .catch((error: Error): Observable<TimelinesGetErrorAction> => Observable.of<TimelinesGetErrorAction>({
-          type: 'TIMELINES_GET_ERROR',
-          payload: error,
-        }))
+      .mergeMap((action: TimelinesGetAction) =>
+        this.fireTimelines
+          .getList()
+          .map((firebaseTimelines: FirebaseTimeline[]): TimelinesGetSuccessAction => {
+            return {
+              type: 'TIMELINES_GET_SUCCESS',
+              payload: firebaseTimelines.map(toTimeline),
+            }
+          })
+          .catch((error: Error): Observable<TimelinesGetErrorAction> => Observable.of<TimelinesGetErrorAction>({
+            type: 'TIMELINES_GET_ERROR',
+            payload: error,
+          }))
       );
 
   @Effect() create: Observable<TimelinesCreateSuccessAction | TimelinesCreateErrorAction> =
     this.authorizedActionsOfType('TIMELINES_CREATE')
       .switchMap((action: TimelinesCreateAction) =>
-        Observable.fromPromise(<any>
-          this.fireTimelines.getList().push({
+        this.fireTimelines
+          .pushObject({
             title: 'Новая лента',
-          }))
+          })
           .map((ref: { key: string }): TimelinesCreateSuccessAction => ({
             type: 'TIMELINES_CREATE_SUCCESS',
             payload: ref.key,
@@ -61,14 +61,15 @@ export class TimelinesFirebaseEffects extends ProtectedFirebaseEffects<Timelines
           )
       );
 
-  @Effect() deleteTimeline: Observable<TimelinesDeleteSuccessAction|TimelinesDeleteErrorAction> =
+  @Effect() deleteTimeline: Observable<TimelinesDeleteSuccessAction | TimelinesDeleteErrorAction> =
     this.authorizedActionsOfType('TIMELINES_DELETE')
       .switchMap((action: TimelinesDeleteAction) =>
-        Observable.fromPromise(<Promise<void>>this.fireTimelines.getList().remove(action.payload.id))
+        this.fireTimelines
+          .removeObject(action.payload.id)
           .map((): TimelinesDeleteSuccessAction => ({
             type: 'TIMELINES_DELETE_SUCCESS',
           }))
-          .catch((error: Error|string): Observable<TimelinesDeleteErrorAction> =>
+          .catch((error: Error | string): Observable<TimelinesDeleteErrorAction> =>
             Observable.of<TimelinesDeleteErrorAction>({
               type: 'TIMELINES_DELETE_ERROR',
               payload: toError(error),
