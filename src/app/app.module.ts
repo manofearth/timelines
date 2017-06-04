@@ -18,7 +18,11 @@ import { TimelinesFirebaseEffects } from './protected/timelines/timelines-fireba
 import { TimelineFirebaseEffects } from './protected/timeline/timeline-firebase.effects';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Logger } from './shared/logger.service';
-import { EventFirebaseEffects } from './protected/event/event-firebase.effects';
+import { EventFirebaseUpdateEffect } from './protected/event/effects/event-firebase-update.effect';
+import { EventFirebaseInsertEffect } from './protected/event/effects/event-firebase-insert.effect';
+import { EventFirebaseInsertAndAttachEffect } from './protected/event/effects/event-firebase-insert-and-attach.effect';
+import { EventFirebaseDetachEffect } from './protected/event/effects/event-firebase-detach.effect';
+import { EventFirebaseGetEffect } from './protected/event/effects/event-firebase-get.effect';
 
 const routes: Routes = [
   {
@@ -64,7 +68,11 @@ const routes: Routes = [
     // until https://github.com/angular/angular/issues/12869 fixed
     EffectsModule.run(TimelinesFirebaseEffects),
     EffectsModule.run(TimelineFirebaseEffects),
-    EffectsModule.run(EventFirebaseEffects),
+    EffectsModule.run(EventFirebaseGetEffect),
+    EffectsModule.run(EventFirebaseInsertEffect),
+    EffectsModule.run(EventFirebaseInsertAndAttachEffect),
+    EffectsModule.run(EventFirebaseUpdateEffect),
+    EffectsModule.run(EventFirebaseDetachEffect),
   ],
   providers: [
     AuthGuard,

@@ -1,4 +1,3 @@
-import { FirebaseTimelineEvent } from './event-firebase.effects';
 import { ProtectedFirebaseService } from '../shared/protected-firebase.service';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
@@ -35,6 +34,13 @@ export class EventsFirebaseService extends ProtectedFirebaseService<FirebaseTime
 }
 
 export interface FirebaseEventUpdateObject {
+  title: string;
+  dateBegin: TimelineDate;
+  dateEnd: TimelineDate;
+}
+
+export interface FirebaseTimelineEvent {
+  $key: string;
   title: string;
   dateBegin: TimelineDate;
   dateEnd: TimelineDate;
