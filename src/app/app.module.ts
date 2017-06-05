@@ -14,8 +14,6 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { reducer, initialState } from './reducers';
 import { AuthGuard } from './auth/auth-guard.service';
 import { StoreModule } from '@ngrx/store';
-import { TimelinesFirebaseEffects } from './protected/timelines/timelines-firebase.effects';
-import { TimelineFirebaseEffects } from './protected/timeline/timeline-firebase.effects';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Logger } from './shared/logger.service';
 import { EventFirebaseUpdateEffect } from './protected/event/effects/event-firebase-update.effect';
@@ -23,6 +21,11 @@ import { EventFirebaseInsertEffect } from './protected/event/effects/event-fireb
 import { EventFirebaseInsertAndAttachEffect } from './protected/event/effects/event-firebase-insert-and-attach.effect';
 import { EventFirebaseDetachEffect } from './protected/event/effects/event-firebase-detach.effect';
 import { EventFirebaseGetEffect } from './protected/event/effects/event-firebase-get.effect';
+import { TimelinesFirebaseGetEffect } from './protected/timelines/effects/timelines-firebase-get.effect';
+import { TimelineFirebaseCreateEffect } from './protected/timeline/effects/timeline-firebase-create.effect';
+import { TimelineFirebaseDeleteEffect } from './protected/timeline/effects/timeline-firebase-delete.effect';
+import { TimelineFirebaseGetEffect } from './protected/timeline/effects/timeline-firebase-get.effect';
+import { TimelineFirebaseSaveEffect } from './protected/timeline/effects/timeline-firebase-save.effect';
 
 const routes: Routes = [
   {
@@ -66,8 +69,11 @@ const routes: Routes = [
     AngularFireModule.initializeApp(firebaseConfig),
     EffectsModule.run(FirebaseAuthEffects),
     // until https://github.com/angular/angular/issues/12869 fixed
-    EffectsModule.run(TimelinesFirebaseEffects),
-    EffectsModule.run(TimelineFirebaseEffects),
+    EffectsModule.run(TimelinesFirebaseGetEffect),
+    EffectsModule.run(TimelineFirebaseCreateEffect),
+    EffectsModule.run(TimelineFirebaseDeleteEffect),
+    EffectsModule.run(TimelineFirebaseGetEffect),
+    EffectsModule.run(TimelineFirebaseSaveEffect),
     EffectsModule.run(EventFirebaseGetEffect),
     EffectsModule.run(EventFirebaseInsertEffect),
     EffectsModule.run(EventFirebaseInsertAndAttachEffect),

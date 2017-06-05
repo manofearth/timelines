@@ -5,7 +5,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { TimelinesGetAction, TimelinesState, TimelinesCreateAction, TimelinesDeleteAction } from './timelines.reducer';
+import { TimelinesGetAction, TimelinesState, TimelineCreateAction, TimelineDeleteAction } from './timelines.reducer';
 import { AppState } from '../../reducers';
 import { Router } from '@angular/router';
 import { Timeline, TimelineForList } from '../timeline/timeline.reducer';
@@ -68,8 +68,8 @@ export class TimelinesComponent implements OnInit, OnDestroy {
 
   create() {
     this.modeOpenNew = true;
-    this.store.dispatch(<TimelinesCreateAction>{
-      type: 'TIMELINES_CREATE',
+    this.store.dispatch(<TimelineCreateAction>{
+      type: 'TIMELINE_CREATE',
     });
   }
 
@@ -82,8 +82,8 @@ export class TimelinesComponent implements OnInit, OnDestroy {
         return;
       }
 
-      this.store.dispatch(<TimelinesDeleteAction>{
-        type: 'TIMELINES_DELETE',
+      this.store.dispatch(<TimelineDeleteAction>{
+        type: 'TIMELINE_DELETE',
         payload: timeline,
       });
 

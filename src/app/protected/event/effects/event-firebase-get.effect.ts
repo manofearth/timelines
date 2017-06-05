@@ -26,11 +26,11 @@ export class EventFirebaseGetEffect extends ProtectedFirebaseEffect<'EVENT_GET',
     };
   }
 
-  protected get interestedActionType(): 'EVENT_GET' {
+  protected getInterestedActionType(): 'EVENT_GET' {
     return 'EVENT_GET';
   }
 
-  protected get errorActionType(): 'EVENT_GET_ERROR' {
+  protected getErrorActionType(): 'EVENT_GET_ERROR' {
     return 'EVENT_GET_ERROR';
   }
 

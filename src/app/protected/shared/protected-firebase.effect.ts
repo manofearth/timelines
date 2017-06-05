@@ -11,7 +11,7 @@ export abstract class ProtectedFirebaseEffect<TActionType extends string,
   TEffectResult> {
 
   @Effect() effect: Observable<TSuccessAction | TErrorAction> = this
-    .authorizedActionsOfType(this.interestedActionType)
+    .getActions()
     .switchMap((action: TAction) =>
       this
         .runEffect(action)
@@ -28,17 +28,27 @@ export abstract class ProtectedFirebaseEffect<TActionType extends string,
       .filter((action: TAction) => this.auth.isLoggedIn);
   }
 
+  private getActions(): Observable<TAction> {
+    return this.modifyActionsObservable(
+      this.authorizedActionsOfType(this.getInterestedActionType())
+    );
+  }
+
+  protected modifyActionsObservable(actions: Observable<TAction>): Observable<TAction> {
+    return actions;
+  }
+
   protected abstract runEffect(action: TAction): Observable<TEffectResult>;
 
   protected abstract mapToSuccessAction(effectResult: TEffectResult): TSuccessAction;
 
-  protected abstract get interestedActionType(): TActionType;
+  protected abstract getInterestedActionType(): TActionType;
 
-  protected abstract get errorActionType(): TErrorActionType;
+  protected abstract getErrorActionType(): TErrorActionType;
 
   protected mapToErrorAction(error: Error | string): Observable<TErrorAction> {
     return Observable.of<Action>({
-      type: this.errorActionType,
+      type: this.getErrorActionType(),
       payload: toError(error),
     });
   }

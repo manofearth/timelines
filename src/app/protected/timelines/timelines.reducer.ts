@@ -9,9 +9,9 @@ export interface TimelinesState {
 }
 
 export type TimelinesActionType = 'TIMELINES_GET' | 'TIMELINES_GET_SUCCESS'
-  | 'TIMELINES_GET_ERROR' | 'TIMELINES_CREATE' | 'TIMELINES_CREATE_SUCCESS'
-  | 'TIMELINES_CREATE_ERROR' | 'TIMELINES_DELETE' | 'TIMELINES_DELETE_SUCCESS'
-  | 'TIMELINES_DELETE_ERROR';
+  | 'TIMELINES_GET_ERROR' | 'TIMELINE_CREATE' | 'TIMELINE_CREATE_SUCCESS'
+  | 'TIMELINE_CREATE_ERROR' | 'TIMELINE_DELETE' | 'TIMELINE_DELETE_SUCCESS'
+  | 'TIMELINE_DELETE_ERROR';
 
 export interface TimelinesActionBase extends Action {
   type: TimelinesActionType;
@@ -31,37 +31,37 @@ export interface TimelinesGetErrorAction extends TimelinesActionBase {
   payload: Error;
 }
 
-export interface TimelinesCreateAction extends TimelinesActionBase {
-  type: 'TIMELINES_CREATE';
+export interface TimelineCreateAction extends TimelinesActionBase {
+  type: 'TIMELINE_CREATE';
 }
 
-export interface TimelinesCreateSuccessAction extends TimelinesActionBase {
-  type: 'TIMELINES_CREATE_SUCCESS';
+export interface TimelineCreateSuccessAction extends TimelinesActionBase {
+  type: 'TIMELINE_CREATE_SUCCESS';
   payload: string;
 }
 
-export interface TimelinesCreateErrorAction extends TimelinesActionBase {
-  type: 'TIMELINES_CREATE_ERROR';
+export interface TimelineCreateErrorAction extends TimelinesActionBase {
+  type: 'TIMELINE_CREATE_ERROR';
   payload: Error;
 }
 
-export interface TimelinesDeleteAction extends TimelinesActionBase {
-  type: 'TIMELINES_DELETE';
+export interface TimelineDeleteAction extends TimelinesActionBase {
+  type: 'TIMELINE_DELETE';
   payload: Timeline;
 }
 
-export interface TimelinesDeleteSuccessAction extends TimelinesActionBase {
-  type: 'TIMELINES_DELETE_SUCCESS';
+export interface TimelineDeleteSuccessAction extends TimelinesActionBase {
+  type: 'TIMELINE_DELETE_SUCCESS';
 }
 
-export interface TimelinesDeleteErrorAction extends TimelinesActionBase {
-  type: 'TIMELINES_DELETE_ERROR';
+export interface TimelineDeleteErrorAction extends TimelinesActionBase {
+  type: 'TIMELINE_DELETE_ERROR';
   payload: Error;
 }
 
 export type TimelinesAction = TimelinesGetAction | TimelinesGetSuccessAction | TimelinesGetErrorAction
-  | TimelinesGetAction | TimelinesCreateAction | TimelinesCreateSuccessAction | TimelinesCreateErrorAction
-  | TimelinesDeleteAction | TimelinesDeleteSuccessAction | TimelinesDeleteErrorAction;
+  | TimelinesGetAction | TimelineCreateAction | TimelineCreateSuccessAction | TimelineCreateErrorAction
+  | TimelineDeleteAction | TimelineDeleteSuccessAction | TimelineDeleteErrorAction;
 
 export function timelinesReducer(state: TimelinesState, action: TimelinesAction): TimelinesState {
   switch (action.type) {
@@ -79,28 +79,28 @@ export function timelinesReducer(state: TimelinesState, action: TimelinesAction)
         newTimelineId: null,
         timelines: state.timelines,
       };
-    case 'TIMELINES_CREATE_SUCCESS':
+    case 'TIMELINE_DELETE_SUCCESS':
       return {
         isLoading: false,
         error: null,
-        newTimelineId: action.payload,
+        newTimelineId: null,
         timelines: state.timelines,
       };
-    case 'TIMELINES_CREATE_ERROR':
+    case 'TIMELINE_DELETE_ERROR':
       return {
         isLoading: false,
         error: action.payload,
         newTimelineId: null,
         timelines: state.timelines,
       };
-    case 'TIMELINES_DELETE_SUCCESS':
+    case 'TIMELINE_CREATE_SUCCESS':
       return {
         isLoading: false,
         error: null,
-        newTimelineId: null,
+        newTimelineId: action.payload,
         timelines: state.timelines,
       };
-    case 'TIMELINES_DELETE_ERROR':
+    case 'TIMELINE_CREATE_ERROR':
       return {
         isLoading: false,
         error: action.payload,

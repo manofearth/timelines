@@ -3,7 +3,6 @@ import { FirebaseObjectObservable } from 'angularfire2';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
 import { ProtectedFirebaseService } from '../shared/protected-firebase.service';
-import { FirebaseTimeline } from '../timeline/timeline-firebase.effects';
 
 @Injectable()
 export class TimelinesFirebaseService extends ProtectedFirebaseService<FirebaseTimeline, FirebaseTimelineUpdateObject> {
@@ -34,6 +33,12 @@ export class TimelinesFirebaseService extends ProtectedFirebaseService<FirebaseT
   protected getFirebaseNodeName(): string {
     return 'timelines';
   }
+}
+
+export interface FirebaseTimeline {
+  $key: string;
+  title: string;
+  events?: { [key: string]: true };
 }
 
 export interface FirebaseTimelineUpdateObject {

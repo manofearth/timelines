@@ -20,11 +20,11 @@ export class EventFirebaseUpdateEffect extends ProtectedFirebaseEffect<'EVENT_UP
       .updateObject(action.payload.id, toFirebaseEventUpdateObject(action.payload));
   }
 
-  protected get interestedActionType(): 'EVENT_UPDATE' {
+  protected getInterestedActionType(): 'EVENT_UPDATE' {
     return 'EVENT_UPDATE';
   }
 
-  protected get errorActionType(): 'EVENT_UPDATE_ERROR' {
+  protected getErrorActionType(): 'EVENT_UPDATE_ERROR' {
     return 'EVENT_UPDATE_ERROR';
   }
 

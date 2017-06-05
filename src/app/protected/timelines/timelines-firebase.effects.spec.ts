@@ -7,11 +7,11 @@ import { Actions } from '@ngrx/effects';
 import {
   TimelinesGetAction,
   TimelinesGetSuccessAction,
-  TimelinesCreateAction,
-  TimelinesCreateSuccessAction,
-  TimelinesDeleteAction,
-  TimelinesDeleteSuccessAction,
-  TimelinesCreateErrorAction,
+  TimelineCreateAction,
+  TimelineCreateSuccessAction,
+  TimelineDeleteAction,
+  TimelineDeleteSuccessAction,
+  TimelineCreateErrorAction,
 } from './timelines.reducer';
 import { FirebaseTimeline } from '../timeline/timeline-firebase.effects';
 
@@ -57,8 +57,8 @@ describe('TimelinesFirebaseEffects', () => {
 
     beforeEach(() => {
       runner.next(<TimelinesGetAction>{ type: 'TIMELINES_GET' });
-      runner.next(<TimelinesCreateAction>{ type: 'TIMELINES_CREATE' });
-      runner.next(<TimelinesDeleteAction>{ type: 'TIMELINES_DELETE' });
+      runner.next(<TimelineCreateAction>{ type: 'TIMELINE_CREATE' });
+      runner.next(<TimelineDeleteAction>{ type: 'TIMELINE_DELETE' });
     });
 
     it('should not query firebase database', () => {
@@ -128,7 +128,7 @@ describe('TimelinesFirebaseEffects', () => {
     describe('create effect', () => {
 
       beforeEach(() => {
-        runner.next(<TimelinesCreateAction>{ type: 'TIMELINES_CREATE' });
+        runner.next(<TimelineCreateAction>{ type: 'TIMELINE_CREATE' });
       });
 
       it('should push new timeline to firebase database list', () => {
@@ -137,23 +137,23 @@ describe('TimelinesFirebaseEffects', () => {
         expect(mockFirebaseList.push).toHaveBeenCalledWith({ title: 'Новая лента' });
       });
 
-      it('should emit TIMELINES_CREATE_SUCCESS', (done: DoneFn) => {
+      it('should emit TIMELINE_CREATE_SUCCESS', (done: DoneFn) => {
 
         mockFirebaseList.push = <any> (() => Promise.resolve({ key: 'generated key' }));
 
-        effects.create.subscribe((action: TimelinesCreateSuccessAction) => {
-          expect(action.type).toBe('TIMELINES_CREATE_SUCCESS');
+        effects.create.subscribe((action: TimelineCreateSuccessAction) => {
+          expect(action.type).toBe('TIMELINE_CREATE_SUCCESS');
           expect(action.payload).toBe('generated key');
           done();
         });
       });
 
-      it('should emit TIMELINES_CREATE_ERROR', (done: DoneFn) => {
+      it('should emit TIMELINE_CREATE_ERROR', (done: DoneFn) => {
 
         mockFirebaseList.push = () => Promise.reject('some error');
 
-        effects.create.subscribe((action: TimelinesCreateErrorAction) => {
-          expect(action.type).toBe('TIMELINES_CREATE_ERROR');
+        effects.create.subscribe((action: TimelineCreateErrorAction) => {
+          expect(action.type).toBe('TIMELINE_CREATE_ERROR');
           expect(action.payload).toEqual(new Error('some error'));
           done();
         });
@@ -163,8 +163,8 @@ describe('TimelinesFirebaseEffects', () => {
     describe('deleteTimeline effect', () => {
 
       beforeEach(() => {
-        runner.next(<TimelinesDeleteAction>{
-          type: 'TIMELINES_DELETE',
+        runner.next(<TimelineDeleteAction>{
+          type: 'TIMELINE_DELETE',
           payload: { id: 'some timeline id' },
         });
       });
@@ -175,23 +175,23 @@ describe('TimelinesFirebaseEffects', () => {
         expect(mockFirebaseList.remove).toHaveBeenCalledWith('some timeline id');
       });
 
-      it('should emit TIMELINES_DELETE_SUCCESS', (done: DoneFn) => {
+      it('should emit TIMELINE_DELETE_SUCCESS', (done: DoneFn) => {
 
         mockFirebaseList.remove = () => Promise.resolve();
 
-        effects.deleteTimeline.subscribe((action: TimelinesDeleteSuccessAction) => {
-          expect(action.type).toBe('TIMELINES_DELETE_SUCCESS');
+        effects.deleteTimeline.subscribe((action: TimelineDeleteSuccessAction) => {
+          expect(action.type).toBe('TIMELINE_DELETE_SUCCESS');
           expect(action.payload).toBeUndefined();
           done();
         });
       });
 
-      it('should emit TIMELINES_DELETE_ERROR', (done: DoneFn) => {
+      it('should emit TIMELINE_DELETE_ERROR', (done: DoneFn) => {
 
         mockFirebaseList.remove = () => Promise.reject('some error');
 
-        effects.deleteTimeline.subscribe((action: TimelinesDeleteSuccessAction) => {
-          expect(action.type).toBe('TIMELINES_DELETE_ERROR');
+        effects.deleteTimeline.subscribe((action: TimelineDeleteSuccessAction) => {
+          expect(action.type).toBe('TIMELINE_DELETE_ERROR');
           expect(action.payload).toEqual(new Error('some error'));
           done();
         });
@@ -217,14 +217,14 @@ describe('TimelinesFirebaseEffects', () => {
 
       runner.next(<TimelinesGetAction>{ type: 'TIMELINES_GET' });
       runner.next(<TimelinesGetAction>{ type: 'TIMELINES_GET' });
-      runner.next(<TimelinesCreateAction>{ type: 'TIMELINES_CREATE' });
-      runner.next(<TimelinesCreateAction>{ type: 'TIMELINES_CREATE' });
-      runner.next(<TimelinesDeleteAction>{
-        type: 'TIMELINES_DELETE',
+      runner.next(<TimelineCreateAction>{ type: 'TIMELINE_CREATE' });
+      runner.next(<TimelineCreateAction>{ type: 'TIMELINE_CREATE' });
+      runner.next(<TimelineDeleteAction>{
+        type: 'TIMELINE_DELETE',
         payload: { id: 'some timeline id' },
       });
-      runner.next(<TimelinesDeleteAction>{
-        type: 'TIMELINES_DELETE',
+      runner.next(<TimelineDeleteAction>{
+        type: 'TIMELINE_DELETE',
         payload: { id: 'some timeline id' },
       });
 
@@ -238,7 +238,7 @@ describe('TimelinesFirebaseEffects', () => {
       runner.next(<TimelinesGetAction>{ type: 'TIMELINES_GET' });
 
       authStateChanges.next(<any>{ uid: 'second-user-uid' });
-      runner.next(<TimelinesCreateAction>{ type: 'TIMELINES_CREATE' });
+      runner.next(<TimelineCreateAction>{ type: 'TIMELINE_CREATE' });
 
       expect(firebaseListSpy.calls.allArgs()).toEqual([
         ['/private/first-user-uid/timelines'],

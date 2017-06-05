@@ -26,11 +26,11 @@ export class EventFirebaseInsertEffect extends ProtectedFirebaseEffect<'EVENT_IN
     };
   }
 
-  protected get interestedActionType(): 'EVENT_INSERT' {
+  protected getInterestedActionType(): 'EVENT_INSERT' {
     return 'EVENT_INSERT';
   }
 
-  protected get errorActionType(): 'EVENT_INSERT_ERROR' {
+  protected getErrorActionType(): 'EVENT_INSERT_ERROR' {
     return 'EVENT_INSERT_ERROR';
   }
 

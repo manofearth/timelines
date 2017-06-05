@@ -15,8 +15,7 @@ import { EventsFirebaseService } from '../events-firebase.service';
 import { TimelinesFirebaseService } from '../../timelines/timelines-firebase.service';
 
 @Injectable()
-export class EventFirebaseInsertAndAttachEffect
-  extends ProtectedFirebaseEffect<'EVENT_INSERT_AND_ATTACH_TO_TIMELINE',
+export class EventFirebaseInsertAndAttachEffect extends ProtectedFirebaseEffect<'EVENT_INSERT_AND_ATTACH_TO_TIMELINE',
     EventInsertAndAttachToTimelineAction,
     EventInsertSuccessAction,
     'EVENT_INSERT_ERROR',
@@ -43,11 +42,11 @@ export class EventFirebaseInsertAndAttachEffect
     };
   }
 
-  protected get interestedActionType(): 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE' {
+  protected getInterestedActionType(): 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE' {
     return 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE';
   }
 
-  protected get errorActionType(): 'EVENT_INSERT_ERROR' {
+  protected getErrorActionType(): 'EVENT_INSERT_ERROR' {
     return 'EVENT_INSERT_ERROR';
   }
 

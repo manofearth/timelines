@@ -33,11 +33,11 @@ export class EventFirebaseDetachEffect extends ProtectedFirebaseEffect<'EVENT_DE
     };
   }
 
-  protected get interestedActionType(): 'EVENT_DETACH' {
+  protected getInterestedActionType(): 'EVENT_DETACH' {
     return 'EVENT_DETACH';
   }
 
-  protected get errorActionType(): 'EVENT_DETACH_ERROR' {
+  protected getErrorActionType(): 'EVENT_DETACH_ERROR' {
     return 'EVENT_DETACH_ERROR';
   }
 

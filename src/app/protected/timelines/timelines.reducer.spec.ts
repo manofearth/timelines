@@ -3,9 +3,10 @@ import {
   TimelinesState,
   TimelinesGetSuccessAction,
   TimelinesGetErrorAction,
-  TimelinesCreateSuccessAction,
-  TimelinesCreateErrorAction,
-  TimelinesDeleteSuccessAction, TimelinesDeleteErrorAction
+  TimelineCreateSuccessAction,
+  TimelineCreateErrorAction,
+  TimelineDeleteSuccessAction,
+  TimelineDeleteErrorAction
 } from './timelines.reducer';
 
 describe('timelines reducer', () => {
@@ -74,7 +75,7 @@ describe('timelines reducer', () => {
 
   });
 
-  it('on TIMELINES_CREATE_SUCCESS should mark not loading and set "new timeline id"', () => {
+  it('on TIMELINE_CREATE_SUCCESS should mark not loading and set "new timeline id"', () => {
 
     const state: TimelinesState = Object.freeze({
       isLoading: true,
@@ -86,8 +87,8 @@ describe('timelines reducer', () => {
       ],
     });
 
-    const action: TimelinesCreateSuccessAction = {
-      type: 'TIMELINES_CREATE_SUCCESS',
+    const action: TimelineCreateSuccessAction = {
+      type: 'TIMELINE_CREATE_SUCCESS',
       payload: 'new-timeline-id',
     };
 
@@ -106,7 +107,7 @@ describe('timelines reducer', () => {
 
   });
 
-  it('on TIMELINES_CREATE_ERROR should mark not loading and set error', () => {
+  it('on TIMELINE_CREATE_ERROR should mark not loading and set error', () => {
 
     const state: TimelinesState = Object.freeze({
       isLoading: true,
@@ -118,8 +119,8 @@ describe('timelines reducer', () => {
       ],
     });
 
-    const action: TimelinesCreateErrorAction = {
-      type: 'TIMELINES_CREATE_ERROR',
+    const action: TimelineCreateErrorAction = {
+      type: 'TIMELINE_CREATE_ERROR',
       payload: new Error('some error'),
     };
 
@@ -138,7 +139,7 @@ describe('timelines reducer', () => {
 
   });
 
-  it('on TIMELINES_DELETE_SUCCESS should mark not loading and erase error', () => {
+  it('on TIMELINE_DELETE_SUCCESS should mark not loading and erase error', () => {
 
     const state: TimelinesState = Object.freeze({
       isLoading: true,
@@ -150,8 +151,8 @@ describe('timelines reducer', () => {
       ],
     });
 
-    const action: TimelinesDeleteSuccessAction = {
-      type: 'TIMELINES_DELETE_SUCCESS',
+    const action: TimelineDeleteSuccessAction = {
+      type: 'TIMELINE_DELETE_SUCCESS',
     };
 
     const newState: TimelinesState = timelinesReducer(state, action);
@@ -169,7 +170,7 @@ describe('timelines reducer', () => {
 
   });
 
-  it('on TIMELINES_DELETE_ERROR should mark not loading and set error', () => {
+  it('on TIMELINE_DELETE_ERROR should mark not loading and set error', () => {
 
     const state: TimelinesState = Object.freeze({
       isLoading: true,
@@ -181,8 +182,8 @@ describe('timelines reducer', () => {
       ],
     });
 
-    const action: TimelinesDeleteErrorAction = {
-      type: 'TIMELINES_DELETE_ERROR',
+    const action: TimelineDeleteErrorAction = {
+      type: 'TIMELINE_DELETE_ERROR',
       payload: new Error('some error'),
     };
 
