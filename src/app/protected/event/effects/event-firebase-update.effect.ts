@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ProtectedFirebaseEffect } from '../../shared/protected-firebase.effect';
+import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
 import { EventUpdateAction, EventUpdateErrorAction, EventUpdateSuccessAction } from '../event.reducer';
 import { Observable } from 'rxjs/Observable';
 import { EventsFirebaseService, FirebaseEventUpdateObject } from '../events-firebase.service';
 import { TimelineEvent } from '../../shared/timeline-event';
 import { Actions } from '@ngrx/effects';
-import { AuthFirebaseService } from '../../shared/auth-firebase.service';
+import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 
 @Injectable()
 export class EventFirebaseUpdateEffect extends ProtectedFirebaseEffect<'EVENT_UPDATE',

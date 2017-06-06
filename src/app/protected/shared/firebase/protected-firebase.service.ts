@@ -7,31 +7,18 @@ import 'rxjs/add/observable/fromPromise';
 @Injectable()
 export abstract class ProtectedFirebaseService<TObject, TUpdateObject> {
 
-  private firebaseObject: FirebaseObjectObservable<TObject> = null;
-  private firebaseObjectKey: string                         = null;
-  private firebaseList: FirebaseListObservable<TObject[]>   = null;
-
-  constructor(protected database: AngularFireDatabase, protected auth: AuthFirebaseService) {
-    this.auth.auth$.subscribe(() => {
-      this.firebaseObject    = null;
-      this.firebaseObjectKey = null;
-      this.firebaseList      = null;
-    });
+  constructor(
+    protected database: AngularFireDatabase,
+    protected auth: AuthFirebaseService,
+  ) {
   }
 
   getObject(key: string): FirebaseObjectObservable<TObject> {
-    if (this.firebaseObjectKey !== key) {
-      this.firebaseObject    = this.database.object(this.getFirebaseObjectPath(key));
-      this.firebaseObjectKey = key;
-    }
-    return this.firebaseObject;
+    return this.database.object(this.getFirebaseObjectPath(key));
   }
 
   getList(): FirebaseListObservable<TObject[]> {
-    if (!this.firebaseList) {
-      this.firebaseList = this.database.list(this.getFirebaseNodePath());
-    }
-    return this.firebaseList;
+    return this.database.list(this.getFirebaseNodePath());
   }
 
   updateObject(key: string, data: TUpdateObject): Observable<void> {

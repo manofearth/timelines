@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ProtectedFirebaseEffect } from '../../shared/protected-firebase.effect';
+import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
 import {
   TimelineChangedAction,
   TimelineChangedPayload,
@@ -9,7 +9,7 @@ import {
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/debounceTime';
 import { Actions } from '@ngrx/effects';
-import { AuthFirebaseService } from '../../shared/auth-firebase.service';
+import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 import { FirebaseTimelineUpdateObject, TimelinesFirebaseService } from '../../timelines/timelines-firebase.service';
 
 @Injectable()

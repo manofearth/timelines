@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { FirebaseObjectObservable } from 'angularfire2';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
-import { ProtectedFirebaseService } from '../shared/protected-firebase.service';
+import { ProtectedFirebaseService } from '../shared/firebase/protected-firebase.service';
 
 @Injectable()
 export class TimelinesFirebaseService extends ProtectedFirebaseService<FirebaseTimeline, FirebaseTimelineUpdateObject> {

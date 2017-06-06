@@ -12,10 +12,6 @@ export class AuthFirebaseService {
     });
   }
 
-  get auth$(): AngularFireAuth {
-    return this.fireAuth;
-  }
-
   get isLoggedIn(): boolean {
     return this.authState !== null;
   }

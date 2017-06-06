@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ProtectedFirebaseEffect } from '../../shared/protected-firebase.effect';
+import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
 import { EventDetachAction, EventDetachErrorAction, EventDetachSuccessAction } from '../event.reducer';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/map';
 import { Actions } from '@ngrx/effects';
-import { AuthFirebaseService } from '../../shared/auth-firebase.service';
+import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 import { EventsFirebaseService } from '../events-firebase.service';
 import { TimelinesFirebaseService } from '../../timelines/timelines-firebase.service';
 

@@ -1,4 +1,4 @@
-import { ProtectedFirebaseService } from '../shared/protected-firebase.service';
+import { ProtectedFirebaseService } from '../shared/firebase/protected-firebase.service';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
@@ -8,17 +8,17 @@ import { TimelineDate } from '../shared/date';
 @Injectable()
 export class EventsFirebaseService extends ProtectedFirebaseService<FirebaseTimelineEvent, FirebaseEventUpdateObject> {
 
-  attachToTimeline(timelineEventId: string, timelineId: string): Observable<void> {
+  attachToTimeline(timelineEventKey: string, timelineKey: string): Observable<void> {
     const promise: firebase.Promise<void> = this
-      .timelineAttachmentObject(timelineEventId, timelineId)
+      .timelineAttachmentObject(timelineEventKey, timelineKey)
       .set(true);
 
     return Observable.fromPromise(promise as Promise<void>);
   }
 
-  detachFromTimeline(timelineEventId: string, timelineId: string): Observable<void> {
+  detachFromTimeline(timelineEventKey: string, timelineKey: string): Observable<void> {
     const promise: firebase.Promise<void> = this
-      .timelineAttachmentObject(timelineEventId, timelineId)
+      .timelineAttachmentObject(timelineEventKey, timelineKey)
       .remove();
 
     return Observable.fromPromise(promise as Promise<void>);

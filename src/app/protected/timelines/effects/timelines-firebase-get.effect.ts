@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ProtectedFirebaseEffect } from '../../shared/protected-firebase.effect';
+import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
 import { TimelinesGetAction, TimelinesGetErrorAction, TimelinesGetSuccessAction } from '../timelines.reducer';
-import { FirebaseTimeline } from '../../timeline/timeline-firebase.effects';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/take';
 import { Actions } from '@ngrx/effects';
-import { AuthFirebaseService } from '../../shared/auth-firebase.service';
-import { TimelinesFirebaseService } from '../timelines-firebase.service';
+import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
+import { FirebaseTimeline, TimelinesFirebaseService } from '../timelines-firebase.service';
 import { TimelineForList } from '../../timeline/timeline.reducer';
 
 @Injectable()

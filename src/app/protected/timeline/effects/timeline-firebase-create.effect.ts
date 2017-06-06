@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ProtectedFirebaseEffect } from '../../shared/protected-firebase.effect';
+import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
 import {
   TimelineCreateAction,
   TimelineCreateErrorAction,
@@ -7,7 +7,7 @@ import {
 } from '../../timelines/timelines.reducer';
 import { Observable } from 'rxjs/Observable';
 import { Actions } from '@ngrx/effects';
-import { AuthFirebaseService } from '../../shared/auth-firebase.service';
+import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 import { TimelinesFirebaseService } from '../../timelines/timelines-firebase.service';
 
 @Injectable()
