@@ -1,6 +1,6 @@
 import { ProtectedFirebaseService } from './protected-firebase.service';
 import { AngularFireDatabase } from 'angularfire2';
-import { AuthFirebaseService } from './auth-firebase.service';
+import { AuthFirebaseServiceStub } from './auth-firebase.service.stub';
 
 class ProtectedFirebaseServiceStub extends ProtectedFirebaseService<any, any> {
 
@@ -13,7 +13,7 @@ describe('ProtectedFirebaseService', () => {
 
   let serviceStub: ProtectedFirebaseServiceStub;
   let fireDb: AngularFireDatabase;
-  let fireAuth: AuthFirebaseService;
+  let fireAuth: AuthFirebaseServiceStub;
 
   beforeEach(() => {
 
@@ -24,9 +24,8 @@ describe('ProtectedFirebaseService', () => {
       }
     } as any;
 
-    fireAuth = {
-      uid: 'some-user-uid'
-    } as any;
+    fireAuth = new AuthFirebaseServiceStub();
+    fireAuth.logIn('some-user-uid');
 
     serviceStub = new ProtectedFirebaseServiceStub(fireDb, fireAuth);
   });
