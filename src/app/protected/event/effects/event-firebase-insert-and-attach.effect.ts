@@ -8,6 +8,7 @@ import {
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/mergeMap';
 import { toFirebaseEventUpdateObject } from './event-firebase-update.effect';
 import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 import { Actions } from '@ngrx/effects';

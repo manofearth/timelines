@@ -48,7 +48,7 @@ describe('ProtectedFirebaseService', () => {
 
       expect(serviceStub.getList()).toBe('firebase-list-stub');
 
-      expect(fireDb.object).toHaveBeenCalledWith('/private/some-user-uid/some-node-name');
+      expect(fireDb.list).toHaveBeenCalledWith('/private/some-user-uid/some-node-name');
     });
   });
 

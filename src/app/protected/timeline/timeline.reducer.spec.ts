@@ -20,8 +20,8 @@ describe('timeline reducer', () => {
         id: '-KYM3lCiVvKVV-mJt3eB',
         title: 'Second World War',
         events: [
-          { id: 'some-event-id-1', title: 'some event 1' },
-          { id: 'some-event-id-2', title: 'some event 2' },
+          { id: 'some-event-id-1', title: 'some event 1', dateBegin: null, dateEnd: null },
+          { id: 'some-event-id-2', title: 'some event 2', dateBegin: null, dateEnd: null },
         ]
       },
     };
@@ -37,8 +37,8 @@ describe('timeline reducer', () => {
         id: '-KYM3lCiVvKVV-mJt3eB',
         title: 'Second World War',
         events: [
-          { id: 'some-event-id-1', title: 'some event 1' },
-          { id: 'some-event-id-2', title: 'some event 2' },
+          { id: 'some-event-id-1', title: 'some event 1', dateBegin: null, dateEnd: null },
+          { id: 'some-event-id-2', title: 'some event 2', dateBegin: null, dateEnd: null },
         ]
       },
     });
@@ -54,8 +54,8 @@ describe('timeline reducer', () => {
         id: '-KYM3lCiVvKVV-mJt3eB',
         title: 'Second World War',
         events: [
-          { id: 'some-event-id-1', title: 'some event 1' },
-          { id: 'some-event-id-2', title: 'some event 2' },
+          { id: 'some-event-id-1', title: 'some event 1', dateBegin: null, dateEnd: null },
+          { id: 'some-event-id-2', title: 'some event 2', dateBegin: null, dateEnd: null },
         ]
       },
     });
@@ -76,8 +76,8 @@ describe('timeline reducer', () => {
         id: '-KYM3lCiVvKVV-mJt3eB',
         title: 'Second World War',
         events: [
-          { id: 'some-event-id-1', title: 'some event 1' },
-          { id: 'some-event-id-2', title: 'some event 2' },
+          { id: 'some-event-id-1', title: 'some event 1', dateBegin: null, dateEnd: null },
+          { id: 'some-event-id-2', title: 'some event 2', dateBegin: null, dateEnd: null },
         ]
       },
     });
