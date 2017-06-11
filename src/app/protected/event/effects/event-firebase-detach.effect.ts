@@ -4,7 +4,7 @@ import { EventDetachAction, EventDetachErrorAction, EventDetachSuccessAction } f
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/map';
-import { Actions } from '@ngrx/effects';
+import { Actions, Effect } from '@ngrx/effects';
 import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 import { EventsFirebaseService } from '../events-firebase.service';
 import { TimelinesFirebaseService } from '../../timelines/timelines-firebase.service';
@@ -16,6 +16,11 @@ export class EventFirebaseDetachEffect extends ProtectedFirebaseEffect<'EVENT_DE
   'EVENT_DETACH_ERROR',
   EventDetachErrorAction,
   void> {
+
+  @Effect()
+  effect(): Observable<EventDetachSuccessAction | EventDetachErrorAction> {
+    return super.createEffect();
+  }
 
   protected runEffect(action: EventDetachAction): Observable<void> {
     return Observable

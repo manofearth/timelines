@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
 import { Timeline, TimelineGetAction, TimelineGetErrorAction, TimelineGetSuccessAction } from '../timeline.reducer';
 import { Observable } from 'rxjs/Observable';
-import { Actions } from '@ngrx/effects';
+import { Actions, Effect } from '@ngrx/effects';
 import { AuthFirebaseService } from 'app/protected/shared/firebase/auth-firebase.service';
 import { FirebaseTimeline, TimelinesFirebaseService } from '../../timelines/timelines-firebase.service';
 import { EventsFirebaseService, FirebaseTimelineEvent } from '../../event/events-firebase.service';
@@ -16,6 +16,11 @@ export class TimelineFirebaseGetEffect extends ProtectedFirebaseEffect<'TIMELINE
   'TIMELINE_GET_ERROR',
   TimelineGetErrorAction,
   Timeline> {
+
+  @Effect()
+  effect(): Observable<TimelineGetSuccessAction | TimelineGetErrorAction> {
+    return super.createEffect();
+  }
 
   protected runEffect(action: TimelineGetAction): Observable<Timeline> {
     return this.fireTimelines

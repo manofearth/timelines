@@ -26,6 +26,9 @@ import { TimelineFirebaseCreateEffect } from './protected/timeline/effects/timel
 import { TimelineFirebaseDeleteEffect } from './protected/timeline/effects/timeline-firebase-delete.effect';
 import { TimelineFirebaseGetEffect } from './protected/timeline/effects/timeline-firebase-get.effect';
 import { TimelineFirebaseSaveEffect } from './protected/timeline/effects/timeline-firebase-save.effect';
+import { AuthFirebaseService } from './protected/shared/firebase/auth-firebase.service';
+import { TimelinesFirebaseService } from './protected/timelines/timelines-firebase.service';
+import { EventsFirebaseService } from './protected/event/events-firebase.service';
 
 const routes: Routes = [
   {
@@ -82,7 +85,11 @@ const routes: Routes = [
   ],
   providers: [
     AuthGuard,
+    AuthFirebaseService,
     Logger,
+    // until https://github.com/angular/angular/issues/12869 fixed
+    TimelinesFirebaseService,
+    EventsFirebaseService,
   ],
   bootstrap: [AppComponent]
 })

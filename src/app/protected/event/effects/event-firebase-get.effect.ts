@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { EventsFirebaseService, FirebaseTimelineEvent } from '../events-firebase.service';
 import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 import { TimelineEvent } from '../../shared/timeline-event';
-import { Actions } from '@ngrx/effects';
+import { Actions, Effect } from '@ngrx/effects';
 
 @Injectable()
 export class EventFirebaseGetEffect extends ProtectedFirebaseEffect<'EVENT_GET',
@@ -14,6 +14,11 @@ export class EventFirebaseGetEffect extends ProtectedFirebaseEffect<'EVENT_GET',
   'EVENT_GET_ERROR',
   EventGetErrorAction,
   FirebaseTimelineEvent> {
+
+  @Effect()
+  effect(): Observable<EventGetSuccessAction | EventGetErrorAction> {
+    return super.createEffect();
+  }
 
   protected runEffect(action: EventGetAction): Observable<FirebaseTimelineEvent> {
     return this.fireEvents.getObject(action.payload);

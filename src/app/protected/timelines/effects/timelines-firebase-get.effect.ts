@@ -3,7 +3,7 @@ import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebas
 import { TimelinesGetAction, TimelinesGetErrorAction, TimelinesGetSuccessAction } from '../timelines.reducer';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/take';
-import { Actions } from '@ngrx/effects';
+import { Actions, Effect } from '@ngrx/effects';
 import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 import { FirebaseTimeline, TimelinesFirebaseService } from '../timelines-firebase.service';
 import { TimelineForList } from '../../timeline/timeline.reducer';
@@ -15,6 +15,11 @@ export class TimelinesFirebaseGetEffect extends ProtectedFirebaseEffect<'TIMELIN
   'TIMELINES_GET_ERROR',
   TimelinesGetErrorAction,
   FirebaseTimeline[]> {
+
+  @Effect()
+  effect(): Observable<TimelinesGetSuccessAction | TimelinesGetErrorAction> {
+    return super.createEffect();
+  }
 
   protected runEffect(action: TimelinesGetAction): Observable<FirebaseTimeline[]> {
     return this.fireTimelines.getList();

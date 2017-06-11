@@ -4,7 +4,7 @@ import { EventUpdateAction, EventUpdateErrorAction, EventUpdateSuccessAction } f
 import { Observable } from 'rxjs/Observable';
 import { EventsFirebaseService, FirebaseEventUpdateObject } from '../events-firebase.service';
 import { TimelineEvent } from '../../shared/timeline-event';
-import { Actions } from '@ngrx/effects';
+import { Actions, Effect } from '@ngrx/effects';
 import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 
 @Injectable()
@@ -14,6 +14,11 @@ export class EventFirebaseUpdateEffect extends ProtectedFirebaseEffect<'EVENT_UP
   'EVENT_UPDATE_ERROR',
   EventUpdateErrorAction,
   void> {
+
+  @Effect()
+  effect(): Observable<EventUpdateSuccessAction | EventUpdateErrorAction> {
+    return super.createEffect();
+  }
 
   protected runEffect(action: EventUpdateAction): Observable<void> {
     return this.fireEvents

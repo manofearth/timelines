@@ -10,16 +10,22 @@ export abstract class ProtectedFirebaseEffect<TActionType extends string,
   TErrorAction extends Action,
   TEffectResult> {
 
-  @Effect() effect: Observable<TSuccessAction | TErrorAction> = this
-    .getActions()
-    .switchMap((action: TAction) =>
-      this
-        .runEffect(action)
-        .map(this.mapToSuccessAction.bind(this))
-        .catch(this.mapToErrorAction.bind(this))
-    );
-
   constructor(private actions: Actions, protected auth: AuthFirebaseService) {
+  }
+
+  /**
+   * Every child effect should expose @Effect and init it by this method, because @ngrx/effects module
+   * does not support @Effect in parent class: https://github.com/ngrx/effects/issues/156
+   */
+  protected createEffect(): Observable<TSuccessAction | TErrorAction> {
+    return this
+      .getActions()
+      .switchMap((action: TAction) =>
+        this
+          .runEffect(action)
+          .map(this.mapToSuccessAction.bind(this))
+          .catch(this.mapToErrorAction.bind(this))
+      );
   }
 
   protected authorizedActionsOfType(...types: TActionType[]): Observable<TAction> {

@@ -8,7 +8,7 @@ import {
 } from '../timeline.reducer';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/debounceTime';
-import { Actions } from '@ngrx/effects';
+import { Actions, Effect } from '@ngrx/effects';
 import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 import { FirebaseTimelineUpdateObject, TimelinesFirebaseService } from '../../timelines/timelines-firebase.service';
 
@@ -19,6 +19,11 @@ export class TimelineFirebaseSaveEffect extends ProtectedFirebaseEffect<'TIMELIN
   'TIMELINE_SAVE_ERROR',
   TimelineSaveErrorAction,
   void> {
+
+  @Effect()
+  effect(): Observable<TimelineSaveSuccessAction | TimelineSaveErrorAction> {
+    return super.createEffect();
+  }
 
   protected runEffect(action: TimelineChangedAction): Observable<void> {
     return this.fireTimelines.updateObject(action.payload.id, toFirebaseTimelineUpdateObject(action.payload));

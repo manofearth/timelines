@@ -12,6 +12,10 @@ class ProtectedFirebaseEffectStub extends ProtectedFirebaseEffect<any, any, any,
   successActionMapper: (val: any) => any = (val) => val;
   errorActionType: string;
 
+  effect(): Observable<any | any> {
+    return super.createEffect();
+  }
+
   protected runEffect(action: any): Observable<any> {
     return this.effectRunner(action);
   }
@@ -54,7 +58,7 @@ describe('ProtectedFirebaseEffect', () => {
 
       actions.queue({ type: 'some-interesting-action-type' });
 
-      effectUnderTest.effect.subscribe(() => {
+      effectUnderTest.effect().subscribe(() => {
         fail('should be silent, because user is not logged in');
       });
 
@@ -75,7 +79,7 @@ describe('ProtectedFirebaseEffect', () => {
       actions.queue({ type: 'some-interesting-action-type' });
       actions.queue({ type: 'some-not-interesting-action-type' });
 
-      effectUnderTest.effect.subscribe((result) => {
+      effectUnderTest.effect().subscribe((result) => {
         expect(result).toBe('some-effect-result');
         done();
       });
@@ -89,7 +93,7 @@ describe('ProtectedFirebaseEffect', () => {
 
       actions.queue({ type: 'some-interesting-action-type' });
 
-      effectUnderTest.effect.subscribe((result) => {
+      effectUnderTest.effect().subscribe((result) => {
         expect(result).toBe('some-effect-result-mapped');
         done();
       });
@@ -103,7 +107,7 @@ describe('ProtectedFirebaseEffect', () => {
 
       actions.queue({ type: 'some-interesting-action-type' });
 
-      effectUnderTest.effect.subscribe((result) => {
+      effectUnderTest.effect().subscribe((result) => {
         expect(result).toEqual({
           type: 'some-error-action-type',
           payload: new Error('some-error')
@@ -118,7 +122,7 @@ describe('ProtectedFirebaseEffect', () => {
 
       actions.queue({ type: 'some-interesting-action-type' });
 
-      effectUnderTest.effect.subscribe(() => {
+      effectUnderTest.effect().subscribe(() => {
         expect(effectUnderTest.effectRunner).toHaveBeenCalledWith({
           type: 'some-interesting-action-type-mapped' // modifier works
         });

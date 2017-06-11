@@ -11,7 +11,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
 import { toFirebaseEventUpdateObject } from './event-firebase-update.effect';
 import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
-import { Actions } from '@ngrx/effects';
+import { Actions, Effect } from '@ngrx/effects';
 import { EventsFirebaseService } from '../events-firebase.service';
 import { TimelinesFirebaseService } from '../../timelines/timelines-firebase.service';
 
@@ -22,6 +22,11 @@ export class EventFirebaseInsertAndAttachEffect extends ProtectedFirebaseEffect<
     'EVENT_INSERT_ERROR',
     EventInsertErrorAction,
     firebase.database.Reference> {
+
+  @Effect()
+  effect(): Observable<EventInsertSuccessAction | EventInsertErrorAction> {
+    return super.createEffect();
+  }
 
   protected runEffect(action: EventInsertAndAttachToTimelineAction): Observable<firebase.database.Reference> {
     return this.fireEvents

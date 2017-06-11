@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
 import { EventInsertAction, EventInsertErrorAction, EventInsertSuccessAction } from '../event.reducer';
 import { Observable } from 'rxjs/Observable';
-import { Actions } from '@ngrx/effects';
+import { Actions, Effect } from '@ngrx/effects';
 import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 import { EventsFirebaseService } from '../events-firebase.service';
 import { toFirebaseEventUpdateObject } from './event-firebase-update.effect';
@@ -14,6 +14,11 @@ export class EventFirebaseInsertEffect extends ProtectedFirebaseEffect<'EVENT_IN
   'EVENT_INSERT_ERROR',
   EventInsertErrorAction,
   firebase.database.Reference> {
+
+  @Effect()
+  effect(): Observable<EventInsertSuccessAction | EventInsertErrorAction> {
+    return super.createEffect();
+  }
 
   protected runEffect(action: EventInsertAction): Observable<firebase.database.Reference> {
     return this.fireEvents.pushObject(toFirebaseEventUpdateObject(action.payload));

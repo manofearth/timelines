@@ -6,7 +6,7 @@ import {
   TimelineCreateSuccessAction
 } from '../../timelines/timelines.reducer';
 import { Observable } from 'rxjs/Observable';
-import { Actions } from '@ngrx/effects';
+import { Actions, Effect } from '@ngrx/effects';
 import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 import { TimelinesFirebaseService } from '../../timelines/timelines-firebase.service';
 
@@ -17,6 +17,11 @@ export class TimelineFirebaseCreateEffect extends ProtectedFirebaseEffect<'TIMEL
   'TIMELINE_CREATE_ERROR',
   TimelineCreateErrorAction,
   firebase.database.Reference> {
+
+  @Effect()
+  effect(): Observable<TimelineCreateSuccessAction | TimelineCreateErrorAction> {
+    return super.createEffect();
+  }
 
   protected runEffect(action: TimelineCreateAction): Observable<firebase.database.Reference> {
     return this.fireTimelines.pushObject({
