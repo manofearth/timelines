@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
 import { Timeline, TimelineGetAction, TimelineGetErrorAction, TimelineGetSuccessAction } from '../timeline.reducer';
-import { Observable } from 'rxjs/Observable';
 import { Actions, Effect } from '@ngrx/effects';
 import { AuthFirebaseService } from 'app/protected/shared/firebase/auth-firebase.service';
 import { FirebaseTimeline, TimelinesFirebaseService } from '../../timelines/timelines-firebase.service';
 import { EventsFirebaseService, FirebaseTimelineEvent } from '../../event/events-firebase.service';
-import { Subscription, TeardownLogic } from 'rxjs/Subscription';
+import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
+import { Subscription, TeardownLogic } from 'rxjs/Subscription';
+import 'rxjs/add/operator/first';
 
 @Injectable()
 export class TimelineFirebaseGetEffect extends ProtectedFirebaseEffect<'TIMELINE_GET',

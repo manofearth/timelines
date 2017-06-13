@@ -1,11 +1,16 @@
 //noinspection TypeScriptPreferShortImport
 import { Subscription } from '../../shared/rxjs';
 import {
-  Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, TemplateRef,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
   ViewChild
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { TimelinesGetAction, TimelinesState, TimelineCreateAction, TimelineDeleteAction } from './timelines.reducer';
+import { TimelineCreateAction, TimelineDeleteAction, TimelinesGetAction, TimelinesState } from './timelines.reducer';
 import { AppState } from '../../reducers';
 import { Router } from '@angular/router';
 import { Timeline, TimelineForList } from '../timeline/timeline.reducer';
@@ -13,7 +18,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Title } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-timelines',
+  selector: 'tl-timelines',
   templateUrl: './timelines.component.html',
   styleUrls: ['./timelines.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

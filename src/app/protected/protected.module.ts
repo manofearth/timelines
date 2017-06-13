@@ -15,6 +15,7 @@ import { DateDirective } from './date/date.directive';
 import { ChartComponent } from './chart/chart.component';
 import { D3Service } from './d3/d3.service';
 import { WindowService } from './window/window.service';
+import { AdminComponent } from './admin/admin.component';
 
 const routes: Routes = [
   {
@@ -30,6 +31,10 @@ const routes: Routes = [
         component: TimelineComponent,
         canDeactivate: [TimelineCanDeactivate],
       },
+      {
+        path: 'admin',
+        component: AdminComponent,
+      }
     ],
   },
 
@@ -52,6 +57,7 @@ const routes: Routes = [
     SelectorComponent,
     DateDirective,
     ChartComponent,
+    AdminComponent,
   ],
   providers: [
     TimelineCanDeactivate,

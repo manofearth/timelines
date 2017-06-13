@@ -1,15 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { AppState } from '../reducers';
 
 @Component({
   selector: 'app-protected',
   templateUrl: './protected.component.html',
   styleUrls: ['./protected.component.css']
 })
-export class ProtectedComponent implements OnInit {
+export class ProtectedComponent {
 
-  constructor() { }
-
-  ngOnInit() {
+  constructor(private store: Store<AppState>) {
   }
-
 }

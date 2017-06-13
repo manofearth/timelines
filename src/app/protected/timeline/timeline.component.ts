@@ -1,18 +1,18 @@
 //noinspection TypeScriptPreferShortImport
 import { Subscription } from '../../shared/rxjs';
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
 import {
-  TimelineGetAction,
-  TimelineState,
   Timeline,
   TimelineChangedAction,
   TimelineChangedPayload,
   TimelineEventForTimeline,
+  TimelineGetAction,
+  TimelineState
 } from './timeline.reducer';
 import { ActivatedRoute, Params } from '@angular/router';
-import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EventComponent } from '../event/event.component';
@@ -56,17 +56,18 @@ export class TimelineComponent implements OnInit, OnDestroy {
 
     this.timelineStateSubscription = this.store
       .select('timeline')
-      .filter((timeline: TimelineState): boolean => timeline.timeline !== null)
       .subscribe((timeline: TimelineState) => {
         this.isLoading = timeline.isLoading;
         this.isSaving = timeline.isSaving;
         this.error = timeline.error;
         this.timeline = timeline.timeline;
 
-        this.updateTitle();
+        if (this.timeline) {
+          this.updateTitle();
 
-        if (!this.form) {
-          this.initForm(timeline.timeline);
+          if (!this.form) {
+            this.initForm(timeline.timeline);
+          }
         }
 
         this.changeDetector.markForCheck();

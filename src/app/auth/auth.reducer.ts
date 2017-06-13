@@ -61,6 +61,7 @@ export interface LogoutSuccessAction extends AuthAction {
 
 export interface User {
   email: string;
+  isAdmin?: boolean;
 }
 
 export function authReducer(state: AuthState, action: AuthAction): AuthState {
