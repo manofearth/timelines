@@ -1,12 +1,10 @@
-import { Actions, Effect } from '@ngrx/effects';
+import { Actions } from '@ngrx/effects';
 import { AuthFirebaseService } from './auth-firebase.service';
 import { Observable } from 'rxjs/Observable';
 import { Action } from '@ngrx/store';
 
-export abstract class ProtectedFirebaseEffect<TActionType extends string,
-  TAction extends Action,
+export abstract class ProtectedFirebaseEffect<TIncomingAction extends Action,
   TSuccessAction extends Action,
-  TErrorActionType extends string,
   TErrorAction extends Action,
   TEffectResult> {
 
@@ -20,7 +18,7 @@ export abstract class ProtectedFirebaseEffect<TActionType extends string,
   protected createEffect(): Observable<TSuccessAction | TErrorAction> {
     return this
       .getActions()
-      .switchMap((action: TAction) =>
+      .switchMap((action: TIncomingAction) =>
         this
           .runEffect(action)
           .map(this.mapToSuccessAction.bind(this))
@@ -28,29 +26,29 @@ export abstract class ProtectedFirebaseEffect<TActionType extends string,
       );
   }
 
-  protected authorizedActionsOfType(...types: TActionType[]): Observable<TAction> {
+  protected authorizedActionsOfType(...types: TIncomingAction['type'][]): Observable<TIncomingAction> {
     return this.actions
       .ofType(...types)
-      .filter((action: TAction) => this.auth.isLoggedIn);
+      .filter((action: TIncomingAction) => this.auth.isLoggedIn);
   }
 
-  private getActions(): Observable<TAction> {
+  private getActions(): Observable<TIncomingAction> {
     return this.modifyActionsObservable(
       this.authorizedActionsOfType(this.getInterestedActionType())
     );
   }
 
-  protected modifyActionsObservable(actions: Observable<TAction>): Observable<TAction> {
+  protected modifyActionsObservable(actions: Observable<TIncomingAction>): Observable<TIncomingAction> {
     return actions;
   }
 
-  protected abstract runEffect(action: TAction): Observable<TEffectResult>;
+  protected abstract runEffect(action: TIncomingAction): Observable<TEffectResult>;
 
   protected abstract mapToSuccessAction(effectResult: TEffectResult): TSuccessAction;
 
-  protected abstract getInterestedActionType(): TActionType;
+  protected abstract getInterestedActionType(): TIncomingAction['type'];
 
-  protected abstract getErrorActionType(): TErrorActionType;
+  protected abstract getErrorActionType(): TErrorAction['type'];
 
   protected mapToErrorAction(error: Error | string): Observable<TErrorAction> {
     return Observable.of<Action>({

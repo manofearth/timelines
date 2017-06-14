@@ -8,10 +8,8 @@ import { Actions, Effect } from '@ngrx/effects';
 import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 
 @Injectable()
-export class EventFirebaseUpdateEffect extends ProtectedFirebaseEffect<'EVENT_UPDATE',
-  EventUpdateAction,
+export class EventFirebaseUpdateEffect extends ProtectedFirebaseEffect<EventUpdateAction,
   EventUpdateSuccessAction,
-  'EVENT_UPDATE_ERROR',
   EventUpdateErrorAction,
   void> {
 

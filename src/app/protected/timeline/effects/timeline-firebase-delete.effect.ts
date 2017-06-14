@@ -11,10 +11,8 @@ import {
 } from '../../timelines/timelines.reducer';
 
 @Injectable()
-export class TimelineFirebaseDeleteEffect extends ProtectedFirebaseEffect<'TIMELINE_DELETE',
-  TimelineDeleteAction,
+export class TimelineFirebaseDeleteEffect extends ProtectedFirebaseEffect<TimelineDeleteAction,
   TimelineDeleteSuccessAction,
-  'TIMELINE_DELETE_ERROR',
   TimelineDeleteErrorAction,
   void> {
 

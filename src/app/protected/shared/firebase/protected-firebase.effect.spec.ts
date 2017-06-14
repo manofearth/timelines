@@ -6,7 +6,7 @@ import { Actions } from '@ngrx/effects';
 import { AuthFirebaseServiceStub } from './auth-firebase.service.stub';
 import createSpy = jasmine.createSpy;
 
-class ProtectedFirebaseEffectStub extends ProtectedFirebaseEffect<any, any, any, any, any, any> {
+class ProtectedFirebaseEffectStub extends ProtectedFirebaseEffect<any, any, any, any> {
 
   effectRunner: (action: any) => Observable<any>;
   successActionMapper: (val: any) => any = (val) => val;

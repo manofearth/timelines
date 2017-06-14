@@ -10,10 +10,8 @@ import { EventsFirebaseService } from '../events-firebase.service';
 import { TimelinesFirebaseService } from '../../timelines/timelines-firebase.service';
 
 @Injectable()
-export class EventFirebaseDetachEffect extends ProtectedFirebaseEffect<'EVENT_DETACH',
-  EventDetachAction,
+export class EventFirebaseDetachEffect extends ProtectedFirebaseEffect<EventDetachAction,
   EventDetachSuccessAction,
-  'EVENT_DETACH_ERROR',
   EventDetachErrorAction,
   void> {
 

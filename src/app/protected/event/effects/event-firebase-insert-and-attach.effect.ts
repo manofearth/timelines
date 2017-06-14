@@ -16,12 +16,10 @@ import { EventsFirebaseService } from '../events-firebase.service';
 import { TimelinesFirebaseService } from '../../timelines/timelines-firebase.service';
 
 @Injectable()
-export class EventFirebaseInsertAndAttachEffect extends ProtectedFirebaseEffect<'EVENT_INSERT_AND_ATTACH_TO_TIMELINE',
-    EventInsertAndAttachToTimelineAction,
-    EventInsertSuccessAction,
-    'EVENT_INSERT_ERROR',
-    EventInsertErrorAction,
-    firebase.database.Reference> {
+export class EventFirebaseInsertAndAttachEffect extends ProtectedFirebaseEffect<EventInsertAndAttachToTimelineAction,
+  EventInsertSuccessAction,
+  EventInsertErrorAction,
+  firebase.database.Reference> {
 
   @Effect()
   effect(): Observable<EventInsertSuccessAction | EventInsertErrorAction> {

@@ -13,10 +13,8 @@ import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service
 import { FirebaseTimelineUpdateObject, TimelinesFirebaseService } from '../../timelines/timelines-firebase.service';
 
 @Injectable()
-export class TimelineFirebaseSaveEffect extends ProtectedFirebaseEffect<'TIMELINE_CHANGED',
-  TimelineChangedAction,
+export class TimelineFirebaseSaveEffect extends ProtectedFirebaseEffect<TimelineChangedAction,
   TimelineSaveSuccessAction,
-  'TIMELINE_SAVE_ERROR',
   TimelineSaveErrorAction,
   void> {
 

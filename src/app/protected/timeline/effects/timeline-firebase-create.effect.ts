@@ -11,10 +11,8 @@ import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service
 import { TimelinesFirebaseService } from '../../timelines/timelines-firebase.service';
 
 @Injectable()
-export class TimelineFirebaseCreateEffect extends ProtectedFirebaseEffect<'TIMELINE_CREATE',
-  TimelineCreateAction,
+export class TimelineFirebaseCreateEffect extends ProtectedFirebaseEffect<TimelineCreateAction,
   TimelineCreateSuccessAction,
-  'TIMELINE_CREATE_ERROR',
   TimelineCreateErrorAction,
   firebase.database.Reference> {
 

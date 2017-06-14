@@ -8,10 +8,8 @@ import { EventsFirebaseService } from '../events-firebase.service';
 import { toFirebaseEventUpdateObject } from './event-firebase-update.effect';
 
 @Injectable()
-export class EventFirebaseInsertEffect extends ProtectedFirebaseEffect<'EVENT_INSERT',
-  EventInsertAction,
+export class EventFirebaseInsertEffect extends ProtectedFirebaseEffect<EventInsertAction,
   EventInsertSuccessAction,
-  'EVENT_INSERT_ERROR',
   EventInsertErrorAction,
   firebase.database.Reference> {
 

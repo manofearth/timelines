@@ -11,10 +11,8 @@ import { Subscription, TeardownLogic } from 'rxjs/Subscription';
 import 'rxjs/add/operator/first';
 
 @Injectable()
-export class TimelineFirebaseGetEffect extends ProtectedFirebaseEffect<'TIMELINE_GET',
-  TimelineGetAction,
+export class TimelineFirebaseGetEffect extends ProtectedFirebaseEffect<TimelineGetAction,
   TimelineGetSuccessAction,
-  'TIMELINE_GET_ERROR',
   TimelineGetErrorAction,
   Timeline> {
 

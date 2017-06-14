@@ -9,10 +9,8 @@ import { FirebaseTimeline, TimelinesFirebaseService } from '../timelines-firebas
 import { TimelineForList } from '../../timeline/timeline.reducer';
 
 @Injectable()
-export class TimelinesFirebaseGetEffect extends ProtectedFirebaseEffect<'TIMELINES_GET',
-  TimelinesGetAction,
+export class TimelinesFirebaseGetEffect extends ProtectedFirebaseEffect<TimelinesGetAction,
   TimelinesGetSuccessAction,
-  'TIMELINES_GET_ERROR',
   TimelinesGetErrorAction,
   FirebaseTimeline[]> {
 

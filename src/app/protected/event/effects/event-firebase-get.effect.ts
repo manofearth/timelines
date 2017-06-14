@@ -8,10 +8,8 @@ import { TimelineEvent } from '../../shared/timeline-event';
 import { Actions, Effect } from '@ngrx/effects';
 
 @Injectable()
-export class EventFirebaseGetEffect extends ProtectedFirebaseEffect<'EVENT_GET',
-  EventGetAction,
+export class EventFirebaseGetEffect extends ProtectedFirebaseEffect<EventGetAction,
   EventGetSuccessAction,
-  'EVENT_GET_ERROR',
   EventGetErrorAction,
   FirebaseTimelineEvent> {
 
