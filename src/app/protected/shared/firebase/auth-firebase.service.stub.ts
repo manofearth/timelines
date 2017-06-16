@@ -1,6 +1,6 @@
 import { AuthFirebaseService } from './auth-firebase.service';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { FirebaseAuthState } from 'angularfire2';
+import { User as FireUser } from 'firebase';
 
 export class AuthFirebaseServiceStub extends AuthFirebaseService {
 
@@ -20,5 +20,5 @@ export class AuthFirebaseServiceStub extends AuthFirebaseService {
 }
 
 type FirebaseAuthStateStub = {
-  [P in keyof FirebaseAuthState]?: FirebaseAuthState[P];
-  }
+  [P in keyof FireUser]?: FireUser[P];
+}

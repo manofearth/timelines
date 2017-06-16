@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
-import { AngularFireAuth, FirebaseAuthState } from 'angularfire2';
+import { User as FireUser } from 'firebase';
+import { AngularFireAuth } from 'angularfire2/auth';
+
 
 @Injectable()
 export class AuthFirebaseService {
 
-  private authState: FirebaseAuthState;
+  private authState: FireUser;
 
   constructor(private fireAuth: AngularFireAuth) {
-    this.fireAuth.subscribe((state: FirebaseAuthState) => {
+    this.fireAuth.authState.subscribe((state: FireUser) => {
       this.authState = state;
     });
   }

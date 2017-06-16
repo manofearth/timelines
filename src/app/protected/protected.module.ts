@@ -14,7 +14,7 @@ import { DateParser } from './shared/date-parser/date-parser.service';
 import { DateDirective } from './date/date.directive';
 import { ChartComponent } from './chart/chart.component';
 import { D3Service } from './d3/d3.service';
-import { WindowService } from './window/window.service';
+import { WindowService } from './shared/window.service';
 import { AdminComponent } from './admin/admin.component';
 
 const routes: Routes = [

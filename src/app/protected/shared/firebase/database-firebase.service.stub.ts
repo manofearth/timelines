@@ -1,4 +1,4 @@
-import { AngularFireDatabase, FirebaseListObservable, FirebaseObjectObservable } from 'angularfire2';
+import { AngularFireDatabase, FirebaseListObservable, FirebaseObjectObservable } from 'angularfire2/database';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 
@@ -7,7 +7,7 @@ export class DatabaseFirebaseServiceStub extends AngularFireDatabase {
   private data: any;
 
   constructor(data: any = {}) {
-    super(null, null);
+    super(null);
     this.data = data;
   }
 
@@ -24,4 +24,3 @@ export class DatabaseFirebaseServiceStub extends AngularFireDatabase {
     }) as any;
   }
 }
-

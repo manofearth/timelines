@@ -31,6 +31,8 @@ import { TimelinesFirebaseService } from './protected/timelines/timelines-fireba
 import { EventsFirebaseService } from './protected/event/events-firebase.service';
 import { AdminRefreshEventsSearchIndexEffect } from './protected/admin/effect/admin-refresh-events-search-index.effect';
 import { ElasticSearchService } from './protected/shared/elastic-search.service';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireAuthModule } from 'angularfire2/auth';
 
 const routes: Routes = [
   {
@@ -72,6 +74,8 @@ const routes: Routes = [
     StoreModule.provideStore(reducer, initialState),
     StoreDevtoolsModule.instrumentOnlyWithExtension(),
     AngularFireModule.initializeApp(firebaseConfig),
+    AngularFireDatabaseModule,
+    AngularFireAuthModule,
     EffectsModule.run(FirebaseAuthEffects),
     // until https://github.com/angular/angular/issues/12869 fixed
     EffectsModule.run(TimelinesFirebaseGetEffect),

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFire, FirebaseAuthState, AuthMethods } from 'angularfire2';
-import { Effect, Actions } from '@ngrx/effects';
+import { Actions, Effect } from '@ngrx/effects';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/fromPromise';
@@ -10,53 +9,53 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/do';
 import {
-  SignupAction,
-  SignupSuccessAction,
-  SignupErrorAction,
+  AuthStateChangedAction,
   LoginAction,
   LoginErrorAction,
   LoginSuccessAction,
-  User,
-  AuthStateChangedAction,
-  LogoutSuccessAction
+  LogoutSuccessAction,
+  SignupAction,
+  SignupErrorAction,
+  SignupSuccessAction,
+  User
 } from './auth.reducer';
+import { AngularFireAuth } from 'angularfire2/auth';
+import { User as FireUser } from 'firebase';
 
 @Injectable()
 export class FirebaseAuthEffects {
 
-  @Effect() signup: Observable<SignupSuccessAction|SignupErrorAction> = this.actions
+  @Effect() signup: Observable<SignupSuccessAction | SignupErrorAction> = this.actions
     .ofType('SIGNUP')
     .switchMap((action: SignupAction) =>
       Observable.fromPromise(
-        <Promise<FirebaseAuthState>>this.fire.auth.createUser({
-          email: action.payload.email,
-          password: action.payload.password,
-        }))
-        .map((authState: FirebaseAuthState): SignupSuccessAction => ({
+        <Promise<FireUser>>this.fireAuth.auth.createUserWithEmailAndPassword(
+          action.payload.email,
+          action.payload.password,
+        ))
+        .map((authState: FireUser): SignupSuccessAction => ({
           type: 'SIGNUP_SUCCESS',
           payload: toUser(authState),
         }))
-        .catch((error: Error|string): Observable<SignupErrorAction> => Observable.of({
+        .catch((error: Error | string): Observable<SignupErrorAction> => Observable.of({
           type: <'SIGNUP_ERROR'>'SIGNUP_ERROR',
           payload: toError(error),
         }))
     );
 
-  @Effect() login: Observable<LoginSuccessAction|LoginErrorAction> = this.actions
+  @Effect() login: Observable<LoginSuccessAction | LoginErrorAction> = this.actions
     .ofType('LOGIN')
     .switchMap((action: LoginAction) =>
       Observable.fromPromise(
-        <Promise<FirebaseAuthState>>this.fire.auth.login({
-          email: action.payload.email,
-          password: action.payload.password,
-        }, {
-          method: AuthMethods.Password,
-        }))
-        .map((authState: FirebaseAuthState): LoginSuccessAction => ({
+        <Promise<FireUser>>this.fireAuth.auth.signInWithEmailAndPassword(
+          action.payload.email,
+          action.payload.password,
+        ))
+        .map((authState: FireUser): LoginSuccessAction => ({
           type: 'LOGIN_SUCCESS',
           payload: toUser(authState),
         }))
-        .catch((error: Error|string): Observable<LoginErrorAction> =>
+        .catch((error: Error | string): Observable<LoginErrorAction> =>
           Observable.of({
             type: <'LOGIN_ERROR'>'LOGIN_ERROR',
             payload: toError(error),
@@ -67,33 +66,33 @@ export class FirebaseAuthEffects {
   @Effect() logout: Observable<LogoutSuccessAction> = this.actions
     .ofType('LOGOUT')
     .map((): LogoutSuccessAction => {
-      this.fire.auth.logout();
+      this.fireAuth.auth.signOut();
       return { type: 'LOGOUT_SUCCESS' }
     });
 
-  @Effect() auth: Observable<AuthStateChangedAction> = this.fire.auth
-    .map((authState: FirebaseAuthState): AuthStateChangedAction => ({
+  @Effect() auth: Observable<AuthStateChangedAction> = this.fireAuth.authState
+    .map((authState: FireUser): AuthStateChangedAction => ({
       type: 'AUTH_STATE_CHANGED',
       payload: toUser(authState),
     }));
 
-  constructor(private actions: Actions, private fire: AngularFire) {
+  constructor(private actions: Actions, private fireAuth: AngularFireAuth) {
   }
 
 }
 
-function toUser(authState: FirebaseAuthState): User {
+function toUser(authState: FireUser): User {
 
   if (authState === null) {
     return null;
   } else {
     return {
-      email: authState.auth.email,
+      email: authState.email,
     }
   }
 }
 
-function toError(error: Error|string): Error {
+function toError(error: Error | string): Error {
 
   if (error instanceof Error) {
     // May have "TypeError: Cannot assign to read only property 'microTask' of object '#<Object>'" later.

@@ -18,7 +18,7 @@ export class AdminRefreshEventsSearchIndexEffect {
         .catch((error) => {
           return Observable.of<Action>({
             type: 'ADMIN_REFRESH_EVENTS_SEARCH_INDEX_ERROR',
-            payload: error,
+            payload: error.message,
           })
         });
     });

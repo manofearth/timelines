@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { AngularFireDatabase, FirebaseListObservable, FirebaseObjectObservable } from 'angularfire2';
 import { AuthFirebaseService } from './auth-firebase.service';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
+import { AngularFireDatabase, FirebaseListObservable, FirebaseObjectObservable } from 'angularfire2/database';
 
 @Injectable()
 export abstract class ProtectedFirebaseService<TObject, TUpdateObject> {

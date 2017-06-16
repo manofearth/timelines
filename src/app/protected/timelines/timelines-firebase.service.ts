@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FirebaseObjectObservable } from 'angularfire2';
+import { FirebaseObjectObservable } from 'angularfire2/database';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
 import { ProtectedFirebaseService } from '../shared/firebase/protected-firebase.service';

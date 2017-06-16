@@ -12,7 +12,7 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 import { D3Service } from '../d3/d3.service';
-import { WindowService } from '../window/window.service';
+import { WindowService } from '../shared/window.service';
 import { Selection } from 'd3-selection';
 import { Subscription } from 'rxjs/Subscription';
 import { TimelineEventForTimeline } from '../timeline/timeline.reducer';
