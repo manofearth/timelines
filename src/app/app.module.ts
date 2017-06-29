@@ -29,8 +29,6 @@ import { TimelineFirebaseSaveEffect } from './protected/timeline/effects/timelin
 import { AuthFirebaseService } from './protected/shared/firebase/auth-firebase.service';
 import { TimelinesFirebaseService } from './protected/timelines/timelines-firebase.service';
 import { EventsFirebaseService } from './protected/event/events-firebase.service';
-import { AdminRefreshEventsSearchIndexEffect } from './protected/admin/effect/admin-refresh-events-search-index.effect';
-import { ElasticSearchService } from './protected/shared/elastic-search.service';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 
@@ -88,7 +86,6 @@ const routes: Routes = [
     EffectsModule.run(EventFirebaseInsertAndAttachEffect),
     EffectsModule.run(EventFirebaseUpdateEffect),
     EffectsModule.run(EventFirebaseDetachEffect),
-    EffectsModule.run(AdminRefreshEventsSearchIndexEffect),
   ],
   providers: [
     AuthGuard,
@@ -97,7 +94,6 @@ const routes: Routes = [
     // until https://github.com/angular/angular/issues/12869 fixed
     TimelinesFirebaseService,
     EventsFirebaseService,
-    ElasticSearchService,
   ],
   bootstrap: [AppComponent]
 })

@@ -6,7 +6,7 @@
 /out-tsc
 
 # dependencies
-/node_modules
+node_modules/
 
 # IDEs and editors
 /.idea
@@ -30,8 +30,13 @@
 /coverage
 /libpeerconnection.log
 npm-debug.log
+firebase-debug.log
 testem.log
 /typings
+
+# Environment
+/.firebaserc
+/src/environments/firebase.config.ts
 
 # e2e
 /e2e/*.js
@@ -40,6 +45,3 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
-
-/src/environments/firebase.config.ts
-/src/environments/elastic-search.config.ts
