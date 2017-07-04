@@ -31,6 +31,7 @@ import { TimelinesFirebaseService } from './protected/timelines/timelines-fireba
 import { EventsFirebaseService } from './protected/event/events-firebase.service';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
+import { TimelineEventFinderSearchEffect } from './protected/timeline/effects/timeline-event-finder-search.effect';
 
 const routes: Routes = [
   {
@@ -86,6 +87,7 @@ const routes: Routes = [
     EffectsModule.run(EventFirebaseInsertAndAttachEffect),
     EffectsModule.run(EventFirebaseUpdateEffect),
     EffectsModule.run(EventFirebaseDetachEffect),
+    EffectsModule.run(TimelineEventFinderSearchEffect),
   ],
   providers: [
     AuthGuard,

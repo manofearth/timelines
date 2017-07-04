@@ -4,11 +4,17 @@ import {
   ElementRef,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output,
   ViewChild
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { AppState } from '../../../reducers';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs/Subscription';
+import 'rxjs/add/operator/map';
+import { SelectorChangedAction } from './selector-actions';
 
 @Component({
   selector: 'tl-selector',
@@ -16,18 +22,35 @@ import { FormControl } from '@angular/forms';
   styleUrls: ['./selector.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SelectorComponent implements OnInit {
+export class SelectorComponent implements OnInit, OnDestroy {
+
 
   inputControl: FormControl;
 
   @Output('create') create: EventEmitter<string> = new EventEmitter<string>();
 
   @Input('placeholder') placeholder: string;
+  @Input('name') name: string;
 
   @ViewChild('btnCreate') btnCreate: ElementRef;
 
+  private valueChangesSub: Subscription;
+
+  constructor(private store: Store<AppState>) {
+  }
+
   ngOnInit() {
     this.inputControl = new FormControl();
+    this.valueChangesSub = this.inputControl.valueChanges
+      .map(val => ({
+        type: this.name.toUpperCase() + '_CHANGED',
+        payload: val
+      } as SelectorChangedAction))
+      .subscribe(this.store);
+  }
+
+  ngOnDestroy(): void {
+    this.valueChangesSub.unsubscribe();
   }
 
   emitCreateEvent() {

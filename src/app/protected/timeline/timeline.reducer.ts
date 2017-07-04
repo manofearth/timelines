@@ -1,5 +1,7 @@
 import { Action } from '@ngrx/store';
 import { TimelineDate } from '../shared/date';
+import { SelectorState } from '../shared/selector/selector-state';
+import { SelectorChangedAction } from '../shared/selector/selector-actions';
 
 export interface Timeline {
   id: string;
@@ -29,10 +31,12 @@ export interface TimelineState {
   isSaving: boolean;
   error: Error;
   timeline: Timeline;
+  eventFinder: SelectorState;
 }
 
 export type TimelineActionType = 'TIMELINE_GET' | 'TIMELINE_GET_SUCCESS' | 'TIMELINE_GET_ERROR'
-  | 'TIMELINE_CHANGED' | 'TIMELINE_SAVE_SUCCESS' | 'TIMELINE_SAVE_ERROR';
+  | 'TIMELINE_CHANGED' | 'TIMELINE_SAVE_SUCCESS' | 'TIMELINE_SAVE_ERROR'
+  | 'TIMELINE_EVENT_FINDER_CHANGED' | 'TIMELINE_EVENT_FINDER_SEARCH_SUCCESS' | 'TIMELINE_EVENT_FINDER_SEARCH_ERROR';
 
 export interface TimelineActionBase extends Action {
   type: TimelineActionType;
@@ -67,6 +71,19 @@ export interface TimelineSaveErrorAction extends TimelineActionBase {
   payload: Error;
 }
 
+export interface TimelineEventFinderChangedAction extends TimelineActionBase, SelectorChangedAction {
+  type: 'TIMELINE_EVENT_FINDER_CHANGED';
+  payload: string;
+}
+
+export interface TimelineEventFinderSearchSuccessAction extends TimelineActionBase {
+  type: 'TIMELINE_EVENT_FINDER_SEARCH_SUCCESS';
+}
+
+export interface TimelineEventFinderSearchErrorAction extends TimelineActionBase {
+  type: 'TIMELINE_EVENT_FINDER_SEARCH_ERROR';
+}
+
 export type TimelineAction = TimelineGetAction | TimelineGetSuccessAction | TimelineGetErrorAction
   | TimelineChangedAction | TimelineSaveSuccessAction | TimelineSaveErrorAction;
 
@@ -78,6 +95,7 @@ export function timelineReducer(state: TimelineState, action: TimelineAction): T
         isSaving: false,
         error: null,
         timeline: action.payload,
+        eventFinder: null,
       };
     case 'TIMELINE_GET_ERROR':
       return {
@@ -85,6 +103,7 @@ export function timelineReducer(state: TimelineState, action: TimelineAction): T
         isSaving: false,
         error: action.payload,
         timeline: state.timeline,
+        eventFinder: null,
       };
     case 'TIMELINE_CHANGED':
       return {
@@ -92,6 +111,7 @@ export function timelineReducer(state: TimelineState, action: TimelineAction): T
         isSaving: true,
         error: null,
         timeline: { ...state.timeline, ...action.payload },
+        eventFinder: null,
       };
     case 'TIMELINE_SAVE_SUCCESS':
       return {
@@ -99,6 +119,7 @@ export function timelineReducer(state: TimelineState, action: TimelineAction): T
         isSaving: false,
         error: null,
         timeline: state.timeline,
+        eventFinder: null,
       };
     case 'TIMELINE_SAVE_ERROR':
       return {
@@ -106,6 +127,7 @@ export function timelineReducer(state: TimelineState, action: TimelineAction): T
         isSaving: false,
         error: action.payload,
         timeline: state.timeline,
+        eventFinder: null,
       };
     default:
       return state;
