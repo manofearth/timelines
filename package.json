@@ -12,7 +12,9 @@
     "e2e": "ng e2e",
     "generate-peg-date-parser": "pegjs ./src/app/protected/shared/date-parser/peg-date-parser.pegjs",
     "dstart": "ng serve --host 0.0.0.0 --poll 1000",
-    "dtest": "ng test --poll 1000"
+    "dtest": "ng test --poll 1000",
+    "firebase-serve-functions": "firebase serve --only functions",
+    "firebase-deploy-functions": "firebase deploy --only functions"
   },
   "private": true,
   "dependencies": {

@@ -37,6 +37,7 @@ testem.log
 # Environment
 /.firebaserc
 /src/environments/firebase.config.ts
+functions/.runtimeconfig.json
 
 # e2e
 /e2e/*.js
