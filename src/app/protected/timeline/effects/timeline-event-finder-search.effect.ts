@@ -11,7 +11,7 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import { Injectable } from '@angular/core';
 
 const USER_INPUT_DEBOUNCE_TIME = 1500;
-const TIMELINE_EVENTS_SEARCH_URL = 'https://us-central1-timelines-26da8.cloudfunctions.net/queryElasticSearch';
+const TIMELINE_EVENTS_SEARCH_URL = '/functions/queryElasticSearch';
 type EffectObservable = Observable<TimelineEventFinderSearchSuccessAction | TimelineEventFinderSearchErrorAction>;
 
 @Injectable()
@@ -28,7 +28,8 @@ export class TimelineEventFinderSearchEffect {
         }
       })
       .map((res: Response) => ({
-        payload: 'TIMELINE_EVENT_FINDER_SEARCH_SUCCESS'
+        type: 'TIMELINE_EVENT_FINDER_SEARCH_SUCCESS',
+        payload: res.json()
       } as TimelineEventFinderSearchSuccessAction))
     );
 

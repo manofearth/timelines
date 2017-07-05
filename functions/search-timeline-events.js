@@ -30,7 +30,7 @@ function createQuery(matchQuery, ownerId) {
           title: matchQuery
         }
       },
-      filter: createFilter(matchQuery, ownerId)
+      filter: createFilter(matchQuery, ownerId),
     }
   };
 }
@@ -53,7 +53,12 @@ function searchTimelineEvents(req, res) {
     },
     json: true,
     body: {
-      query: createQuery(req.query.q, req.query.o)
+      query: createQuery(req.query.q, req.query.o),
+      highlight: {
+        fields: {
+          title: {}
+        }
+      }
     }
   }).then(
     response => {
