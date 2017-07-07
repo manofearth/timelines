@@ -13,7 +13,7 @@ import { Store } from '@ngrx/store';
 import { TimelineCreateAction, TimelineDeleteAction, TimelinesGetAction, TimelinesState } from './timelines.reducer';
 import { AppState } from '../../reducers';
 import { Router } from '@angular/router';
-import { Timeline, TimelineForList } from '../timeline/timeline.reducer';
+import { Timeline, TimelineForList } from '../timeline/timeline-states';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Title } from '@angular/platform-browser';
 

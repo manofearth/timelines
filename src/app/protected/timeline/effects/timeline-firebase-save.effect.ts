@@ -1,11 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
-import {
-  TimelineChangedAction,
-  TimelineChangedPayload,
-  TimelineSaveErrorAction,
-  TimelineSaveSuccessAction
-} from '../timeline.reducer';
+import { TimelineChangedAction, TimelineSaveErrorAction, TimelineSaveSuccessAction } from '../timeline-actions';
+import { TimelineChangedPayload } from '../timeline-states';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/debounceTime';
 import { Actions, Effect } from '@ngrx/effects';

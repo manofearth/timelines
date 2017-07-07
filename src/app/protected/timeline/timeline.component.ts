@@ -3,20 +3,15 @@ import { Subscription } from '../../shared/rxjs';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
-import {
-  Timeline,
-  TimelineChangedAction,
-  TimelineChangedPayload,
-  TimelineEventForTimeline,
-  TimelineGetAction,
-  TimelineState
-} from './timeline.reducer';
+import { TimelineChangedAction, TimelineGetAction } from './timeline-actions';
+import { Timeline, TimelineChangedPayload, TimelineEventForTimeline, TimelineState } from './timeline-states';
 import { ActivatedRoute, Params } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EventComponent } from '../event/event.component';
 import { EventCreateAction, EventDetachAction, EventEraseAction, EventGetAction } from '../event/event.reducer';
+import { TimelineEventsSearchService } from './timeline-events-search.service';
 
 @Component({
   templateUrl: './timeline.component.html',
@@ -41,7 +36,8 @@ export class TimelineComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private changeDetector: ChangeDetectorRef,
     private titleService: Title,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    public eventsSearchService: TimelineEventsSearchService,
   ) {
   }
 

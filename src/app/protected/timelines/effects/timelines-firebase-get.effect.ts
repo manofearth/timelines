@@ -6,7 +6,7 @@ import 'rxjs/add/operator/take';
 import { Actions, Effect } from '@ngrx/effects';
 import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 import { FirebaseTimeline, TimelinesFirebaseService } from '../timelines-firebase.service';
-import { TimelineForList } from '../../timeline/timeline.reducer';
+import { TimelineForList } from '../../timeline/timeline-states';
 
 @Injectable()
 export class TimelinesFirebaseGetEffect extends ProtectedFirebaseEffect<TimelinesGetAction,

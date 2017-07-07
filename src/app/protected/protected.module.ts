@@ -15,6 +15,7 @@ import { DateDirective } from './date/date.directive';
 import { ChartComponent } from './chart/chart.component';
 import { D3Service } from './d3/d3.service';
 import { WindowService } from './shared/window.service';
+import { TimelineEventsSearchService } from './timeline/timeline-events-search.service';
 
 const routes: Routes = [
   {
@@ -57,6 +58,7 @@ const routes: Routes = [
     DateParser,
     D3Service,
     WindowService,
+    TimelineEventsSearchService,
   ],
   entryComponents: [
     EventComponent,

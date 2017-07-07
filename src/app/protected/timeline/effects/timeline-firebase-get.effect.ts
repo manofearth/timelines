@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
-import { Timeline, TimelineGetAction, TimelineGetErrorAction, TimelineGetSuccessAction } from '../timeline.reducer';
+import { TimelineGetAction, TimelineGetErrorAction, TimelineGetSuccessAction } from '../timeline-actions';
+import { Timeline } from '../timeline-states';
 import { Actions, Effect } from '@ngrx/effects';
 import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 import { FirebaseTimeline, TimelinesFirebaseService } from '../../timelines/timelines-firebase.service';

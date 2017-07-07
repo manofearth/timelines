@@ -10,11 +10,9 @@ import {
   ViewChild
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { AppState } from '../../../reducers';
-import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/map';
-import { SelectorChangedAction } from './selector-actions';
+import { SelectorSearchService } from './selector-search.service';
 
 @Component({
   selector: 'tl-selector',
@@ -30,23 +28,26 @@ export class SelectorComponent implements OnInit, OnDestroy {
   @Output('create') create: EventEmitter<string> = new EventEmitter<string>();
 
   @Input('placeholder') placeholder: string;
-  @Input('name') name: string;
+  @Input('searchService') searchService: SelectorSearchService;
 
   @ViewChild('btnCreate') btnCreate: ElementRef;
 
   private valueChangesSub: Subscription;
 
-  constructor(private store: Store<AppState>) {
+  constructor() {
   }
 
   ngOnInit() {
     this.inputControl = new FormControl();
+
     this.valueChangesSub = this.inputControl.valueChanges
-      .map(val => ({
-        type: this.name.toUpperCase() + '_CHANGED',
-        payload: val
-      } as SelectorChangedAction))
-      .subscribe(this.store);
+      .debounceTime(USER_INPUT_DEBOUNCE_TIME)
+      .subscribe(this.searchService.queryListener);
+
+    this.searchService.results$.subscribe(results => {
+      console.log(results);
+    });
+
   }
 
   ngOnDestroy(): void {
@@ -63,3 +64,5 @@ export class SelectorComponent implements OnInit, OnDestroy {
     this.emitCreateEvent();
   }
 }
+
+const USER_INPUT_DEBOUNCE_TIME = 1500;

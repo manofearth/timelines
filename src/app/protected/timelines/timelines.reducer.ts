@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { Timeline, TimelineForList } from '../timeline/timeline.reducer';
+import { Timeline, TimelineForList } from '../timeline/timeline-states';
 
 export interface TimelinesState {
   isLoading: boolean;

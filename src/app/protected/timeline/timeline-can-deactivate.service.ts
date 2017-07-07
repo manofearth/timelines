@@ -1,10 +1,10 @@
-import {Observable} from '../../shared/rxjs';
-import {Injectable} from '@angular/core';
-import {CanDeactivate} from '@angular/router';
-import {TimelineComponent} from './timeline.component';
-import {Store} from '@ngrx/store';
-import {AppState} from '../../reducers';
-import {TimelineState} from './timeline.reducer';
+import { Observable } from '../../shared/rxjs';
+import { Injectable } from '@angular/core';
+import { CanDeactivate } from '@angular/router';
+import { TimelineComponent } from './timeline.component';
+import { Store } from '@ngrx/store';
+import { AppState } from '../../reducers';
+import { TimelineState } from './timeline-states';
 
 @Injectable()
 export class TimelineCanDeactivate implements CanDeactivate<TimelineComponent> {

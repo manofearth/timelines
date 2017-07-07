@@ -4,8 +4,9 @@ import { compose } from '@ngrx/core/compose';
 import { storeFreeze } from 'ngrx-store-freeze';
 import { timelinesReducer, TimelinesState } from './protected/timelines/timelines.reducer';
 import { environment } from '../environments/environment';
-import { TimelineState, timelineReducer } from './protected/timeline/timeline.reducer';
+import { timelineReducer } from './protected/timeline/timeline.reducer';
 import { EventState, eventReducer } from './protected/event/event.reducer';
+import { TimelineState } from './protected/timeline/timeline-states';
 
 export interface AppState {
   auth: AuthState;
@@ -31,7 +32,6 @@ export const initialState: AppState = {
     isSaving: false,
     error: null,
     timeline: null,
-    eventFinder: null,
   },
   event: {
     status: null,
