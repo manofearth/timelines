@@ -3,7 +3,7 @@ import { AuthFirebaseServiceStub } from '../../shared/firebase/auth-firebase.ser
 import { EffectsRunner } from '@ngrx/effects/testing';
 import { EventsFirebaseService } from '../events-firebase.service';
 import { Actions } from '@ngrx/effects';
-import { EventGetAction, EventGetSuccessAction } from '../event.reducer';
+import { EventGetAction, EventGetSuccessAction } from '../event-actions';
 import { DatabaseFirebaseServiceStub } from '../../shared/firebase/database-firebase.service.stub';
 
 describe('EventFirebaseGetEffect', () => {
@@ -49,7 +49,7 @@ describe('EventFirebaseGetEffect', () => {
     };
     actions.queue(action);
 
-    effectUnderTest.effect.subscribe((successAction: EventGetSuccessAction) => {
+    effectUnderTest.effect().subscribe((successAction: EventGetSuccessAction) => {
       expect(successAction.type).toBe('EVENT_GET_SUCCESS');
       expect(successAction.payload.id).toBe('some-event-id');
       expect(successAction.payload.title).toBe('some event title');

@@ -5,8 +5,9 @@ import { storeFreeze } from 'ngrx-store-freeze';
 import { timelinesReducer, TimelinesState } from './protected/timelines/timelines.reducer';
 import { environment } from '../environments/environment';
 import { timelineReducer } from './protected/timeline/timeline.reducer';
-import { EventState, eventReducer } from './protected/event/event.reducer';
+import { eventReducer } from './protected/event/event.reducer';
 import { TimelineState } from './protected/timeline/timeline-states';
+import { EventState } from './protected/event/event-states';
 
 export interface AppState {
   auth: AuthState;

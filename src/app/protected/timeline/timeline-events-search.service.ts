@@ -1,5 +1,7 @@
 import { SelectorSearchService } from '../shared/selector/selector-search.service';
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/map';
 import { SelectorSearchResultItem } from '../shared/selector/selector-search-result-item';
 import { Http, Response } from '@angular/http';
 import { AngularFireAuth } from 'angularfire2/auth';
@@ -16,6 +18,11 @@ export class TimelineEventsSearchService extends SelectorSearchService {
   }
 
   protected search(query: string): Observable<SelectorSearchResultItem[]> {
+
+    if (!query) {
+      return Observable.of([]);
+    }
+
     return this.http
       .get(TIMELINE_EVENTS_SEARCH_URL, {
         params: {
@@ -54,7 +61,7 @@ interface EventHitHighlight {
 interface TimelineEventSearchItem extends SelectorSearchResultItem {
   title: string;
   item: {
-    title: string;
+    id: string;
   }
 }
 
@@ -66,7 +73,7 @@ function toSelectorSearchResultItem(hit: EventSearchHit): TimelineEventSearchIte
   return {
     title: hit.highlight.title[0],
     item: {
-      title: hit._source.title,
+      id: hit._id,
     },
   };
 }

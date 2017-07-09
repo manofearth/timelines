@@ -1,0 +1,10 @@
+{
+  "/functions/*": {
+    "target": "https://path-from-firebase-console.cloudfunctions.net",
+    "pathRewrite": {
+      "^/functions" : ""
+    },
+    "secure": true,
+    "changeOrigin": true
+  }
+}

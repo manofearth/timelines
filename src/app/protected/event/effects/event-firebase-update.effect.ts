@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
-import { EventUpdateAction, EventUpdateErrorAction, EventUpdateSuccessAction } from '../event.reducer';
+import { EventUpdateAction, EventUpdateErrorAction, EventUpdateSuccessAction } from '../event-actions';
 import { Observable } from 'rxjs/Observable';
 import { EventsFirebaseService, FirebaseEventUpdateObject } from '../events-firebase.service';
 import { TimelineEvent } from '../../shared/timeline-event';

@@ -3,7 +3,7 @@ import { AuthFirebaseServiceStub } from '../../shared/firebase/auth-firebase.ser
 import { EffectsRunner } from '@ngrx/effects/testing';
 import { EventsFirebaseService } from '../events-firebase.service';
 import { Actions } from '@ngrx/effects';
-import { EventInsertAction, EventInsertSuccessAction } from '../event.reducer';
+import { EventInsertAction, EventInsertSuccessAction } from '../event-actions';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 
@@ -44,7 +44,7 @@ describe('EventFirebaseInsertEffect', () => {
 
     spyOn(fireEvents, 'pushObject').and.returnValue(Observable.of('event-stub'));
 
-    effectUnderTest.effect.subscribe((successAction: EventInsertSuccessAction) => {
+    effectUnderTest.effect().subscribe((successAction: EventInsertSuccessAction) => {
       expect(successAction.type).toBe('EVENT_INSERT_SUCCESS');
       done();
     });

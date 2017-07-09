@@ -3,7 +3,7 @@ import { EffectsRunner } from '@ngrx/effects/testing';
 import { EventsFirebaseService } from '../events-firebase.service';
 import { TimelinesFirebaseService } from '../../timelines/timelines-firebase.service';
 import { Actions } from '@ngrx/effects';
-import { EventInsertAndAttachToTimelineAction, EventInsertSuccessAction } from '../event.reducer';
+import { EventInsertAndAttachToTimelineAction, EventInsertSuccessAction } from '../event-actions';
 import { EventFirebaseInsertAndAttachEffect } from './event-firebase-insert-and-attach.effect';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
@@ -57,7 +57,7 @@ describe('EventFirebaseInsertAndAttachEffect', () => {
       key: 'some-event-id'
     }));
 
-    effectUnderTest.effect.subscribe((successAction: EventInsertSuccessAction) => {
+    effectUnderTest.effect().subscribe((successAction: EventInsertSuccessAction) => {
       expect(successAction.type).toBe('EVENT_INSERT_SUCCESS');
       done();
     });

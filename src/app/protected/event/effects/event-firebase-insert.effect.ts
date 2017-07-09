@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
-import { EventInsertAction, EventInsertErrorAction, EventInsertSuccessAction } from '../event.reducer';
+import { EventInsertAction, EventInsertErrorAction, EventInsertSuccessAction } from '../event-actions';
 import { Observable } from 'rxjs/Observable';
 import { Actions, Effect } from '@ngrx/effects';
 import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';

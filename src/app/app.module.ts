@@ -31,6 +31,8 @@ import { TimelinesFirebaseService } from './protected/timelines/timelines-fireba
 import { EventsFirebaseService } from './protected/event/events-firebase.service';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
+import { EventFirebaseAttachEffect } from './protected/event/effects/event-firebase-attach.effect';
+import { EventToTimelineAttachingFirebaseService } from './protected/event/event-to-timeline-attaching-firebase.service';
 
 const routes: Routes = [
   {
@@ -86,6 +88,7 @@ const routes: Routes = [
     EffectsModule.run(EventFirebaseInsertAndAttachEffect),
     EffectsModule.run(EventFirebaseUpdateEffect),
     EffectsModule.run(EventFirebaseDetachEffect),
+    EffectsModule.run(EventFirebaseAttachEffect),
   ],
   providers: [
     AuthGuard,
@@ -94,6 +97,7 @@ const routes: Routes = [
     // until https://github.com/angular/angular/issues/12869 fixed
     TimelinesFirebaseService,
     EventsFirebaseService,
+    EventToTimelineAttachingFirebaseService,
   ],
   bootstrap: [AppComponent]
 })

@@ -9,7 +9,8 @@ import { ifEmptyObject } from '../../shared/helpers';
 import { TimelineDate } from '../shared/date';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
-import { EventInsertAndAttachToTimelineAction, EventStatus } from './event.reducer';
+import { EventInsertAndAttachToTimelineAction } from './event-actions';
+import { EventStatus } from './event-states';
 import { ObjectWithId } from '../../shared/interfaces';
 
 @Component({

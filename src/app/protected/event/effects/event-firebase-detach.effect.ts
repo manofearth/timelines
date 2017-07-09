@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
-import { EventDetachAction, EventDetachErrorAction, EventDetachSuccessAction } from '../event.reducer';
+import { EventDetachAction, EventDetachErrorAction, EventDetachSuccessAction } from '../event-actions';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/map';

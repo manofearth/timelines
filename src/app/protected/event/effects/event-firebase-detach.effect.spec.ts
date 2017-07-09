@@ -4,7 +4,7 @@ import { Actions } from '@ngrx/effects';
 import { AuthFirebaseServiceStub } from '../../shared/firebase/auth-firebase.service.stub';
 import { TimelinesFirebaseService } from '../../timelines/timelines-firebase.service';
 import { EventsFirebaseService } from '../events-firebase.service';
-import { EventDetachAction, EventDetachSuccessAction } from '../event.reducer';
+import { EventDetachAction, EventDetachSuccessAction } from '../event-actions';
 
 describe('EventFirebaseDetachEffect', () => {
 
@@ -45,7 +45,7 @@ describe('EventFirebaseDetachEffect', () => {
     spyOn(fireTimelines, 'detachEvent').and.returnValue(Promise.resolve());
     spyOn(fireEvents, 'detachFromTimeline').and.returnValue(Promise.resolve());
 
-    effectUnderTest.effect.subscribe((successAction: EventDetachSuccessAction) => {
+    effectUnderTest.effect().subscribe((successAction: EventDetachSuccessAction) => {
       expect(successAction.type).toBe('EVENT_DETACH_SUCCESS');
       done();
     });

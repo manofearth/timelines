@@ -4,7 +4,7 @@ import {
   EventInsertAndAttachToTimelineAction,
   EventInsertErrorAction,
   EventInsertSuccessAction
-} from '../event.reducer';
+} from '../event-actions';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/map';
@@ -13,7 +13,7 @@ import { toFirebaseEventUpdateObject } from './event-firebase-update.effect';
 import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 import { Actions, Effect } from '@ngrx/effects';
 import { EventsFirebaseService } from '../events-firebase.service';
-import { TimelinesFirebaseService } from '../../timelines/timelines-firebase.service';
+import { EventToTimelineAttachingFirebaseService } from '../event-to-timeline-attaching-firebase.service';
 
 @Injectable()
 export class EventFirebaseInsertAndAttachEffect extends ProtectedFirebaseEffect<EventInsertAndAttachToTimelineAction,
@@ -29,13 +29,9 @@ export class EventFirebaseInsertAndAttachEffect extends ProtectedFirebaseEffect<
   protected runEffect(action: EventInsertAndAttachToTimelineAction): Observable<firebase.database.Reference> {
     return this.fireEvents
       .pushObject(toFirebaseEventUpdateObject(action.payload.event))
-      .mergeMap((ref: firebase.database.Reference) =>
-        Observable
-          .forkJoin(
-            this.fireTimelines.attachEvent(action.payload.timeline.id, ref.key),
-            this.fireEvents.attachToTimeline(ref.key, action.payload.timeline.id),
-          )
-          .map(() => ref)
+      .mergeMap((ref: firebase.database.Reference) => this.eventToTimelineAttacher
+        .attach(action.payload.timeline.id, ref.key)
+        .map(() => ref)
       );
   }
 
@@ -58,7 +54,7 @@ export class EventFirebaseInsertAndAttachEffect extends ProtectedFirebaseEffect<
     actions: Actions,
     auth: AuthFirebaseService,
     private fireEvents: EventsFirebaseService,
-    private fireTimelines: TimelinesFirebaseService,
+    private eventToTimelineAttacher: EventToTimelineAttachingFirebaseService,
   ) {
     super(actions, auth);
   }
