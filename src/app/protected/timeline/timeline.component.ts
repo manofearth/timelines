@@ -115,12 +115,12 @@ export class TimelineComponent implements OnInit, OnDestroy {
     );
   }
 
-  detachEvent(event: TimelineEventForTimeline) {
+  detachEvent(eventId: string) {
     this.store.dispatch(<EventDetachAction> {
       type: 'EVENT_DETACH',
       payload: {
         timelineId: this.timeline.id,
-        eventId: event.id,
+        eventId: eventId,
       }
     });
   }

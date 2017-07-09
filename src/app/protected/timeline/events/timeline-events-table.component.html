@@ -1,0 +1,18 @@
+<tl-selector
+  [placeholder]="'Добавьте событие'"
+  [searchService]="eventsSearchService"
+  (create)="create.emit($event)"
+  (choose)="attach.emit($event.id)"
+></tl-selector>
+<table class="table table-hover">
+  <tbody>
+  <tr *ngFor="let event of store.select('timeline', 'events', this.groupId) | async as events">
+    <td>
+      <button type="button" class="btn btn-link" (click)="open.emit(event.id)">{{ event.title }}</button>
+    </td>
+    <td class="text-sm-right">
+      <button type="button" class="btn btn-link btn-sm" (click)="detach.emit(event.id)">открепить</button>
+    </td>
+  </tr>
+  </tbody>
+</table>

@@ -16,6 +16,7 @@ import { ChartComponent } from './chart/chart.component';
 import { D3Service } from './d3/d3.service';
 import { WindowService } from './shared/window.service';
 import { TimelineEventsSearchService } from './timeline/timeline-events-search.service';
+import { TimelineEventTableComponent } from './timeline/events/timeline-events-table.component';
 
 const routes: Routes = [
   {
@@ -46,6 +47,7 @@ const routes: Routes = [
   declarations: [
     TimelinesComponent,
     TimelineComponent,
+    TimelineEventTableComponent,
     ProtectedComponent,
     LogoutComponent,
     EventComponent,

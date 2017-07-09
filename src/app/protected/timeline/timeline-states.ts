@@ -3,7 +3,11 @@ import { TimelineDate } from '../shared/date';
 export interface Timeline {
   id: string;
   title: string;
-  events: TimelineEventForTimeline[];
+  events: TimelineGroupedEvents;
+}
+
+export interface TimelineGroupedEvents {
+  [groupId: string]: TimelineEventForTimeline[];
 }
 
 export interface TimelineEventForTimeline {

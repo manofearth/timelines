@@ -24,6 +24,11 @@ export class TimelineFirebaseCreateEffect extends ProtectedFirebaseEffect<Timeli
   protected runEffect(action: TimelineCreateAction): Observable<firebase.database.Reference> {
     return this.fireTimelines.pushObject({
       title: 'Новая лента',
+      groups: {
+        'default': {
+          title: 'Группа 1'
+        }
+      }
     });
   }
 

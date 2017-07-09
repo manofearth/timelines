@@ -43,4 +43,9 @@ export interface FirebaseTimeline {
 
 export interface FirebaseTimelineUpdateObject {
   title: string;
+  groups?: {
+    [key: string]: {
+      title: string
+    };
+  };
 }
