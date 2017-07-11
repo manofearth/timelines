@@ -101,6 +101,7 @@ function toTimeline(firebaseTimeline: FirebaseTimeline, firebaseEvents: Firebase
       acc.push({
         id: groupId,
         title: firebaseTimeline.groups[groupId].title,
+        color: firebaseTimeline.groups[groupId].color,
         events: Object.keys(firebaseTimeline.groups[groupId].events)
           .map((eventId: string) => eventsDictionary[eventId])
           .map((firebaseEvent: FirebaseTimelineEvent) => ({

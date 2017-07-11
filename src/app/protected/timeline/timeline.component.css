@@ -8,3 +8,17 @@ input.title:hover {
   /*noinspection CssConvertColorToHexInspection*/
   border-color: rgba(0, 0, 0, 0.15);
 }
+
+.tab-content-container {
+  padding-top: 15px;
+  padding-left: 5px;
+}
+
+.group-color-marker {
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+  margin-right: 5px;
+  margin-bottom: 2px;
+  vertical-align: middle;
+}

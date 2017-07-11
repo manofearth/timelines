@@ -122,6 +122,7 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
       .enter()
       .append('rect')
       .classed('bar', true)
+      .style('fill', d => d.color)
       .on('click', (d: TimelineEventForTimeline) => {
         this.onSelect.emit(d);
       })
@@ -132,8 +133,8 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.d3.selectEventTarget().classed('mouseover', false);
       })
       .merge(bars) // enter + update
-      .attr('x', (d: TimelineEventForChart) => xScale(d.dateBegin.days))
-      .attr('y', (d: TimelineEventForChart) => yScale(d.yPos))
+      .attr('x', d => xScale(d.dateBegin.days))
+      .attr('y', d => yScale(d.yPos))
       .attr('width', (d: TimelineEventForTimeline) =>
         xScale(d.dateEnd.days) - xScale(d.dateBegin.days)
       )
@@ -204,8 +205,8 @@ function toEventsForChart(groups: TimelineEventsGroup[]): TimelineEventForChart[
   const levels: TimelineEventForTimeline[][] = [];
 
   return groups
-    .reduce<TimelineEventWithGroupId[]>((acc, group) => {
-      return acc.concat(group.events.map<TimelineEventWithGroupId>(enrichWithGroupId(group.id)));
+    .reduce<TimelineEventWithGroupData[]>((acc, group) => {
+      return acc.concat(group.events.map<TimelineEventWithGroupData>(enrichWithGroupData(group)));
     }, [])
     .map<TimelineEventForChart>(event => {
 
@@ -222,20 +223,21 @@ function toEventsForChart(groups: TimelineEventsGroup[]): TimelineEventForChart[
     });
 }
 
-function enrichWithGroupId(groupId: string): (event: TimelineEventForTimeline) => TimelineEventWithGroupId {
-  return event => ({ ...event, groupId: groupId });
+function enrichWithGroupData(group: TimelineEventsGroup): (event: TimelineEventForTimeline) => TimelineEventWithGroupData {
+  return event => ({ ...event, groupId: group.id, color: group.color });
 }
 
-function notOverlaps(e1: TimelineEventWithGroupId): (e2: TimelineEventWithGroupId) => boolean {
-  return function (e2: TimelineEventWithGroupId) {
+function notOverlaps(e1: TimelineEventWithGroupData): (e2: TimelineEventWithGroupData) => boolean {
+  return function (e2: TimelineEventWithGroupData) {
     return e1.groupId === e2.groupId && (e2.dateBegin.days >= e1.dateEnd.days || e2.dateEnd.days <= e1.dateBegin.days);
   }
 }
 
-interface TimelineEventWithGroupId extends TimelineEventForTimeline {
+interface TimelineEventWithGroupData extends TimelineEventForTimeline {
   groupId: string;
+  color: string;
 }
 
-interface  TimelineEventForChart extends TimelineEventWithGroupId {
+interface  TimelineEventForChart extends TimelineEventWithGroupData {
   yPos: number;
 }

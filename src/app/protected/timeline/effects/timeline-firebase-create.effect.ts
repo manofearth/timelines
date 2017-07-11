@@ -26,7 +26,8 @@ export class TimelineFirebaseCreateEffect extends ProtectedFirebaseEffect<Timeli
       title: 'Новая лента',
       groups: {
         'default': {
-          title: 'Группа 1'
+          title: 'Группа 1',
+          color: 'cornflowerblue',
         }
       }
     });

@@ -1,7 +1,6 @@
 svg rect.bar {
-  fill: cornflowerblue;
 }
 
 svg rect.bar.mouseover {
-  fill: coral;
+  fill: coral !important;
 }

@@ -9,6 +9,7 @@ export interface Timeline {
 export interface TimelineEventsGroup {
   id: string;
   title: string;
+  color: string;
   events: TimelineEventForTimeline[];
 }
 

@@ -5,7 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { TimelinesComponent } from './timelines/timelines.component';
 import { LogoutComponent } from './logout/logout.component';
 import { TimelineComponent } from './timeline/timeline.component';
-import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModalModule, NgbTabsetModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule } from '@angular/forms';
 import {TimelineCanDeactivate} from './timeline/timeline-can-deactivate.service';
 import { EventComponent } from './event/event.component';
@@ -40,8 +40,9 @@ const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule,
-    NgbModalModule,
     ReactiveFormsModule,
+    NgbModalModule,
+    NgbTabsetModule,
     RouterModule.forChild(routes),
   ],
   declarations: [

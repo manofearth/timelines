@@ -47,6 +47,7 @@ export interface FirebaseTimelineEventGroups {
 
 export interface FirebaseTimelineEventsGroup {
   title: string;
+  color: string;
   events?: {
     [eventId: string]: true;
   }
