@@ -15,7 +15,7 @@ import { D3Service } from '../d3/d3.service';
 import { WindowService } from '../shared/window.service';
 import { Selection } from 'd3-selection';
 import { Subscription } from 'rxjs/Subscription';
-import { TimelineEventForTimeline } from '../timeline/timeline-states';
+import { TimelineEventForTimeline, TimelineEventsGroup } from '../timeline/timeline-states';
 
 @Component({
   selector: 'tl-chart',
@@ -32,7 +32,7 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
   @Output('onSelect') onSelect: EventEmitter<TimelineEventForTimeline> = new EventEmitter();
 
   private windowResizeSubscription: Subscription;
-  private _data: TimelineEventForTimeline[];
+  private _data: TimelineEventsGroup[];
   private canvasHeight = 180;
   private margins = {
     top: 0,
@@ -73,7 +73,7 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   @Input('data')
-  set data(data: TimelineEventForTimeline[]) {
+  set data(data: TimelineEventsGroup[]) {
     this._data = data;
     this.redraw();
   }
@@ -84,7 +84,7 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   private redraw() {
 
-    const data: TimelineEventForTimelineWithYPosition[] = toEventWithYPosition(this._data);
+    const data: TimelineEventForChart[] = toEventsForChart(this._data);
 
     this.selectSvg()
       .attr('width', this.width)
@@ -132,12 +132,12 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.d3.selectEventTarget().classed('mouseover', false);
       })
       .merge(bars) // enter + update
-      .attr('x', (d: TimelineEventForTimelineWithYPosition) => xScale(d.dateBegin.days))
-      .attr('y', (d: TimelineEventForTimelineWithYPosition) => yScale(d.yPos))
+      .attr('x', (d: TimelineEventForChart) => xScale(d.dateBegin.days))
+      .attr('y', (d: TimelineEventForChart) => yScale(d.yPos))
       .attr('width', (d: TimelineEventForTimeline) =>
         xScale(d.dateEnd.days) - xScale(d.dateBegin.days)
       )
-      .attr('height', (d: TimelineEventForTimelineWithYPosition) =>
+      .attr('height', (d: TimelineEventForChart) =>
         yScale(d.yPos + 1) - yScale(d.yPos) - 2
       );
 
@@ -156,14 +156,14 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
       .attr('pointer-events', 'none')
       .merge(texts) // enter + update
       .text((d: TimelineEventForTimeline) => d.title)
-      .attr('x', (d: TimelineEventForTimelineWithYPosition) => xScale(d.dateBegin.days))
+      .attr('x', (d: TimelineEventForChart) => xScale(d.dateBegin.days))
       .attr('dx', 4)
-      .attr('y', (d: TimelineEventForTimelineWithYPosition) => yScale(d.yPos))
-      .attr('dy', (d: TimelineEventForTimelineWithYPosition) => (yScale(d.yPos + 1) - yScale(d.yPos) - 2) / 2)
+      .attr('y', (d: TimelineEventForChart) => yScale(d.yPos))
+      .attr('dy', (d: TimelineEventForChart) => (yScale(d.yPos + 1) - yScale(d.yPos) - 2) / 2)
       .attr('width', (d: TimelineEventForTimeline) =>
         xScale(d.dateEnd.days) - xScale(d.dateBegin.days)
       )
-      .attr('height', (d: TimelineEventForTimelineWithYPosition) =>
+      .attr('height', (d: TimelineEventForChart) =>
         yScale(d.yPos + 1) - yScale(d.yPos) - 2
       );
 
@@ -190,37 +190,52 @@ function eventsXDomain(events: TimelineEventForTimeline[]): [number, number] {
 
 const DAYS_IN_GRIGORIAN_YEAR = 365.2425;
 
-function eventsYDomain(events: TimelineEventForTimelineWithYPosition[]): [number, number] {
+function eventsYDomain(events: TimelineEventForChart[]): [number, number] {
   return [
     0,
     events
-      .map((event: TimelineEventForTimelineWithYPosition) => event.yPos)
-      .reduce((prev: number, cur: number) => Math.max(prev, cur), 0) + 1
+      .map<number>((event: TimelineEventForChart) => event.yPos)
+      .reduce<number>((prev, cur) => Math.max(prev, cur), 0) + 1
   ];
 }
 
-function toEventWithYPosition(events: TimelineEventForTimeline[]): TimelineEventForTimelineWithYPosition[] {
+function toEventsForChart(groups: TimelineEventsGroup[]): TimelineEventForChart[] {
 
   const levels: TimelineEventForTimeline[][] = [];
 
-  return events.map((event: TimelineEventForTimeline): TimelineEventForTimelineWithYPosition => {
-    const levelIndex = levels.findIndex((level: TimelineEventForTimeline[]): boolean => {
-      return level.every((eventInLevel: TimelineEventForTimeline) => {
-        return eventInLevel.dateBegin.days >= event.dateEnd.days || eventInLevel.dateEnd.days <= event.dateBegin.days;
-      });
+  return groups
+    .reduce<TimelineEventWithGroupId[]>((acc, group) => {
+      return acc.concat(group.events.map<TimelineEventWithGroupId>(enrichWithGroupId(group.id)));
+    }, [])
+    .map<TimelineEventForChart>(event => {
+
+      const levelIndex = levels.findIndex(level => level.every(notOverlaps(event)));
+
+      if (levelIndex === -1) {
+        levels.push([event]);
+        return { ...event, yPos: levels.length - 1 };
+      } else {
+        levels[levelIndex].push(event);
+        return { ...event, yPos: levelIndex };
+      }
+
     });
-
-    if (levelIndex === -1) {
-      levels.push([event]);
-      return { ...event, yPos: levels.length - 1 };
-    } else {
-      levels[levelIndex].push(event);
-      return { ...event, yPos: levelIndex };
-    }
-
-  });
 }
 
-interface  TimelineEventForTimelineWithYPosition extends TimelineEventForTimeline {
+function enrichWithGroupId(groupId: string): (event: TimelineEventForTimeline) => TimelineEventWithGroupId {
+  return event => ({ ...event, groupId: groupId });
+}
+
+function notOverlaps(e1: TimelineEventWithGroupId): (e2: TimelineEventWithGroupId) => boolean {
+  return function (e2: TimelineEventWithGroupId) {
+    return e1.groupId === e2.groupId && (e2.dateBegin.days >= e1.dateEnd.days || e2.dateEnd.days <= e1.dateBegin.days);
+  }
+}
+
+interface TimelineEventWithGroupId extends TimelineEventForTimeline {
+  groupId: string;
+}
+
+interface  TimelineEventForChart extends TimelineEventWithGroupId {
   yPos: number;
 }

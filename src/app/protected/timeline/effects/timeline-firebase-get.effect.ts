@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
 import { TimelineGetAction, TimelineGetErrorAction, TimelineGetSuccessAction } from '../timeline-actions';
-import { Timeline, TimelineGroupedEvents } from '../timeline-states';
+import { Timeline, TimelineEventsGroup } from '../timeline-states';
 import { Actions, Effect } from '@ngrx/effects';
 import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 import { FirebaseTimeline, TimelinesFirebaseService } from '../../timelines/timelines-firebase.service';
@@ -28,7 +28,7 @@ export class TimelineFirebaseGetEffect extends ProtectedFirebaseEffect<TimelineG
       .switchMap((firebaseTimeline: FirebaseTimeline): Observable<Timeline> =>
         Observable.create((observer: Observer<Timeline>): TeardownLogic => {
 
-          if (firebaseTimeline.events) {
+          if (firebaseTimeline.groups) {
             const eventsObservables: Observable<FirebaseTimelineEvent>[] = extractEventsIds(firebaseTimeline)
               .map(
                 eventId => this.fireEvents.getObject(eventId).first()
@@ -78,10 +78,10 @@ export class TimelineFirebaseGetEffect extends ProtectedFirebaseEffect<TimelineG
   }
 }
 
-function extractEventsIds(firebaseTimeline: FirebaseTimeline) {
-  return Object.keys(firebaseTimeline.events)
+function extractEventsIds(firebaseTimeline: FirebaseTimeline): string[] {
+  return Object.keys(firebaseTimeline.groups)
     .reduce<string[]>(
-      (acc, groupId) => acc.concat(Object.keys(firebaseTimeline.events[groupId])),
+      (acc, groupId) => acc.concat(Object.keys(firebaseTimeline.groups[groupId].events)),
       []
     );
 }
@@ -96,24 +96,28 @@ function toTimeline(firebaseTimeline: FirebaseTimeline, firebaseEvents: Firebase
     {}
   );
 
-  const events = Object.keys(firebaseTimeline.events).reduce<TimelineGroupedEvents>(
+  const groups = Object.keys(firebaseTimeline.groups).reduce<TimelineEventsGroup[]>(
     (acc, groupId) => {
-      acc[groupId] = Object.keys(firebaseTimeline.events[groupId])
-        .map((eventId: string) => eventsDictionary[eventId])
-        .map((firebaseEvent: FirebaseTimelineEvent) => ({
-          id: firebaseEvent.$key,
-          title: firebaseEvent.title,
-          dateBegin: firebaseEvent.dateBegin,
-          dateEnd: firebaseEvent.dateEnd,
-        }));
+      acc.push({
+        id: groupId,
+        title: firebaseTimeline.groups[groupId].title,
+        events: Object.keys(firebaseTimeline.groups[groupId].events)
+          .map((eventId: string) => eventsDictionary[eventId])
+          .map((firebaseEvent: FirebaseTimelineEvent) => ({
+            id: firebaseEvent.$key,
+            title: firebaseEvent.title,
+            dateBegin: firebaseEvent.dateBegin,
+            dateEnd: firebaseEvent.dateEnd,
+          }))
+      });
       return acc;
     },
-    {}
+    []
   );
 
   return {
     id: firebaseTimeline.$key,
     title: firebaseTimeline.title,
-    events: events,
+    groups,
   };
 }

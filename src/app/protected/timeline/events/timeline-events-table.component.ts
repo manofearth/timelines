@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { Store } from '@ngrx/store';
 import { AppState } from '../../../reducers';
 import { TimelineEvent } from '../../shared/timeline-event';
+import { TimelineEventsSearchService } from '../timeline-events-search.service';
 
 @Component({
   selector: 'tl-events-table',
@@ -10,7 +11,7 @@ import { TimelineEvent } from '../../shared/timeline-event';
 })
 export class TimelineEventTableComponent {
 
-  @Input() groupId: string;
+  @Input() groupIndex: number;
 
   @Output() create: EventEmitter<string> = new EventEmitter();
   @Output() open: EventEmitter<string> = new EventEmitter();
@@ -19,6 +20,9 @@ export class TimelineEventTableComponent {
 
   events: TimelineEvent[] = [];
 
-  constructor(public store: Store<AppState>) {
+  constructor(
+    public store: Store<AppState>,
+    public eventsSearchService: TimelineEventsSearchService,
+  ) {
   }
 }

@@ -6,9 +6,9 @@
       <input class="form-control title" id="input-title" type="text" title="Название" formControlName="title">
     </div>
   </form>
-  <tl-chart [data]="timeline.events" (onSelect)="onBarSelect($event)"></tl-chart>
+  <tl-chart [data]="timeline.groups" (onSelect)="onBarSelect($event)"></tl-chart>
   <tl-events-table
-    [groupId]="default"
+    [groupIndex]="0"
     (create)="createAndOpenTimelineEvent($event)"
     (open)="openTimelineEvent($event)"
     (attach)="dispatchAttachToTimelineAction($event)"

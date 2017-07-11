@@ -10,9 +10,13 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EventComponent } from '../event/event.component';
-import { EventCreateAction, EventDetachAction, EventEraseAction, EventGetAction } from '../event/event-actions';
-import { TimelineEventsSearchService } from './timeline-events-search.service';
-import { EventAttachToTimelineAction } from '../event/event-actions';
+import {
+  EventAttachToTimelineAction,
+  EventCreateAction,
+  EventDetachAction,
+  EventEraseAction,
+  EventGetAction
+} from '../event/event-actions';
 
 @Component({
   templateUrl: './timeline.component.html',
@@ -38,7 +42,6 @@ export class TimelineComponent implements OnInit, OnDestroy {
     private changeDetector: ChangeDetectorRef,
     private titleService: Title,
     private modalService: NgbModal,
-    public eventsSearchService: TimelineEventsSearchService,
   ) {
   }
 

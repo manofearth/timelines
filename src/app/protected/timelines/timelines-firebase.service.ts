@@ -38,14 +38,21 @@ export class TimelinesFirebaseService extends ProtectedFirebaseService<FirebaseT
 export interface FirebaseTimeline {
   $key: string;
   title: string;
-  events?: { [key: string]: true };
+  groups?: FirebaseTimelineEventGroups;
+}
+
+export interface FirebaseTimelineEventGroups {
+  [groupId: string]: FirebaseTimelineEventsGroup;
+}
+
+export interface FirebaseTimelineEventsGroup {
+  title: string;
+  events?: {
+    [eventId: string]: true;
+  }
 }
 
 export interface FirebaseTimelineUpdateObject {
   title: string;
-  groups?: {
-    [key: string]: {
-      title: string
-    };
-  };
+  groups?: FirebaseTimelineEventGroups;
 }
