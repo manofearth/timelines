@@ -30,7 +30,7 @@ export class EventFirebaseInsertAndAttachEffect extends ProtectedFirebaseEffect<
     return this.fireEvents
       .pushObject(toFirebaseEventUpdateObject(action.payload.event))
       .mergeMap((ref: firebase.database.Reference) => this.eventToTimelineAttacher
-        .attach(action.payload.timeline.id, ref.key)
+        .attach(action.payload.timelineId, action.payload.groupId, ref.key)
         .map(() => ref)
       );
   }

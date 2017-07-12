@@ -7,8 +7,8 @@
     </div>
   </form>
   <tl-chart [data]="timeline.groups" (onSelect)="onBarSelect($event)"></tl-chart>
-  <ngb-tabset>
-    <ngb-tab *ngFor="let group of timeline.groups; index as i;">
+  <ngb-tabset [activeId]="currentTabId" (tabChange)="onTabChange($event)">
+    <ngb-tab *ngFor="let group of timeline.groups; index as i;" [id]="generateTabId(i)">
       <ng-template ngbTabTitle>
         <span class="group-color-marker" [ngStyle]="{'background-color': group.color}"></span>{{group.title}}
       </ng-template>
@@ -18,8 +18,8 @@
             [groupIndex]="i"
             (create)="createAndOpenTimelineEvent($event)"
             (open)="openTimelineEvent($event)"
-            (attach)="dispatchAttachToTimelineAction($event)"
-            (detach)="detachEvent($event)">
+            (attach)="attachEvent($event, group.id)"
+            (detach)="detachEvent($event, group.id)">
           </tl-events-table>
         </div>
       </ng-template>

@@ -3,7 +3,8 @@ import { Timeline, TimelineChangedPayload } from './timeline-states';
 
 export type TimelineActionType = 'TIMELINE_GET' | 'TIMELINE_GET_SUCCESS' | 'TIMELINE_GET_ERROR'
   | 'TIMELINE_CHANGED' | 'TIMELINE_SAVE_SUCCESS' | 'TIMELINE_SAVE_ERROR'
-  | 'TIMELINE_EVENT_FINDER_SEARCH' | 'TIMELINE_EVENT_FINDER_SEARCH_SUCCESS' | 'TIMELINE_EVENT_FINDER_SEARCH_ERROR';
+  | 'TIMELINE_EVENT_FINDER_SEARCH' | 'TIMELINE_EVENT_FINDER_SEARCH_SUCCESS' | 'TIMELINE_EVENT_FINDER_SEARCH_ERROR'
+  | 'TIMELINE_CHANGE_GROUP';
 
 export interface TimelineActionBase extends Action {
   type: TimelineActionType;
@@ -38,5 +39,10 @@ export interface TimelineSaveErrorAction extends TimelineActionBase {
   payload: Error;
 }
 
+export interface TimelineChangeGroupAction extends TimelineActionBase {
+    type: 'TIMELINE_CHANGE_GROUP';
+    payload: number; // group index
+}
+
 export type TimelineAction = TimelineGetAction | TimelineGetSuccessAction | TimelineGetErrorAction
-  | TimelineChangedAction | TimelineSaveSuccessAction | TimelineSaveErrorAction;
+  | TimelineChangedAction | TimelineSaveSuccessAction | TimelineSaveErrorAction | TimelineChangeGroupAction;

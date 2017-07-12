@@ -3,12 +3,12 @@ import { Subscription } from '../../shared/rxjs';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
-import { TimelineChangedAction, TimelineGetAction } from './timeline-actions';
+import { TimelineChangedAction, TimelineChangeGroupAction, TimelineGetAction } from './timeline-actions';
 import { Timeline, TimelineChangedPayload, TimelineEventForTimeline, TimelineState } from './timeline-states';
 import { ActivatedRoute, Params } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { EventComponent } from '../event/event.component';
 import {
   EventAttachToTimelineAction,
@@ -17,6 +17,7 @@ import {
   EventEraseAction,
   EventGetAction
 } from '../event/event-actions';
+import { toInt } from '../../shared/helpers';
 
 @Component({
   templateUrl: './timeline.component.html',
@@ -26,9 +27,11 @@ import {
 export class TimelineComponent implements OnInit, OnDestroy {
 
   timeline: Timeline;
+  currentGroupIndex: number;
   isLoading: boolean;
   isSaving: boolean;
   error: Error;
+
   form: TimelineForm;
 
   private timelineStateSubscription: Subscription;
@@ -61,6 +64,7 @@ export class TimelineComponent implements OnInit, OnDestroy {
         this.isSaving = timeline.isSaving;
         this.error = timeline.error;
         this.timeline = timeline.timeline;
+        this.currentGroupIndex = timeline.currentGroupIndex;
 
         if (this.timeline) {
           this.updateTitle();
@@ -118,28 +122,57 @@ export class TimelineComponent implements OnInit, OnDestroy {
     );
   }
 
-  detachEvent(eventId: string) {
-    this.store.dispatch(<EventDetachAction> {
+  attachEvent(eventId: string, groupId: string) {
+
+    const action: EventAttachToTimelineAction = {
+      type: 'EVENT_ATTACH_TO_TIMELINE',
+      payload: {
+        timelineId: this.timeline.id,
+        eventId: eventId,
+        groupId: groupId,
+      }
+    };
+
+    this.store.dispatch(action);
+  }
+
+  detachEvent(eventId: string, groupId: string) {
+
+    const action: EventDetachAction = {
       type: 'EVENT_DETACH',
       payload: {
         timelineId: this.timeline.id,
         eventId: eventId,
+        groupId: groupId,
       }
-    });
+    };
+
+    this.store.dispatch(action);
   }
 
   onBarSelect(event: TimelineEventForTimeline) {
     this.openTimelineEvent(event.id);
   }
 
-  dispatchAttachToTimelineAction(eventId: string) {
-    this.store.dispatch(<EventAttachToTimelineAction> {
-      type: 'EVENT_ATTACH_TO_TIMELINE',
-      payload: {
-        timelineId: this.timeline.id,
-        eventId: eventId,
-      }
-    });
+  onTabChange(event: NgbTabChangeEvent) {
+    this.setCurrentGroupIndex(extractTabIndex(event.nextId));
+  }
+
+  setCurrentGroupIndex(index: number) {
+    const action: TimelineChangeGroupAction = {
+      type: 'TIMELINE_CHANGE_GROUP',
+      payload: index,
+    };
+
+    this.store.dispatch(action);
+  }
+
+  generateTabId(index: number): string {
+    return 'ngb-tab-' + index;
+  }
+
+  get currentTabId(): string {
+    return this.generateTabId(this.currentGroupIndex);
   }
 
   private dispatchEventEraseAction() {
@@ -183,4 +216,8 @@ function toTimeline(oldTimeline: Timeline, formValue: TimelineFormValue): Timeli
     id: oldTimeline.id,
     title: formValue.title,
   };
+}
+
+function extractTabIndex(tabId: string): number {
+  return toInt(/(\d+)$/.exec(tabId)[0]);
 }

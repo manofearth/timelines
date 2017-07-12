@@ -7,27 +7,27 @@ import { ProtectedFirebaseService } from '../shared/firebase/protected-firebase.
 @Injectable()
 export class TimelinesFirebaseService extends ProtectedFirebaseService<FirebaseTimeline, FirebaseTimelineUpdateObject> {
 
-  attachEvent(timelineId: string, timelineEventId: string): Observable<void> {
+  attachEvent(timelineId: string, groupId: string, timelineEventId: string): Observable<void> {
     const promise: firebase.Promise<void> = this
-      .eventAttachmentObject(timelineId, timelineEventId)
+      .eventAttachmentObject(timelineId, groupId, timelineEventId)
       .set(true);
 
     return Observable.fromPromise(promise as Promise<void>);
 
   }
 
-  detachEvent(timelineId: string, timelineEventId: string): Observable<void> {
+  detachEvent(timelineId: string, groupId, timelineEventId: string): Observable<void> {
     const promise: firebase.Promise<void> = this
-      .eventAttachmentObject(timelineId, timelineEventId)
+      .eventAttachmentObject(timelineId, groupId, timelineEventId)
       .remove();
 
     return Observable.fromPromise(promise as Promise<void>);
 
   }
 
-  private eventAttachmentObject(timelineId: string, timelineEventId: string): FirebaseObjectObservable<boolean> {
+  private eventAttachmentObject(timelineId: string, groupId: string, timelineEventId: string): FirebaseObjectObservable<boolean> {
     return this.database
-      .object(this.getFirebaseObjectPath(timelineId) + '/events/' + timelineEventId);
+      .object(this.getFirebaseObjectPath(timelineId) + '/groups/' + groupId + '/events/' + timelineEventId );
   }
 
   protected getFirebaseNodeName(): string {

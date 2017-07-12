@@ -35,4 +35,5 @@ export interface TimelineState {
   isSaving: boolean;
   error: Error;
   timeline: Timeline;
+  currentGroupIndex: number;
 }

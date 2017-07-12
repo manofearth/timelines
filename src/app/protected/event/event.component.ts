@@ -1,6 +1,6 @@
 //noinspection TypeScriptPreferShortImport
 import { Subscription } from '../../shared/rxjs';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TimelineEvent } from '../shared/timeline-event';
@@ -11,19 +11,18 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
 import { EventInsertAndAttachToTimelineAction } from './event-actions';
 import { EventStatus } from './event-states';
-import { ObjectWithId } from '../../shared/interfaces';
 
 @Component({
   templateUrl: './event.component.html',
   styleUrls: ['./event.component.css'],
-  // changeDetection: ChangeDetectionStrategy.OnPush, // can't make OnPush - shallow test unexpectedly hangs up
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventComponent implements OnInit, OnDestroy {
 
   form: EventForm;
   closeAfterSave: boolean = false;
   saveWasAttempted: boolean = false;
-  attachToTimeline: ObjectWithId = null;
+  attachTo: { timelineId: string, groupId: string } = null;
   private eventStateSubscription: Subscription;
   private isSavingStateSubscription: Subscription;
 
@@ -70,7 +69,7 @@ export class EventComponent implements OnInit, OnDestroy {
 
       this.closeAfterSave = true;
 
-      if (this.isNew() && this.attachToTimeline !== null) {
+      if (this.isNew() && this.attachTo !== null) {
         this.dispatchInsertAndAttachToTimelineAction();
       } else {
         this.dispatchInsertAction();
@@ -103,13 +102,17 @@ export class EventComponent implements OnInit, OnDestroy {
   }
 
   private dispatchInsertAndAttachToTimelineAction() {
-    this.store.dispatch(<EventInsertAndAttachToTimelineAction>{
+
+    const action: EventInsertAndAttachToTimelineAction = {
       type: 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE',
       payload: {
-        timeline: this.attachToTimeline,
         event: this.form.value,
+        timelineId: this.attachTo.timelineId,
+        groupId: this.attachTo.groupId,
       },
-    });
+    };
+
+    this.store.dispatch(action);
   }
 }
 

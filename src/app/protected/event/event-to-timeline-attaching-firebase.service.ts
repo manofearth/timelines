@@ -13,10 +13,10 @@ export class EventToTimelineAttachingFirebaseService {
   ) {
   }
 
-  attach(timelineId: string, eventId: string): Observable<void> {
+  attach(timelineId: string, groupId: string, eventId: string): Observable<void> {
     return Observable
       .forkJoin(
-        this.fireTimelines.attachEvent(timelineId, eventId),
+        this.fireTimelines.attachEvent(timelineId, groupId, eventId),
         this.fireEvents.attachToTimeline(eventId, timelineId),
       )
       .map(() => {});

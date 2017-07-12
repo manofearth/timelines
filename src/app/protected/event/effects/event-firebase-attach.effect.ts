@@ -23,7 +23,7 @@ export class EventFirebaseAttachEffect extends ProtectedFirebaseEffect<EventAtta
 
   protected runEffect(action: EventAttachToTimelineAction): Observable<void> {
     return this.eventToTimelineAttacher
-      .attach(action.payload.timelineId, action.payload.eventId);
+      .attach(action.payload.timelineId, action.payload.groupId, action.payload.eventId);
   }
 
   protected mapToSuccessAction(): EventAttachToTimelineSuccessAction {

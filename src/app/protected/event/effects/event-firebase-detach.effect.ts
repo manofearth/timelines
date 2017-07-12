@@ -23,7 +23,7 @@ export class EventFirebaseDetachEffect extends ProtectedFirebaseEffect<EventDeta
   protected runEffect(action: EventDetachAction): Observable<void> {
     return Observable
       .forkJoin(
-        this.fireTimelines.detachEvent(action.payload.timelineId, action.payload.eventId),
+        this.fireTimelines.detachEvent(action.payload.timelineId, action.payload.groupId, action.payload.eventId),
         this.fireEvents.detachFromTimeline(action.payload.eventId, action.payload.timelineId),
       )
       .map(() => {
