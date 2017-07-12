@@ -4,7 +4,7 @@ import { Timeline, TimelineChangedPayload } from './timeline-states';
 export type TimelineActionType = 'TIMELINE_GET' | 'TIMELINE_GET_SUCCESS' | 'TIMELINE_GET_ERROR'
   | 'TIMELINE_CHANGED' | 'TIMELINE_SAVE_SUCCESS' | 'TIMELINE_SAVE_ERROR'
   | 'TIMELINE_EVENT_FINDER_SEARCH' | 'TIMELINE_EVENT_FINDER_SEARCH_SUCCESS' | 'TIMELINE_EVENT_FINDER_SEARCH_ERROR'
-  | 'TIMELINE_CHANGE_GROUP';
+  | 'TIMELINE_CHANGE_GROUP' | 'TIMELINE_CREATE_GROUP' | 'TIMELINE_CREATE_GROUP_SUCCESS' | 'TIMELINE_CREATE_GROUP_ERROR';
 
 export interface TimelineActionBase extends Action {
   type: TimelineActionType;
@@ -44,5 +44,20 @@ export interface TimelineChangeGroupAction extends TimelineActionBase {
     payload: number; // group index
 }
 
+export interface TimelineCreateGroupAction extends TimelineActionBase {
+  type: 'TIMELINE_CREATE_GROUP';
+  payload: string; // timeline id
+}
+
+export interface TimelineCreateGroupSuccessAction extends TimelineActionBase {
+  type: 'TIMELINE_CREATE_GROUP_SUCCESS';
+}
+
+export interface TimelineCreateGroupErrorAction extends TimelineActionBase {
+  type: 'TIMELINE_CREATE_GROUP_ERROR';
+  payload: Error;
+}
+
 export type TimelineAction = TimelineGetAction | TimelineGetSuccessAction | TimelineGetErrorAction
-  | TimelineChangedAction | TimelineSaveSuccessAction | TimelineSaveErrorAction | TimelineChangeGroupAction;
+  | TimelineChangedAction | TimelineSaveSuccessAction | TimelineSaveErrorAction | TimelineChangeGroupAction
+  | TimelineCreateGroupAction | TimelineCreateGroupSuccessAction | TimelineCreateGroupErrorAction;

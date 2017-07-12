@@ -122,7 +122,6 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
       .enter()
       .append('rect')
       .classed('bar', true)
-      .style('fill', d => d.color)
       .on('click', (d: TimelineEventForTimeline) => {
         this.onSelect.emit(d);
       })
@@ -133,6 +132,7 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.d3.selectEventTarget().classed('mouseover', false);
       })
       .merge(bars) // enter + update
+      .style('fill', d => d.color)
       .attr('x', d => xScale(d.dateBegin.days))
       .attr('y', d => yScale(d.yPos))
       .attr('width', (d: TimelineEventForTimeline) =>

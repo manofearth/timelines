@@ -3,7 +3,12 @@ import { Subscription } from '../../shared/rxjs';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
-import { TimelineChangedAction, TimelineChangeGroupAction, TimelineGetAction } from './timeline-actions';
+import {
+  TimelineChangedAction,
+  TimelineChangeGroupAction,
+  TimelineCreateGroupAction,
+  TimelineGetAction
+} from './timeline-actions';
 import {
   Timeline,
   TimelineChangedPayload,
@@ -39,6 +44,7 @@ export class TimelineComponent implements OnInit, OnDestroy {
   error: Error;
 
   form: TimelineForm;
+  addNewGroupTabId: string = ADD_NEW_GROUP_TAB_ID;
 
   private timelineStateSubscription: Subscription;
   private formChangesSubscription: Subscription;
@@ -161,13 +167,27 @@ export class TimelineComponent implements OnInit, OnDestroy {
   }
 
   onTabChange(event: NgbTabChangeEvent) {
-    this.setCurrentGroupIndex(this.extractTabIndex(event.nextId));
+    if (event.nextId === this.addNewGroupTabId) {
+      event.preventDefault();
+      this.createGroup();
+    } else {
+      this.setCurrentGroupIndex(this.extractTabIndex(event.nextId));
+    }
   }
 
   setCurrentGroupIndex(index: number) {
     const action: TimelineChangeGroupAction = {
       type: 'TIMELINE_CHANGE_GROUP',
       payload: index,
+    };
+
+    this.store.dispatch(action);
+  }
+
+  createGroup() {
+    const action: TimelineCreateGroupAction = {
+      type: 'TIMELINE_CREATE_GROUP',
+      payload: this.timeline.id,
     };
 
     this.store.dispatch(action);
@@ -233,4 +253,5 @@ function toTimeline(oldTimeline: Timeline, formValue: TimelineFormValue): Timeli
 }
 
 const GROUP_TAB_ID_PREFIX = 'ngb-group-tab-';
+const ADD_NEW_GROUP_TAB_ID = 'add-new-group-tab';
 const EXTRACT_INDEX_FROM_GROUP_TAB_ID_REGEX = new RegExp('^' + GROUP_TAB_ID_PREFIX + '(\\d+)$');

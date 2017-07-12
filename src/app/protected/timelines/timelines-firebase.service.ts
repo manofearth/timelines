@@ -25,9 +25,28 @@ export class TimelinesFirebaseService extends ProtectedFirebaseService<FirebaseT
 
   }
 
-  private eventAttachmentObject(timelineId: string, groupId: string, timelineEventId: string): FirebaseObjectObservable<boolean> {
-    return this.database
-      .object(this.getFirebaseObjectPath(timelineId) + '/groups/' + groupId + '/events/' + timelineEventId );
+  createGroup(timelineId: string, title: string, color: string): Observable<firebase.database.Reference> {
+    return Observable.fromPromise(
+      this.database
+        .list(this.getEventsGroupPath(timelineId))
+        .push({
+          title: title,
+          color: color,
+        }) as any
+    );
+  }
+
+  private eventAttachmentObject(
+    timelineId: string,
+    groupId: string,
+    timelineEventId: string
+  ): FirebaseObjectObservable<boolean> {
+
+    return this.database.object(this.getEventsGroupPath(timelineId) + '/' + groupId + '/events/' + timelineEventId);
+  }
+
+  private getEventsGroupPath(timelineId: string) {
+    return this.getFirebaseObjectPath(timelineId) + '/groups';
   }
 
   protected getFirebaseNodeName(): string {

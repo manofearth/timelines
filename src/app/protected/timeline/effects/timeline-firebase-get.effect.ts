@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
 import { TimelineGetAction, TimelineGetErrorAction, TimelineGetSuccessAction } from '../timeline-actions';
-import { Timeline, TimelineEventsGroup } from '../timeline-states';
+import { Timeline, TimelineEventForTimeline, TimelineEventsGroup } from '../timeline-states';
 import { Actions, Effect } from '@ngrx/effects';
 import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 import { FirebaseTimeline, TimelinesFirebaseService } from '../../timelines/timelines-firebase.service';
@@ -81,7 +81,13 @@ export class TimelineFirebaseGetEffect extends ProtectedFirebaseEffect<TimelineG
 function extractEventsIds(firebaseTimeline: FirebaseTimeline): string[] {
   return Object.keys(firebaseTimeline.groups)
     .reduce<string[]>(
-      (acc, groupId) => acc.concat(Object.keys(firebaseTimeline.groups[groupId].events)),
+      (acc, groupId) => {
+        if (firebaseTimeline.groups[groupId].events) {
+          return acc.concat(Object.keys(firebaseTimeline.groups[groupId].events));
+        } else {
+          return acc;
+        }
+      },
       []
     );
 }
@@ -98,18 +104,24 @@ function toTimeline(firebaseTimeline: FirebaseTimeline, firebaseEvents: Firebase
 
   const groups = Object.keys(firebaseTimeline.groups).reduce<TimelineEventsGroup[]>(
     (acc, groupId) => {
-      acc.push({
-        id: groupId,
-        title: firebaseTimeline.groups[groupId].title,
-        color: firebaseTimeline.groups[groupId].color,
-        events: Object.keys(firebaseTimeline.groups[groupId].events)
+
+      let events: TimelineEventForTimeline[] = [];
+      if (firebaseTimeline.groups[groupId].events) {
+        events = Object.keys(firebaseTimeline.groups[groupId].events)
           .map((eventId: string) => eventsDictionary[eventId])
           .map((firebaseEvent: FirebaseTimelineEvent) => ({
             id: firebaseEvent.$key,
             title: firebaseEvent.title,
             dateBegin: firebaseEvent.dateBegin,
             dateEnd: firebaseEvent.dateEnd,
-          }))
+          }));
+      }
+
+      acc.push({
+        id: groupId,
+        title: firebaseTimeline.groups[groupId].title,
+        color: firebaseTimeline.groups[groupId].color,
+        events: events,
       });
       return acc;
     },

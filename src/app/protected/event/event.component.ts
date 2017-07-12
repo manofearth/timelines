@@ -1,6 +1,6 @@
 //noinspection TypeScriptPreferShortImport
 import { Subscription } from '../../shared/rxjs';
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TimelineEvent } from '../shared/timeline-event';
@@ -22,14 +22,17 @@ export class EventComponent implements OnInit, OnDestroy {
   form: EventForm;
   closeAfterSave: boolean = false;
   saveWasAttempted: boolean = false;
+
   attachTo: { timelineId: string, groupId: string } = null;
+
   private eventStateSubscription: Subscription;
   private isSavingStateSubscription: Subscription;
 
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private changeDetector: ChangeDetectorRef,
   ) {
   }
 
@@ -37,6 +40,7 @@ export class EventComponent implements OnInit, OnDestroy {
     this.eventStateSubscription = this.store.select('event', 'event').subscribe((event: TimelineEvent) => {
       if (event !== null) {
         this.initForm(event);
+        this.changeDetector.markForCheck();
       }
     });
 
