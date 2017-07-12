@@ -23,7 +23,7 @@
 - [x] Chart
 - [x] Edit timeline. Detach event
 - [x] Edit timeline. Search event before creating
-- [ ] Edit timeline. Events groups
+- [x] Edit timeline. Events groups
 - [ ] Edit timeline. Add events group
 - [ ] Edit timeline. Edit events group
 - [ ] Edit event. Select group

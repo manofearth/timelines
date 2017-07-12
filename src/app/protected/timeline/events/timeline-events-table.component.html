@@ -6,7 +6,7 @@
 ></tl-selector>
 <table class="table table-hover">
   <tbody>
-  <tr *ngFor="let event of store.select('timeline', 'timeline', 'groups', groupIndex, 'events') | async as events">
+  <tr *ngFor="let event of event$ | async; trackBy: trackByEventRow">
     <td>
       <button type="button" class="btn btn-link" (click)="open.emit(event.id)">{{ event.title }}</button>
     </td>

@@ -4,7 +4,13 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
 import { TimelineChangedAction, TimelineChangeGroupAction, TimelineGetAction } from './timeline-actions';
-import { Timeline, TimelineChangedPayload, TimelineEventForTimeline, TimelineState } from './timeline-states';
+import {
+  Timeline,
+  TimelineChangedPayload,
+  TimelineEventForTimeline,
+  TimelineEventsGroup,
+  TimelineState
+} from './timeline-states';
 import { ActivatedRoute, Params } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
@@ -84,7 +90,7 @@ export class TimelineComponent implements OnInit, OnDestroy {
     this.timelineStateSubscription.unsubscribe();
   }
 
-  createAndOpenTimelineEvent(title: string) {
+  createAndOpenTimelineEvent(title: string, groupId: string) {
     this.store.dispatch(<EventCreateAction>{
       type: 'EVENT_CREATE',
       payload: title,
@@ -99,7 +105,7 @@ export class TimelineComponent implements OnInit, OnDestroy {
         this.dispatchEventEraseAction();
       },
     );
-    modal.componentInstance.attachToTimeline = this.timeline;
+    modal.componentInstance.attachTo = { timelineId: this.timeline.id, groupId: groupId };
   }
 
   openTimelineEvent(id: string) {
@@ -155,7 +161,7 @@ export class TimelineComponent implements OnInit, OnDestroy {
   }
 
   onTabChange(event: NgbTabChangeEvent) {
-    this.setCurrentGroupIndex(extractTabIndex(event.nextId));
+    this.setCurrentGroupIndex(this.extractTabIndex(event.nextId));
   }
 
   setCurrentGroupIndex(index: number) {
@@ -168,11 +174,19 @@ export class TimelineComponent implements OnInit, OnDestroy {
   }
 
   generateTabId(index: number): string {
-    return 'ngb-tab-' + index;
+    return GROUP_TAB_ID_PREFIX + index;
+  }
+
+  extractTabIndex(tabId: string): number {
+    return toInt(EXTRACT_INDEX_FROM_GROUP_TAB_ID_REGEX.exec(tabId)[1]);
   }
 
   get currentTabId(): string {
     return this.generateTabId(this.currentGroupIndex);
+  }
+
+  groupTrackBy(ignore: number, group: TimelineEventsGroup) {
+    return group.id;
   }
 
   private dispatchEventEraseAction() {
@@ -218,6 +232,5 @@ function toTimeline(oldTimeline: Timeline, formValue: TimelineFormValue): Timeli
   };
 }
 
-function extractTabIndex(tabId: string): number {
-  return toInt(/(\d+)$/.exec(tabId)[0]);
-}
+const GROUP_TAB_ID_PREFIX = 'ngb-group-tab-';
+const EXTRACT_INDEX_FROM_GROUP_TAB_ID_REGEX = new RegExp('^' + GROUP_TAB_ID_PREFIX + '(\\d+)$');

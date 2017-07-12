@@ -1,15 +1,16 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../../reducers';
 import { TimelineEvent } from '../../shared/timeline-event';
 import { TimelineEventsSearchService } from '../timeline-events-search.service';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'tl-events-table',
   templateUrl: './timeline-events-table.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TimelineEventTableComponent {
+export class TimelineEventTableComponent implements OnInit {
 
   @Input() groupIndex: number;
 
@@ -18,11 +19,19 @@ export class TimelineEventTableComponent {
   @Output() attach: EventEmitter<string> = new EventEmitter();
   @Output() detach: EventEmitter<string> = new EventEmitter();
 
-  events: TimelineEvent[] = [];
+  event$: Observable<TimelineEvent[]>;
 
   constructor(
     public store: Store<AppState>,
     public eventsSearchService: TimelineEventsSearchService,
   ) {
+  }
+
+  ngOnInit() {
+    this.event$ = this.store.select('timeline', 'timeline', 'groups', this.groupIndex.toString(), 'events')
+  }
+
+  trackByEventRow(ignore: number, event: TimelineEvent) {
+    return event.id;
   }
 }
