@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
 import {
   TimelineChangedAction,
-  TimelineChangeGroupAction,
+  TimelineChangeCurrentGroupAction,
   TimelineCreateGroupAction,
   TimelineGetAction
 } from './timeline-actions';
@@ -29,6 +29,7 @@ import {
   EventGetAction
 } from '../event/event-actions';
 import { toInt } from '../../shared/helpers';
+import { GroupComponent } from '../group/group.component';
 
 @Component({
   templateUrl: './timeline.component.html',
@@ -176,8 +177,8 @@ export class TimelineComponent implements OnInit, OnDestroy {
   }
 
   setCurrentGroupIndex(index: number) {
-    const action: TimelineChangeGroupAction = {
-      type: 'TIMELINE_CHANGE_GROUP',
+    const action: TimelineChangeCurrentGroupAction = {
+      type: 'TIMELINE_CHANGE_CURRENT_GROUP',
       payload: index,
     };
 
@@ -207,6 +208,13 @@ export class TimelineComponent implements OnInit, OnDestroy {
 
   groupTrackBy(ignore: number, group: TimelineEventsGroup) {
     return group.id;
+  }
+
+  openGroupModal(groupId: string) {
+    const modal = this.modalService.open(GroupComponent, { size: 'sm' });
+    const component = modal.componentInstance as GroupComponent;
+    component.timelineId = this.timeline.id;
+    component.groupId = groupId;
   }
 
   private dispatchEventEraseAction() {

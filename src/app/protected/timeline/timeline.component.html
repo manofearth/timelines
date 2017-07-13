@@ -10,7 +10,9 @@
   <ngb-tabset [activeId]="currentTabId" (tabChange)="onTabChange($event)">
     <ngb-tab *ngFor="let group of timeline.groups; trackBy: groupTrackBy; index as i;" [id]="generateTabId(i)">
       <ng-template ngbTabTitle>
-        <span class="group-color-marker" [ngStyle]="{'background-color': group.color}"></span>{{group.title}}
+        <div (dblclick)="openGroupModal(group.id)">
+          <span class="group-color-marker" [ngStyle]="{'background-color': group.color}"></span>{{group.title}}
+        </div>
       </ng-template>
       <ng-template ngbTabContent>
         <div class="tab-content-container">

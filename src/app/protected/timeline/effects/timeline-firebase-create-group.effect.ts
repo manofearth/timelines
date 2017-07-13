@@ -22,7 +22,13 @@ export class TimelineFirebaseCreateGroupEffect extends ProtectedFirebaseEffect<T
   }
 
   protected runEffect(action: TimelineCreateGroupAction): Observable<firebase.database.Reference> {
-    return this.fireTimelines.createGroup(action.payload, 'Новая группа', 'cornflowerblue');
+    return this.fireTimelines.createGroup(
+      action.payload,
+      {
+        title: 'Новая группа',
+        color: 'cornflowerblue',
+      }
+    );
   }
 
   protected mapToSuccessAction(ref: firebase.database.Reference): TimelineCreateGroupSuccessAction {

@@ -1,6 +1,6 @@
 # Timelines
 
-### Roadmap
+### Roadmap to v1
 - [x] Sign up
 - [x] Sign up fields hints
 - [x] Sign up errors
@@ -24,13 +24,14 @@
 - [x] Edit timeline. Detach event
 - [x] Edit timeline. Search event before creating
 - [x] Edit timeline. Events groups
-- [ ] Edit timeline. Add events group
+- [x] Edit timeline. Add events group
 - [ ] Edit timeline. Edit events group
+- [ ] Edit timeline. Remove events group
 - [ ] Edit event. Select group
 - [ ] Edit event. Create type
+- [ ] Edit event. Select type
 - [ ] Edit event. Create info source
 - [ ] Edit event. Select info sources
-- [ ] Edit event. Select type
 - [ ] Events list
 - [ ] Events list. Search before creating
 - [ ] Events list. Add new

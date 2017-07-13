@@ -17,6 +17,7 @@ import { D3Service } from './d3/d3.service';
 import { WindowService } from './shared/window.service';
 import { TimelineEventsSearchService } from './timeline/timeline-events-search.service';
 import { TimelineEventTableComponent } from './timeline/events/timeline-events-table.component';
+import { GroupComponent } from './group/group.component';
 
 const routes: Routes = [
   {
@@ -52,6 +53,7 @@ const routes: Routes = [
     ProtectedComponent,
     LogoutComponent,
     EventComponent,
+    GroupComponent,
     SelectorComponent,
     DateDirective,
     ChartComponent,
@@ -65,6 +67,7 @@ const routes: Routes = [
   ],
   entryComponents: [
     EventComponent,
+    GroupComponent,
   ]
 })
 export class ProtectedModule {

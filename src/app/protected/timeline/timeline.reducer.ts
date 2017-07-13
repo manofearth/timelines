@@ -43,7 +43,7 @@ export function timelineReducer(state: TimelineState, action: TimelineAction): T
         error: action.payload,
         timeline: state.timeline,
       };
-    case 'TIMELINE_CHANGE_GROUP':
+    case 'TIMELINE_CHANGE_CURRENT_GROUP':
       return {
         ...state,
         currentGroupIndex: action.payload,

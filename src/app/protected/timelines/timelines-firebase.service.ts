@@ -25,14 +25,19 @@ export class TimelinesFirebaseService extends ProtectedFirebaseService<FirebaseT
 
   }
 
-  createGroup(timelineId: string, title: string, color: string): Observable<firebase.database.Reference> {
+  createGroup(timelineId: string, data: FirebaseGroupUpdateObject): Observable<firebase.database.Reference> {
     return Observable.fromPromise(
       this.database
         .list(this.getEventsGroupPath(timelineId))
-        .push({
-          title: title,
-          color: color,
-        }) as any
+        .push(data) as any
+    );
+  }
+
+  saveGroup(timelineId: string, groupId: string, data: FirebaseGroupUpdateObject): Observable<void> {
+    return Observable.fromPromise(
+      this.database
+        .object(this.getEventsGroupPath(timelineId) + '/' + groupId)
+        .update(data)
     );
   }
 
@@ -75,4 +80,9 @@ export interface FirebaseTimelineEventsGroup {
 export interface FirebaseTimelineUpdateObject {
   title: string;
   groups?: FirebaseTimelineEventGroups;
+}
+
+export interface FirebaseGroupUpdateObject {
+  title: string;
+  color?: string;
 }
