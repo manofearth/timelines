@@ -1,0 +1,17 @@
+.color-picker-button {
+  width: 30px;
+  height: 30px;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  -webkit-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+
+.color-picker-button:hover {
+  border-color: dimgray;
+}
+
+.color-picker-button-gaps {
+  margin: 1px;
+}

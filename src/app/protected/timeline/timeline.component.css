@@ -21,4 +21,5 @@ input.title:hover {
   margin-right: 5px;
   margin-bottom: 2px;
   vertical-align: middle;
+  border-radius: 3px;
 }

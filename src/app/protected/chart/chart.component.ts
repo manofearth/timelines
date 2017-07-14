@@ -122,6 +122,8 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
       .enter()
       .append('rect')
       .classed('bar', true)
+      .attr('rx', 3)
+      .attr('ry', 3)
       .on('click', (d: TimelineEventForTimeline) => {
         this.onSelect.emit(d);
       })

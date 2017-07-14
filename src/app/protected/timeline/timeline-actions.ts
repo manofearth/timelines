@@ -66,6 +66,7 @@ export interface TimelineSaveGroupAction extends TimelineActionBase {
     groupId: string;
     data: {
       title: string;
+      color: string;
     }
   }
 }

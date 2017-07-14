@@ -18,6 +18,7 @@ import { WindowService } from './shared/window.service';
 import { TimelineEventsSearchService } from './timeline/timeline-events-search.service';
 import { TimelineEventTableComponent } from './timeline/events/timeline-events-table.component';
 import { GroupComponent } from './group/group.component';
+import { ColorPickerComponent } from './shared/color-picker/color-picker.component';
 
 const routes: Routes = [
   {
@@ -57,6 +58,7 @@ const routes: Routes = [
     SelectorComponent,
     DateDirective,
     ChartComponent,
+    ColorPickerComponent,
   ],
   providers: [
     TimelineCanDeactivate,

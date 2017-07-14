@@ -18,6 +18,8 @@ export class GroupComponent implements OnInit {
 
   form: TimelineGroupForm;
 
+  availableColors: string[] = AVAILABLE_COLORS;
+
   constructor(
     public activeModal: NgbActiveModal,
     private store: Store<AppState>,
@@ -43,9 +45,7 @@ export class GroupComponent implements OnInit {
       payload: {
         timelineId: this.timelineId,
         groupId: this.groupId,
-        data: {
-          title: this.form.controls.title.value,
-        }
+        data: this.form.value,
       }
     };
 
@@ -57,6 +57,7 @@ export class GroupComponent implements OnInit {
   private initForm(group: TimelineEventsGroup) {
     this.form = this.fb.group({
       title: group.title,
+      color: group.color,
     }) as TimelineGroupForm;
   }
 }
@@ -64,5 +65,22 @@ export class GroupComponent implements OnInit {
 interface TimelineGroupForm extends FormGroup {
   controls: {
     title: FormControl;
+    color: FormControl;
+  },
+  value: {
+    title: string;
+    color: string;
   }
 }
+
+const AVAILABLE_COLORS = [
+  'cornflowerblue',
+  'orange',
+  'darkorchid',
+  'lightcoral',
+  'lightpink',
+  'lightblue',
+  'lightsalmon',
+  'lightseagreen',
+  'lightskyblue',
+];

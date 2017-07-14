@@ -1,4 +1,4 @@
-<div class="dropdown show">
+<div class="dropdown" [ngClass]="{ show: searchResults.length !== 0 }">
   <input
     type="text"
     title="{{placeholder}}"
@@ -17,7 +17,7 @@
     class="btn btn-link create-button"
     (click)="emitCreateEvent()"
     [hidden]="isSearching">Создать</button>
-  <div class="dropdown-menu" [hidden]="searchResults.length === 0">
+  <div class="dropdown-menu">
     <div
       *ngFor="let searchResultItem of searchResults; index as i;"
       class="dropdown-item search-result-item"

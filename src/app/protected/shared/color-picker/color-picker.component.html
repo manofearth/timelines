@@ -1,0 +1,11 @@
+<div class="dropdown" [ngClass]="{ show: isOpened }">
+  <button class="color-picker-button" [ngStyle]="{ 'background-color': currentColor }" (click)="toggle()"></button>
+  <div class="dropdown-menu">
+    <button
+      *ngFor="let color of colors"
+      class="color-picker-button color-picker-button-gaps"
+      [ngStyle]="{ 'background-color': color }"
+      (click)="onColorPick(color)">
+    </button>
+  </div>
+</div>

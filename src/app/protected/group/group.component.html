@@ -6,12 +6,15 @@
 </div>
 <div class="modal-body container-fluid">
   <form *ngIf="form" [formGroup]="form">
-    <div class="form-group">
-      <input class="form-control" type="text" title="Название" formControlName="title">
+    <div>
+      <div class="form-group">
+        <input class="form-control" type="text" title="Название" formControlName="title">
+      </div>
+      <tl-color-picker formControlName="color" [colors]="availableColors"></tl-color-picker>
     </div>
   </form>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-primary" (click)="save()">Сохранить</button>
-  <button type="button" class="btn btn-secondary" (click)="dismiss()">Отмена</button>
+  <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Отмена</button>
 </div>
