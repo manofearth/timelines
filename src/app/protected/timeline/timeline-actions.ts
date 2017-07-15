@@ -5,7 +5,8 @@ export type TimelineActionType = 'TIMELINE_GET' | 'TIMELINE_GET_SUCCESS' | 'TIME
   | 'TIMELINE_CHANGED' | 'TIMELINE_SAVE_SUCCESS' | 'TIMELINE_SAVE_ERROR'
   | 'TIMELINE_EVENT_FINDER_SEARCH' | 'TIMELINE_EVENT_FINDER_SEARCH_SUCCESS' | 'TIMELINE_EVENT_FINDER_SEARCH_ERROR'
   | 'TIMELINE_CHANGE_CURRENT_GROUP' | 'TIMELINE_CREATE_GROUP' | 'TIMELINE_CREATE_GROUP_SUCCESS'
-  | 'TIMELINE_CREATE_GROUP_ERROR' | 'TIMELINE_SAVE_GROUP' | 'TIMELINE_SAVE_GROUP_SUCCESS' | 'TIMELINE_SAVE_GROUP_ERROR';
+  | 'TIMELINE_CREATE_GROUP_ERROR' | 'TIMELINE_SAVE_GROUP' | 'TIMELINE_SAVE_GROUP_SUCCESS' | 'TIMELINE_SAVE_GROUP_ERROR'
+  | 'TIMELINE_DELETE_GROUP' | 'TIMELINE_DELETE_GROUP_SUCCESS' | 'TIMELINE_DELETE_GROUP_ERROR';
 
 export interface TimelineActionBase extends Action {
   type: TimelineActionType;
@@ -41,8 +42,8 @@ export interface TimelineSaveErrorAction extends TimelineActionBase {
 }
 
 export interface TimelineChangeCurrentGroupAction extends TimelineActionBase {
-    type: 'TIMELINE_CHANGE_CURRENT_GROUP';
-    payload: number; // group index
+  type: 'TIMELINE_CHANGE_CURRENT_GROUP';
+  payload: number; // group index
 }
 
 export interface TimelineCreateGroupAction extends TimelineActionBase {
@@ -80,8 +81,22 @@ export interface TimelineSaveGroupErrorAction extends TimelineActionBase {
   payload: Error;
 }
 
+export interface TimelineDeleteGroupAction extends TimelineActionBase {
+  type: 'TIMELINE_DELETE_GROUP';
+}
+
+export interface TimelineDeleteGroupSuccessAction extends TimelineActionBase {
+  type: 'TIMELINE_DELETE_GROUP_SUCCESS';
+}
+
+export interface TimelineDeleteGroupErrorAction extends TimelineActionBase {
+  type: 'TIMELINE_DELETE_GROUP_ERROR';
+  payload: Error;
+}
+
 export type TimelineAction = TimelineGetAction | TimelineGetSuccessAction | TimelineGetErrorAction
   | TimelineChangedAction | TimelineSaveSuccessAction | TimelineSaveErrorAction | TimelineChangeCurrentGroupAction
   | TimelineChangedAction | TimelineSaveSuccessAction | TimelineSaveErrorAction | TimelineCreateGroupAction
   | TimelineCreateGroupSuccessAction | TimelineCreateGroupErrorAction | TimelineSaveGroupAction
-  | TimelineSaveGroupSuccessAction | TimelineSaveGroupErrorAction;
+  | TimelineSaveGroupSuccessAction | TimelineSaveGroupErrorAction | TimelineDeleteGroupAction
+  | TimelineDeleteGroupSuccessAction | TimelineDeleteGroupErrorAction;

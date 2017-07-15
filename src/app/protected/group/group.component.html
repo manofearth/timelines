@@ -4,13 +4,19 @@
   </button>
   <h5 class="modal-title">Группа событий</h5>
 </div>
-<div class="modal-body container-fluid">
+<div class="modal-body">
   <form class="form-inline" *ngIf="form" [formGroup]="form">
-    <tl-color-picker class="mr-1 align-middle" formControlName="color" [colors]="availableColors"></tl-color-picker>
+    <tl-color-picker
+      class="mr-1 align-middle"
+      formControlName="color"
+      title="Цвет"
+      [colors]="availableColors">
+    </tl-color-picker>
     <input class="form-control" type="text" title="Название" formControlName="title">
   </form>
 </div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-primary" (click)="save()">Сохранить</button>
+<div class="tl-group-modal-footer d-flex justify-content-end">
+  <button type="button" class="btn btn-danger mr-auto" title="Удалить группу" (click)="deleteGroup()">X</button>
+  <button type="button" class="btn btn-primary mr-1" (click)="save()">Сохранить</button>
   <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Отмена</button>
 </div>

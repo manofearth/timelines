@@ -41,6 +41,14 @@ export class TimelinesFirebaseService extends ProtectedFirebaseService<FirebaseT
     );
   }
 
+  deleteGroup(timelineId: string, groupId: string): Observable<void> {
+    return Observable.fromPromise(
+      this.database
+        .list(this.getEventsGroupPath(timelineId))
+        .remove(groupId) as Promise<void>
+    );
+  }
+
   private eventAttachmentObject(
     timelineId: string,
     groupId: string,

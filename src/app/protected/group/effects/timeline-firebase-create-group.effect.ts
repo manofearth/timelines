@@ -8,7 +8,7 @@ import {
   TimelineCreateGroupAction,
   TimelineCreateGroupErrorAction,
   TimelineCreateGroupSuccessAction
-} from '../timeline-actions';
+} from '../../timeline/timeline-actions';
 
 @Injectable()
 export class TimelineFirebaseCreateGroupEffect extends ProtectedFirebaseEffect<TimelineCreateGroupAction,

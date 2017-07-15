@@ -33,8 +33,9 @@ import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { EventFirebaseAttachEffect } from './protected/event/effects/event-firebase-attach.effect';
 import { EventToTimelineAttachingFirebaseService } from './protected/event/event-to-timeline-attaching-firebase.service';
-import { TimelineFirebaseCreateGroupEffect } from './protected/timeline/effects/timeline-firebase-create-group.effect';
-import { TimelineFirebaseSaveGroupEffect } from './protected/timeline/effects/timeline-firebase-save-group.effect';
+import { TimelineFirebaseCreateGroupEffect } from './protected/group/effects/timeline-firebase-create-group.effect';
+import { TimelineFirebaseSaveGroupEffect } from './protected/group/effects/timeline-firebase-save-group.effect';
+import { TimelineFirebaseDeleteGroupEffect } from './protected/group/effects/timeline-firebase-delete-group.effect';
 
 const routes: Routes = [
   {
@@ -93,6 +94,7 @@ const routes: Routes = [
     EffectsModule.run(EventFirebaseAttachEffect),
     EffectsModule.run(TimelineFirebaseCreateGroupEffect),
     EffectsModule.run(TimelineFirebaseSaveGroupEffect),
+    EffectsModule.run(TimelineFirebaseDeleteGroupEffect),
   ],
   providers: [
     AuthGuard,

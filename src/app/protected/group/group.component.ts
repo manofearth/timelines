@@ -5,10 +5,11 @@ import { AppState } from '../../reducers';
 import { TimelineEventsGroup } from '../timeline/timeline-states';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import 'rxjs/add/operator/map';
-import { TimelineSaveGroupAction } from '../timeline/timeline-actions';
+import { TimelineDeleteGroupAction, TimelineSaveGroupAction } from '../timeline/timeline-actions';
 
 @Component({
   templateUrl: './group.component.html',
+  styleUrls: ['./group.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupComponent implements OnInit {
@@ -54,6 +55,20 @@ export class GroupComponent implements OnInit {
     this.activeModal.close();
   }
 
+  deleteGroup() {
+    const action: TimelineDeleteGroupAction = {
+      type: 'TIMELINE_DELETE_GROUP',
+      payload: {
+        timelineId: this.timelineId,
+        groupId: this.groupId,
+      }
+    };
+
+    this.store.dispatch(action);
+
+    this.activeModal.close();
+  }
+
   private initForm(group: TimelineEventsGroup) {
     this.form = this.fb.group({
       title: group.title,
@@ -83,4 +98,11 @@ const AVAILABLE_COLORS = [
   'lightsalmon',
   'lightseagreen',
   'lightskyblue',
+  'mediumaquamarine',
+  'mediumorchid',
+  'mediumpurple',
+  'mediumseagreen',
+  'mediumslateblue',
+  'mediumturquoise',
+  'teal',
 ];
