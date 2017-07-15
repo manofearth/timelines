@@ -37,7 +37,7 @@ export class TimelinesFirebaseService extends ProtectedFirebaseService<FirebaseT
     return Observable.fromPromise(
       this.database
         .object(this.getEventsGroupPath(timelineId) + '/' + groupId)
-        .update(data)
+        .update(data) as Promise<void>
     );
   }
 
