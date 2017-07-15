@@ -17,5 +17,3 @@ export interface TypeCreateErrorAction extends Action {
   type: 'TYPE_CREATE_ERROR';
   payload: Error;
 }
-
-export type TypeAction = TypeCreateAction | TypeCreateSuccessAction | TypeCreateErrorAction;

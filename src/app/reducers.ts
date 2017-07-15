@@ -8,12 +8,15 @@ import { timelineReducer } from './protected/timeline/timeline.reducer';
 import { eventReducer } from './protected/event/event.reducer';
 import { TimelineState } from './protected/timeline/timeline-states';
 import { EventState } from './protected/event/event-states';
+import { TypesState } from './protected/types/types-states';
+import { typesReducer } from './protected/types/types.reducer';
 
 export interface AppState {
   auth: AuthState;
   timelines: TimelinesState;
   timeline: TimelineState;
   event: EventState;
+  types: TypesState;
 }
 
 export const initialState: AppState = {
@@ -40,6 +43,11 @@ export const initialState: AppState = {
     error: null,
     event: null,
   },
+  types: {
+    isLoading: true,
+    error: null,
+    types: null,
+  }
 };
 
 interface AppReducers {
@@ -47,6 +55,7 @@ interface AppReducers {
   timelines: ActionReducer<TimelinesState>;
   timeline: ActionReducer<TimelineState>;
   event: ActionReducer<EventState>;
+  types: ActionReducer<TypesState>;
 }
 
 const reducers: AppReducers = {
@@ -54,6 +63,7 @@ const reducers: AppReducers = {
   timelines: timelinesReducer,
   timeline: timelineReducer,
   event: eventReducer,
+  types: typesReducer,
 };
 
 const developmentReducer: ActionReducer<AppState> = compose(storeFreeze, combineReducers)(reducers);

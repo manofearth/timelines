@@ -5,4 +5,14 @@
     [searchService]="searchService"
     (create)="create($event)"
   ></tl-selector>
+  <div *ngIf="state.isLoading" class="alert alert-info">загружаются...</div>
+  <div class="grid-row">
+    <table class="table table-hover">
+      <tbody>
+      <tr *ngFor="let type of state.types">
+        <td><a [routerLink]="['/type', type.id]">{{ type.title }}</a></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

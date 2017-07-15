@@ -38,6 +38,7 @@ import { TimelineFirebaseSaveGroupEffect } from './protected/group/effects/timel
 import { TimelineFirebaseDeleteGroupEffect } from './protected/group/effects/timeline-firebase-delete-group.effect';
 import { TypeCreateEffect } from './protected/types/effects/type-create.effect';
 import { TypesFirebaseService } from './protected/types/types-firebase.service';
+import { TypesGetEffect } from './protected/types/effects/types-get.effect';
 
 const routes: Routes = [
   {
@@ -98,6 +99,7 @@ const routes: Routes = [
     EffectsModule.run(TimelineFirebaseSaveGroupEffect),
     EffectsModule.run(TimelineFirebaseDeleteGroupEffect),
     EffectsModule.run(TypeCreateEffect),
+    EffectsModule.run(TypesGetEffect),
   ],
   providers: [
     AuthGuard,
