@@ -19,6 +19,8 @@ import { TimelineEventsSearchService } from './timeline/timeline-events-search.s
 import { TimelineEventTableComponent } from './timeline/events/timeline-events-table.component';
 import { GroupComponent } from './group/group.component';
 import { ColorPickerComponent } from './shared/color-picker/color-picker.component';
+import { TypesComponent } from './types/types.component';
+import { TypesSearchService } from './types/types-search.service';
 
 const routes: Routes = [
   {
@@ -34,6 +36,10 @@ const routes: Routes = [
         component: TimelineComponent,
         canDeactivate: [TimelineCanDeactivate],
       },
+      {
+        path: 'types',
+        component: TypesComponent,
+      }
     ],
   },
 ];
@@ -59,6 +65,7 @@ const routes: Routes = [
     DateDirective,
     ChartComponent,
     ColorPickerComponent,
+    TypesComponent,
   ],
   providers: [
     TimelineCanDeactivate,
@@ -66,6 +73,7 @@ const routes: Routes = [
     D3Service,
     WindowService,
     TimelineEventsSearchService,
+    TypesSearchService,
   ],
   entryComponents: [
     EventComponent,

@@ -1,0 +1,8 @@
+<div class="container-fluid">
+  <h3 class="grid-row">Типы событий</h3>
+  <tl-selector
+    [placeholder]="'Создайте новый тип событий'"
+    [searchService]="searchService"
+    (create)="create($event)"
+  ></tl-selector>
+</div>

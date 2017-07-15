@@ -1,31 +1,31 @@
 const request = require('request-promise-native');
 const functions = require('firebase-functions');
 
-function toElasticSearchTimelineEvent(timelineEvent, ownerId) {
-  if (!timelineEvent) {
+function toElasticSearchEventType(eventType, ownerId) {
+  if (!eventType) {
     return null;
   }
   return {
-    title: timelineEvent.title,
+    title: eventType.title,
     ownerId: ownerId
   };
 }
 
-function indexTimelineEvent(firebaseEvent) {
+function indexEventsType(firebaseEvent) {
 
-  console.log('Indexing event', firebaseEvent.params.eventId);
-  
+  console.log('Indexing events type', firebaseEvent.params.typeId);
+
   const config = functions.config().elasticsearch;
 
   return request({
     method: firebaseEvent.data.val() ? 'POST' : 'DELETE',
-    uri: config.uri + '/timelines_ru/event/' + firebaseEvent.params.eventId,
+    uri: config.uri + '/timelines_ru/events_type/' + firebaseEvent.params.typeId,
     auth: {
       username: config.username,
       password: config.password
     },
     json: true,
-    body: toElasticSearchTimelineEvent(firebaseEvent.data.val(), firebaseEvent.params.userId),
+    body: toElasticSearchEventType(firebaseEvent.data.val(), firebaseEvent.params.userId),
   }).then(
     response => {
       console.log('ElasticSearch response:', response);
@@ -36,4 +36,4 @@ function indexTimelineEvent(firebaseEvent) {
   );
 }
 
-module.exports = indexTimelineEvent;
+module.exports = indexEventsType;

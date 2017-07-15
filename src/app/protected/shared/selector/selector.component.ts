@@ -24,7 +24,6 @@ import { SelectorSearchResultItem } from './selector-search-result-item';
 })
 export class SelectorComponent implements OnInit, OnDestroy {
 
-
   inputControl: FormControl;
 
   @Output('create') create: EventEmitter<string> = new EventEmitter<string>();
@@ -73,9 +72,12 @@ export class SelectorComponent implements OnInit, OnDestroy {
     this.create.emit(this.inputControl.value);
   }
 
-  onEnterKey() {
+  onEnterKey(e: KeyboardEvent) {
+    e.preventDefault();
     if (this.searchResults.length === 0) {
       if (!this.isSearching) {
+        // workaround for bug: https://github.com/ng-bootstrap/ng-bootstrap/issues/1252#issuecomment-294338294
+        this.btnCreate.nativeElement.focus();
         this.onItemCreate();
       }
     } else {
@@ -106,14 +108,16 @@ export class SelectorComponent implements OnInit, OnDestroy {
   onItemSelect(index: number) {
     this.choose.emit(this.searchResults[index].item);
     this.closeDropdown();
-    this.inputControl.setValue('');
+    this.eraseUserInput();
   }
 
   onItemCreate() {
-    // workaround for bug: https://github.com/ng-bootstrap/ng-bootstrap/issues/1252#issuecomment-294338294
-    this.btnCreate.nativeElement.focus();
     this.emitCreateEvent();
-    this.inputControl.setValue('');
+    this.eraseUserInput();
+  }
+
+  eraseUserInput() {
+    this.inputControl.setValue('', { emitEvent: false });
   }
 
   private closeDropdown() {

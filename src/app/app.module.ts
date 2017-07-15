@@ -36,6 +36,8 @@ import { EventToTimelineAttachingFirebaseService } from './protected/event/event
 import { TimelineFirebaseCreateGroupEffect } from './protected/group/effects/timeline-firebase-create-group.effect';
 import { TimelineFirebaseSaveGroupEffect } from './protected/group/effects/timeline-firebase-save-group.effect';
 import { TimelineFirebaseDeleteGroupEffect } from './protected/group/effects/timeline-firebase-delete-group.effect';
+import { TypeCreateEffect } from './protected/types/effects/type-create.effect';
+import { TypesFirebaseService } from './protected/types/types-firebase.service';
 
 const routes: Routes = [
   {
@@ -95,6 +97,7 @@ const routes: Routes = [
     EffectsModule.run(TimelineFirebaseCreateGroupEffect),
     EffectsModule.run(TimelineFirebaseSaveGroupEffect),
     EffectsModule.run(TimelineFirebaseDeleteGroupEffect),
+    EffectsModule.run(TypeCreateEffect),
   ],
   providers: [
     AuthGuard,
@@ -104,6 +107,7 @@ const routes: Routes = [
     TimelinesFirebaseService,
     EventsFirebaseService,
     EventToTimelineAttachingFirebaseService,
+    TypesFirebaseService,
   ],
   bootstrap: [AppComponent]
 })
