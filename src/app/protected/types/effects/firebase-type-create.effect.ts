@@ -7,7 +7,7 @@ import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service
 import { TypesFirebaseService } from '../types-firebase.service';
 
 @Injectable()
-export class TypeCreateEffect extends ProtectedFirebaseEffect<TypeCreateAction,
+export class FirebaseTypeCreateEffect extends ProtectedFirebaseEffect<TypeCreateAction,
   TypeCreateSuccessAction,
   TypeCreateErrorAction,
   firebase.database.Reference> {

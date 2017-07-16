@@ -1,52 +1,32 @@
-import { SelectorSearchService } from '../shared/selector/selector-search.service';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/map';
 import { SelectorSearchResultItem } from '../shared/selector/selector-search-result-item';
-import { Http, Response } from '@angular/http';
-import { AngularFireAuth } from 'angularfire2/auth';
 import { Injectable } from '@angular/core';
+import { ElasticSearchService, SearchHit } from '../shared/elastic-search.service';
+import { AngularFireAuth } from 'angularfire2/auth';
+import { Http } from '@angular/http';
 
 @Injectable()
-export class TimelineEventsSearchService extends SelectorSearchService {
+export class TimelineEventsSearchService
+  extends ElasticSearchService<EventHitSource, EventHitHighlight, TimelineEventSearchItem> {
 
   constructor(
-    private http: Http,
-    private fireAuth: AngularFireAuth,
+    http: Http,
+    fireAuth: AngularFireAuth,
   ) {
-    super();
+    super(http, fireAuth);
   }
 
-  protected search(query: string): Observable<SelectorSearchResultItem[]> {
-
-    if (!query) {
-      return Observable.of([]);
-    }
-
-    return this.http
-      .get(TIMELINE_EVENTS_SEARCH_URL, {
-        params: {
-          q: query,
-          o: this.fireAuth.auth.currentUser.uid,
-        }
-      })
-      .map((res: Response) => toSelectorSearchResultItems(res.json()));
+  protected getSearchUrl(): string {
+    return '/functions/searchTimelineEvents';
   }
 
-}
-
-const TIMELINE_EVENTS_SEARCH_URL = '/functions/queryElasticSearch';
-
-interface SearchResponseData {
-  hits: {
-    hits: EventSearchHit[];
-  };
-}
-
-interface EventSearchHit {
-  _id: string;
-  _source: EventHitSource
-  highlight: EventHitHighlight;
+  protected mapToResultItem(hit: SearchHit<EventHitSource, EventHitHighlight>): TimelineEventSearchItem {
+    return {
+      title: hit.highlight.title[0],
+      item: {
+        id: hit._id,
+      },
+    };
+  }
 }
 
 interface EventHitSource {
@@ -64,17 +44,3 @@ interface TimelineEventSearchItem extends SelectorSearchResultItem {
     id: string;
   }
 }
-
-function toSelectorSearchResultItems(searchData: SearchResponseData): TimelineEventSearchItem[] {
-  return searchData.hits.hits.map(toSelectorSearchResultItem);
-}
-
-function toSelectorSearchResultItem(hit: EventSearchHit): TimelineEventSearchItem {
-  return {
-    title: hit.highlight.title[0],
-    item: {
-      id: hit._id,
-    },
-  };
-}
-

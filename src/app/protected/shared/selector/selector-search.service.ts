@@ -22,5 +22,5 @@ export abstract class SelectorSearchService {
     return this._results$;
   }
 
-  protected abstract search(query: string): Observable<SelectorSearchResultItem[]>;
+  abstract search(query: string): Observable<SelectorSearchResultItem[]>;
 }

@@ -8,7 +8,7 @@ import { TypesGetAction, TypesGetErrorAction, TypesGetSuccessAction } from '../t
 import { TimelineEventsType } from '../types-states';
 
 @Injectable()
-export class TypesGetEffect extends ProtectedFirebaseEffect<TypesGetAction,
+export class FirebaseTypesGetEffect extends ProtectedFirebaseEffect<TypesGetAction,
   TypesGetSuccessAction,
   TypesGetErrorAction,
   FirebaseType[]> {

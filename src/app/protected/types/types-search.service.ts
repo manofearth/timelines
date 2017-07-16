@@ -6,7 +6,7 @@ import { SelectorSearchResultItem } from '../shared/selector/selector-search-res
 @Injectable()
 export class TypesSearchService extends SelectorSearchService {
 
-  protected search(query: string): Observable<SelectorSearchResultItem[]> {
+  search(query: string): Observable<SelectorSearchResultItem[]> {
     return Observable.of([]);
   }
 

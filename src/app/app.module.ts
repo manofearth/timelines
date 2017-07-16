@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { SignupComponent } from './auth/signup/signup.component';
 import { LoginComponent } from './auth/login/login.component';
@@ -11,7 +11,7 @@ import { firebaseConfig } from '../environments/firebase.config';
 import { EffectsModule } from '@ngrx/effects';
 import { FirebaseAuthEffects } from './auth/firebase-auth.effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { reducer, initialState } from './reducers';
+import { initialState, reducer } from './reducers';
 import { AuthGuard } from './auth/auth-guard.service';
 import { StoreModule } from '@ngrx/store';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -36,9 +36,10 @@ import { EventToTimelineAttachingFirebaseService } from './protected/event/event
 import { TimelineFirebaseCreateGroupEffect } from './protected/group/effects/timeline-firebase-create-group.effect';
 import { TimelineFirebaseSaveGroupEffect } from './protected/group/effects/timeline-firebase-save-group.effect';
 import { TimelineFirebaseDeleteGroupEffect } from './protected/group/effects/timeline-firebase-delete-group.effect';
-import { TypeCreateEffect } from './protected/types/effects/type-create.effect';
+import { FirebaseTypeCreateEffect } from './protected/types/effects/firebase-type-create.effect';
+import { ElasticTypesService } from './protected/types/elastic-types.service';
+import { ElasticTypesGetEffect } from './protected/types/effects/elastic-types-get.effect';
 import { TypesFirebaseService } from './protected/types/types-firebase.service';
-import { TypesGetEffect } from './protected/types/effects/types-get.effect';
 
 const routes: Routes = [
   {
@@ -98,8 +99,8 @@ const routes: Routes = [
     EffectsModule.run(TimelineFirebaseCreateGroupEffect),
     EffectsModule.run(TimelineFirebaseSaveGroupEffect),
     EffectsModule.run(TimelineFirebaseDeleteGroupEffect),
-    EffectsModule.run(TypeCreateEffect),
-    EffectsModule.run(TypesGetEffect),
+    EffectsModule.run(FirebaseTypeCreateEffect),
+    EffectsModule.run(ElasticTypesGetEffect),
   ],
   providers: [
     AuthGuard,
@@ -110,6 +111,7 @@ const routes: Routes = [
     EventsFirebaseService,
     EventToTimelineAttachingFirebaseService,
     TypesFirebaseService,
+    ElasticTypesService,
   ],
   bootstrap: [AppComponent]
 })

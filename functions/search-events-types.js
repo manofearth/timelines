@@ -39,7 +39,7 @@ function searchTimelineEventsFabric(searchInElastic) {
 
     searchInElastic({
       index: 'timelines_ru',
-      type: 'event',
+      type: 'events_type',
       query: createQuery(req.query.q, req.query.o),
       highlight: {
         fields: {
