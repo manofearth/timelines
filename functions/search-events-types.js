@@ -9,43 +9,70 @@ function createWildcardsFilter(matchQuery) {
     }));
 }
 
-function createFilter(matchQuery, ownerId) {
-  return [
-    {
-      term: {
-        ownerId: ownerId
-      }
-    },
-    ...createWildcardsFilter(matchQuery)
-  ];
-}
+function createFilter(ownerId, matchQuery) {
 
-function createQuery(matchQuery, ownerId) {
-  return {
-    bool: {
-      should: {
-        match: {
-          title: matchQuery
-        }
-      },
-      filter: createFilter(matchQuery, ownerId),
+  const ownerFilter = {
+    term: {
+      ownerId: ownerId
     }
   };
+
+  if (matchQuery) {
+    return [
+      ...[ownerFilter],
+      ...createWildcardsFilter(matchQuery),
+    ]
+  } else {
+    return ownerFilter;
+  }
+}
+
+function createQuery(ownerId, matchQuery) {
+
+  const query = {
+    bool: {
+      filter: createFilter(ownerId, matchQuery),
+    }
+  };
+
+  if (matchQuery) {
+    query.bool.should = {
+      match: {
+        title: matchQuery
+      }
+    }
+  }
+
+  return query;
+}
+
+function createQueryAndHighlight(ownerId, matchQuery) {
+  const result = {
+    query: createQuery(ownerId, matchQuery)
+  };
+
+  if (matchQuery) {
+    result.highlight = {
+      fields: {
+        title: {}
+      }
+    }
+  }
+
+  return result;
 }
 
 function searchTimelineEventsFabric(searchInElastic) {
 
   return function(req, res) {
 
+    const queryAndHighlight = createQueryAndHighlight(req.query.o, req.query.q);
+
     searchInElastic({
       index: 'timelines_ru',
       type: 'events_type',
-      query: createQuery(req.query.q, req.query.o),
-      highlight: {
-        fields: {
-          title: {}
-        }
-      },
+      query: queryAndHighlight.query,
+      highlight: queryAndHighlight.highlight,
       response: res,
     });
   }

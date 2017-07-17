@@ -15,12 +15,13 @@ import { DateDirective } from './date/date.directive';
 import { ChartComponent } from './chart/chart.component';
 import { D3Service } from './d3/d3.service';
 import { WindowService } from './shared/window.service';
-import { TimelineEventsSearchService } from './timeline/timeline-events-search.service';
+import { TimelineEventsElasticSearchService } from './timeline/timeline-events-elastic-search.service';
 import { TimelineEventTableComponent } from './timeline/events/timeline-events-table.component';
 import { GroupComponent } from './group/group.component';
 import { ColorPickerComponent } from './shared/color-picker/color-picker.component';
 import { TypesComponent } from './types/types.component';
-import { TypesSearchService } from './types/types-search.service';
+import { TimelineEventsSelectorSearchService } from './timeline/timeline-events-selector-search.service';
+import { TypesSelectorSearchService } from './types/types-selector-search.service';
 
 const routes: Routes = [
   {
@@ -72,8 +73,9 @@ const routes: Routes = [
     DateParser,
     D3Service,
     WindowService,
-    TimelineEventsSearchService,
-    TypesSearchService,
+    TimelineEventsElasticSearchService,
+    TimelineEventsSelectorSearchService,
+    TypesSelectorSearchService,
   ],
   entryComponents: [
     EventComponent,

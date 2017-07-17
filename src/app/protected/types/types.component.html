@@ -5,6 +5,7 @@
     [searchService]="searchService"
     (create)="create($event)"
   ></tl-selector>
+  <div *ngIf="state.error" class="alert alert-danger">{{ state.error.message }}</div>
   <div *ngIf="state.isLoading" class="alert alert-info">загружаются...</div>
   <div class="grid-row">
     <table class="table table-hover">

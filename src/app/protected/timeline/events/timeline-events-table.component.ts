@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output
 import { Store } from '@ngrx/store';
 import { AppState } from '../../../reducers';
 import { TimelineEvent } from '../../shared/timeline-event';
-import { TimelineEventsSearchService } from '../timeline-events-search.service';
 import { Observable } from 'rxjs/Observable';
+import { TimelineEventsSelectorSearchService } from '../timeline-events-selector-search.service';
 
 @Component({
   selector: 'tl-events-table',
@@ -23,7 +23,7 @@ export class TimelineEventTableComponent implements OnInit {
 
   constructor(
     public store: Store<AppState>,
-    public eventsSearchService: TimelineEventsSearchService,
+    public eventsSearchService: TimelineEventsSelectorSearchService,
   ) {
   }
 

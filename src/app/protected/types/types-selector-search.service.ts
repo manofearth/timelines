@@ -4,9 +4,9 @@ import { Observable } from 'rxjs/Observable';
 import { SelectorSearchResultItem } from '../shared/selector/selector-search-result-item';
 
 @Injectable()
-export class TypesSearchService extends SelectorSearchService {
+export class TypesSelectorSearchService extends SelectorSearchService {
 
-  search(query: string): Observable<SelectorSearchResultItem[]> {
+  protected search(query: string): Observable<SelectorSearchResultItem[]> {
     return Observable.of([]);
   }
 

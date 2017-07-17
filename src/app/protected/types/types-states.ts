@@ -1,10 +1,10 @@
 export interface TypesState {
   isLoading: boolean;
   error: Error;
-  types: TimelineEventsType[];
+  types: TimelineEventsTypeForList[];
 }
 
-export interface TimelineEventsType {
+export interface TimelineEventsTypeForList {
   id: string;
   title: string;
 }

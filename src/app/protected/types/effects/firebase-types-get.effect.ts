@@ -5,7 +5,7 @@ import { Actions, Effect } from '@ngrx/effects';
 import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 import { FirebaseType, TypesFirebaseService } from '../types-firebase.service';
 import { TypesGetAction, TypesGetErrorAction, TypesGetSuccessAction } from '../types-get-actions';
-import { TimelineEventsType } from '../types-states';
+import { TimelineEventsTypeForList } from '../types-states';
 
 @Injectable()
 export class FirebaseTypesGetEffect extends ProtectedFirebaseEffect<TypesGetAction,
@@ -51,7 +51,7 @@ export class FirebaseTypesGetEffect extends ProtectedFirebaseEffect<TypesGetActi
 
 }
 
-function toType(type: FirebaseType): TimelineEventsType {
+function toType(type: FirebaseType): TimelineEventsTypeForList {
   return {
     id: type.$key,
     title: type.title,

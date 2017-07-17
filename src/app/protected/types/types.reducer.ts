@@ -1,7 +1,7 @@
 import { TypesState } from './types-states';
-import { TypesGetSuccessAction } from './types-get-actions';
+import { TypesGetErrorAction, TypesGetSuccessAction } from './types-get-actions';
 
-type EventTypeAction = TypesGetSuccessAction;
+type EventTypeAction = TypesGetSuccessAction | TypesGetErrorAction;
 
 export function typesReducer(state: TypesState, action: EventTypeAction): TypesState {
   switch (action.type) {
@@ -10,6 +10,12 @@ export function typesReducer(state: TypesState, action: EventTypeAction): TypesS
         isLoading: false,
         error: null,
         types: action.payload,
+      };
+    case 'TYPES_GET_ERROR':
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload,
       };
     default:
       return state;

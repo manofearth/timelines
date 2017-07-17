@@ -37,9 +37,9 @@ import { TimelineFirebaseCreateGroupEffect } from './protected/group/effects/tim
 import { TimelineFirebaseSaveGroupEffect } from './protected/group/effects/timeline-firebase-save-group.effect';
 import { TimelineFirebaseDeleteGroupEffect } from './protected/group/effects/timeline-firebase-delete-group.effect';
 import { FirebaseTypeCreateEffect } from './protected/types/effects/firebase-type-create.effect';
-import { ElasticTypesService } from './protected/types/elastic-types.service';
 import { ElasticTypesGetEffect } from './protected/types/effects/elastic-types-get.effect';
 import { TypesFirebaseService } from './protected/types/types-firebase.service';
+import { TypesElasticSearchService } from './protected/types/types-elastic-search.service';
 
 const routes: Routes = [
   {
@@ -111,7 +111,7 @@ const routes: Routes = [
     EventsFirebaseService,
     EventToTimelineAttachingFirebaseService,
     TypesFirebaseService,
-    ElasticTypesService,
+    TypesElasticSearchService,
   ],
   bootstrap: [AppComponent]
 })

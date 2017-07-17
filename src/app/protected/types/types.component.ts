@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { TypesSearchService } from './types-search.service';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
 import { TypeCreateAction } from './type-create-actions';
 import { TypesGetAction } from './types-get-actions';
 import { TypesState } from './types-states';
 import { Subscription } from 'rxjs/Subscription';
+import { TypesSelectorSearchService } from './types-selector-search.service';
 
 @Component({
   selector: 'tl-types',
@@ -20,10 +20,11 @@ export class TypesComponent implements OnInit, OnDestroy {
   private stateSub: Subscription;
 
   constructor(
-    public searchService: TypesSearchService,
+    public searchService: TypesSelectorSearchService,
     private store: Store<AppState>,
     private changeDetector: ChangeDetectorRef,
-  ) { }
+  ) {
+  }
 
   ngOnInit() {
 
