@@ -1,22 +1,15 @@
 <div class="dropdown" [ngClass]="{ show: searchResults.length !== 0 }">
-  <input
-    type="text"
-    title="{{placeholder}}"
-    class="form-control"
-    placeholder="{{placeholder}}"
-    [formControl]="inputControl"
-    (keydown.enter)="onEnterKey($event)"
-    (keydown.arrowdown)="onArrowDownKey($event)"
-    (keydown.arrowup)="onArrowUpKey($event)"
-    (keydown.esc)="onEscKey($event)"
-  >
-  <span class="search-in-progress-marker" [hidden]="!isSearching">поиск...</span>
-  <button
-    #btnCreate
-    type="button"
-    class="btn btn-link create-button"
-    (click)="onItemCreate($event)"
-    [hidden]="isSearching">Создать</button>
+
+  <tl-search-field
+    [placeholder]="placeholder"
+    [searchService]="searchService"
+    (enterKey)="onEnterKey()"
+    (arrowDownKey)="onArrowDownKey()"
+    (arrowUpKey)="onArrowUpKey()"
+    (escKey)="onEscKey()"
+    (createClick)="onItemCreate($event)"
+  ></tl-search-field>
+
   <div class="dropdown-menu">
     <div
       *ngFor="let searchResultItem of searchResults; index as i;"
@@ -26,5 +19,6 @@
       (click)="onItemSelect(i)"
     ></div>
   </div>
+
 </div>
 

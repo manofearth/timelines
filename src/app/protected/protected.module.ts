@@ -22,6 +22,7 @@ import { ColorPickerComponent } from './shared/color-picker/color-picker.compone
 import { TypesComponent } from './types/types.component';
 import { TimelineEventsSelectorSearchService } from './timeline/timeline-events-selector-search.service';
 import { TypesSelectorSearchService } from './types/types-selector-search.service';
+import { SearchFieldComponent } from './shared/search-field/search-field.component';
 
 const routes: Routes = [
   {
@@ -67,6 +68,7 @@ const routes: Routes = [
     ChartComponent,
     ColorPickerComponent,
     TypesComponent,
+    SearchFieldComponent,
   ],
   providers: [
     TimelineCanDeactivate,

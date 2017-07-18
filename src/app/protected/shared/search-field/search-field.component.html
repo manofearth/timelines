@@ -1,0 +1,21 @@
+<div>
+  <input
+    type="text"
+    title="{{placeholder}}"
+    class="form-control"
+    placeholder="{{placeholder}}"
+    [formControl]="inputControl"
+    (keydown.enter)="onEnterKey($event)"
+    (keydown.arrowdown)="onArrowDownKey($event)"
+    (keydown.arrowup)="onArrowUpKey($event)"
+    (keydown.esc)="onEscKey($event)"
+  >
+  <span class="search-in-progress-marker" [hidden]="!isSearching">поиск...</span>
+  <button
+    #btnCreate
+    type="button"
+    class="btn btn-link create-button"
+    (click)="emitCreateEvent()"
+    [hidden]="isSearching">Создать
+  </button>
+</div>

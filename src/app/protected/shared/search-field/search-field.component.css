@@ -1,0 +1,13 @@
+.create-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.search-in-progress-marker {
+  position: absolute;
+  top: 8px;
+  right: 17px;
+  color: cornflowerblue;
+  font-size: smaller;
+}
