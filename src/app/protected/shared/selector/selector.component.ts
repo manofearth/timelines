@@ -1,15 +1,13 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
-  ElementRef,
   EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  Output,
-  ViewChild
+  Output
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
@@ -39,7 +37,6 @@ export class SelectorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
     this.searchResultsSub = this.searchService.results$.subscribe((results: SelectorSearchResultItem[]) => {
       this.searchResults = results;
       this.highlightedIndex = 0;
@@ -55,16 +52,12 @@ export class SelectorComponent implements OnInit, OnDestroy {
     this.create.emit(userInput);
   }
 
-  onEnterKey(e: KeyboardEvent) {
-    if (this.searchResults.length === 0) {
-      if (!this.isSearching) {
-        // workaround for bug: https://github.com/ng-bootstrap/ng-bootstrap/issues/1252#issuecomment-294338294
-        this.btnCreate.nativeElement.focus();
-        this.onItemCreate();
-      }
-    } else {
-      this.onItemSelect(this.highlightedIndex);
-    }
+  emitSelectEvent(index: number) {
+    this.choose.emit(this.searchResults[index].item);
+  }
+
+  onEnterKey() {
+    this.onItemSelect(this.highlightedIndex);
   }
 
   onArrowDownKey() {
@@ -84,21 +77,20 @@ export class SelectorComponent implements OnInit, OnDestroy {
   }
 
   onEscKey() {
-    this.closeDropdown();
+    this.toInitialSearchState();
   }
 
   onItemSelect(index: number) {
-    this.choose.emit(this.searchResults[index].item);
-    this.closeDropdown();
+    this.emitSelectEvent(index);
+    this.toInitialSearchState();
   }
 
   onItemCreate(userInput: string) {
     this.emitCreateEvent(userInput);
+    this.toInitialSearchState();
   }
 
-  private closeDropdown() {
-    this.searchResults = [];
+  private toInitialSearchState() {
+    this.searchService.toInitialSearchState();
   }
 }
-
-const USER_INPUT_DEBOUNCE_TIME = 300;

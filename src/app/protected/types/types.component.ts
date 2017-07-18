@@ -5,7 +5,7 @@ import { TypeCreateAction } from './type-create-actions';
 import { TypesGetAction } from './types-get-actions';
 import { TypesState } from './types-states';
 import { Subscription } from 'rxjs/Subscription';
-import { TypesSelectorSearchService } from './types-selector-search.service';
+import { TypesSearchService } from './types-search.service';
 
 @Component({
   selector: 'tl-types',
@@ -20,7 +20,7 @@ export class TypesComponent implements OnInit, OnDestroy {
   private stateSub: Subscription;
 
   constructor(
-    public searchService: TypesSelectorSearchService,
+    public searchService: TypesSearchService,
     private store: Store<AppState>,
     private changeDetector: ChangeDetectorRef,
   ) {

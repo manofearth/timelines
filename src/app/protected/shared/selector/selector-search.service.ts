@@ -39,5 +39,9 @@ export abstract class SelectorSearchService implements SearchFieldService {
     return this._isSearchingListener.asObservable();
   }
 
+  toInitialSearchState() {
+    this.queryListener.next('');
+  }
+
   protected abstract search(query: string): Observable<SelectorSearchResultItem[]>;
 }

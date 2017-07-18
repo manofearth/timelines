@@ -1,3 +1,7 @@
+.search-field-container {
+  position: relative;
+}
+
 .create-button {
   position: absolute;
   top: 0;

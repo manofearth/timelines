@@ -14,7 +14,6 @@ import { SearchFieldService } from './search-field-service';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/do';
 
 @Component({
   selector: 'tl-search-field',
@@ -37,9 +36,11 @@ export class SearchFieldComponent implements OnInit, OnDestroy {
 
   inputControl: FormControl;
   isSearching: boolean = false;
+  hasResults: boolean = false;
 
   private valueChangesSub: Subscription;
   private isSearchingSub: Subscription;
+  private searchResultsSub: Subscription;
 
   constructor(
     private changeDetector: ChangeDetectorRef
@@ -56,21 +57,33 @@ export class SearchFieldComponent implements OnInit, OnDestroy {
     this.isSearchingSub = this.searchService.isSearching$.subscribe(isSearching => {
       this.isSearching = isSearching;
       this.changeDetector.markForCheck();
-    })
+    });
+
+    this.searchResultsSub = this.searchService.results$
+      .map(results => results.length !== 0)
+      .subscribe(hasResults => {
+        this.hasResults = hasResults;
+      });
   }
 
   ngOnDestroy() {
     this.valueChangesSub.unsubscribe();
     this.isSearchingSub.unsubscribe();
+    this.searchResultsSub.unsubscribe();
   }
 
   emitCreateEvent() {
     this.createClick.emit(this.inputControl.value);
   }
 
-  onEnterKey(e: KeyboardEvent) {
-    e.preventDefault();
-    this.enterKey.emit();
+  onEnterKey() {
+    if (this.hasResults) {
+      this.enterKey.emit();
+    } else {
+      // workaround for bug: https://github.com/ng-bootstrap/ng-bootstrap/issues/1252#issuecomment-294338294
+      this.btnCreate.nativeElement.focus();
+      // causes btnCreate click, so no need to emit create event
+    }
   }
 
   onArrowDownKey() {

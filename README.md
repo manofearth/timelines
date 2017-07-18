@@ -25,8 +25,8 @@
 - [x] Edit timeline. Search event before creating
 - [x] Edit timeline. Events groups
 - [x] Edit timeline. Add events group
-- [ ] Edit timeline. Edit events group
-- [ ] Edit timeline. Remove events group
+- [x] Edit timeline. Edit events group
+- [x] Edit timeline. Remove events group
 - [ ] Edit event. Select group
 - [ ] Edit event. Create type
 - [ ] Edit event. Select type
@@ -36,7 +36,7 @@
 - [ ] Events list. Search before creating
 - [ ] Events list. Add new
 - [ ] Events list. Delete
-- [ ] Events types list
+- [x] Events types list
 - [ ] Events types list. Create new
 - [ ] Events types list. Delete
 - [ ] Info sources list

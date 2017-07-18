@@ -1,10 +1,15 @@
 import { TypesState } from './types-states';
-import { TypesGetErrorAction, TypesGetSuccessAction } from './types-get-actions';
+import { TypesGetAction, TypesGetErrorAction, TypesGetSuccessAction } from './types-get-actions';
 
-type EventTypeAction = TypesGetSuccessAction | TypesGetErrorAction;
+type EventTypeAction = TypesGetAction | TypesGetSuccessAction | TypesGetErrorAction;
 
 export function typesReducer(state: TypesState, action: EventTypeAction): TypesState {
   switch (action.type) {
+    case 'TYPES_GET':
+      return {
+        ...state,
+        isLoading: true,
+      };
     case 'TYPES_GET_SUCCESS':
       return {
         isLoading: false,

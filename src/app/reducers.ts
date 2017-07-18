@@ -46,7 +46,7 @@ export const initialState: AppState = {
   types: {
     isLoading: true,
     error: null,
-    types: null,
+    types: [],
   }
 };
 
