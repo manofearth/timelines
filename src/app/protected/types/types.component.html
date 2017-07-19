@@ -9,7 +9,7 @@
     <table class="table table-hover">
       <tbody>
       <tr *ngFor="let type of state.types">
-        <td><a class="type-title" [routerLink]="['/type', type.id]" [innerHtml]="type.title"></a></td>
+        <td><a href class="type-title" [innerHtml]="type.title" (click)="openType($event, type.id)"></a></td>
       </tr>
       </tbody>
     </table>

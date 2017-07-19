@@ -23,6 +23,7 @@ import { TypesComponent } from './types/types.component';
 import { TimelineEventsSelectorSearchService } from './timeline/timeline-events-selector-search.service';
 import { TypesSearchService } from './types/types-search.service';
 import { SearchFieldComponent } from './shared/search-field/search-field.component';
+import { TypeComponent } from './type/type.component';
 
 const routes: Routes = [
   {
@@ -63,6 +64,7 @@ const routes: Routes = [
     LogoutComponent,
     EventComponent,
     GroupComponent,
+    TypeComponent,
     SelectorComponent,
     DateDirective,
     ChartComponent,
@@ -82,6 +84,7 @@ const routes: Routes = [
   entryComponents: [
     EventComponent,
     GroupComponent,
+    TypeComponent,
   ]
 })
 export class ProtectedModule {

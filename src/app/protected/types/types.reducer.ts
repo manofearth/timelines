@@ -1,9 +1,9 @@
 import { TypesState } from './types-states';
 import { TypesGetAction, TypesGetErrorAction, TypesGetSuccessAction } from './types-get-actions';
 
-type EventTypeAction = TypesGetAction | TypesGetSuccessAction | TypesGetErrorAction;
+type TypesAction = TypesGetAction | TypesGetSuccessAction | TypesGetErrorAction;
 
-export function typesReducer(state: TypesState, action: EventTypeAction): TypesState {
+export function typesReducer(state: TypesState, action: TypesAction): TypesState {
   switch (action.type) {
     case 'TYPES_GET':
       return {

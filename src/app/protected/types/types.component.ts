@@ -6,6 +6,7 @@ import { TypesGetAction } from './types-get-actions';
 import { TypesState } from './types-states';
 import { Subscription } from 'rxjs/Subscription';
 import { TypesSearchService } from './types-search.service';
+import { TypeGetAction } from '../type/type-get-actions';
 
 @Component({
   selector: 'tl-types',
@@ -54,6 +55,17 @@ export class TypesComponent implements OnInit, OnDestroy {
       payload: {
         title: title,
       },
+    };
+
+    this.store.dispatch(action);
+  }
+
+  openType(e: Event, typeId: string) {
+    e.preventDefault();
+
+    const action: TypeGetAction = {
+      type: 'TYPE_GET',
+      payload: typeId
     };
 
     this.store.dispatch(action);

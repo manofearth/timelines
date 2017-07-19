@@ -10,6 +10,8 @@ import { TimelineState } from './protected/timeline/timeline-states';
 import { EventState } from './protected/event/event-states';
 import { TypesState } from './protected/types/types-states';
 import { typesReducer } from './protected/types/types.reducer';
+import { initialTypeState, TypeState } from './protected/type/type-states';
+import { typeReducer } from './protected/type/type.reducer';
 
 export interface AppState {
   auth: AuthState;
@@ -17,6 +19,7 @@ export interface AppState {
   timeline: TimelineState;
   event: EventState;
   types: TypesState;
+  type: TypeState;
 }
 
 export const initialState: AppState = {
@@ -47,7 +50,8 @@ export const initialState: AppState = {
     isLoading: true,
     error: null,
     types: [],
-  }
+  },
+  type: initialTypeState,
 };
 
 interface AppReducers {
@@ -56,6 +60,7 @@ interface AppReducers {
   timeline: ActionReducer<TimelineState>;
   event: ActionReducer<EventState>;
   types: ActionReducer<TypesState>;
+  type: ActionReducer<TypeState>;
 }
 
 const reducers: AppReducers = {
@@ -64,6 +69,7 @@ const reducers: AppReducers = {
   timeline: timelineReducer,
   event: eventReducer,
   types: typesReducer,
+  type: typeReducer,
 };
 
 const developmentReducer: ActionReducer<AppState> = compose(storeFreeze, combineReducers)(reducers);
