@@ -13,6 +13,7 @@ export class TypesFirebaseService extends ProtectedFirebaseService<FirebaseType,
 export interface FirebaseType {
   $key: string;
   title: string;
+  kind: string;
 }
 
 export interface FirebaseTypeUpdateObject {

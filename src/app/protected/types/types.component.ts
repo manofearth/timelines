@@ -7,6 +7,9 @@ import { TypesState } from './types-states';
 import { Subscription } from 'rxjs/Subscription';
 import { TypesSearchService } from './types-search.service';
 import { TypeGetAction } from '../type/type-get-actions';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TypeComponent } from '../type/type.component';
+import { TypeEraseAction } from '../type/type-erase-action';
 
 @Component({
   selector: 'tl-types',
@@ -24,6 +27,7 @@ export class TypesComponent implements OnInit, OnDestroy {
     public searchService: TypesSearchService,
     private store: Store<AppState>,
     private changeDetector: ChangeDetectorRef,
+    private modalService: NgbModal,
   ) {
   }
 
@@ -66,6 +70,19 @@ export class TypesComponent implements OnInit, OnDestroy {
     const action: TypeGetAction = {
       type: 'TYPE_GET',
       payload: typeId
+    };
+
+    this.store.dispatch(action);
+
+    this.modalService.open(TypeComponent, { size: 'lg' }).result.then(
+      () => { this.dispatchTypeErase() },
+      () => { this.dispatchTypeErase() },
+    );
+  }
+
+  private dispatchTypeErase() {
+    const action: TypeEraseAction = {
+      type: 'TYPE_ERASE'
     };
 
     this.store.dispatch(action);

@@ -41,6 +41,7 @@ import { ElasticTypesGetEffect } from './protected/types/effects/elastic-types-g
 import { TypesFirebaseService } from './protected/types/types-firebase.service';
 import { TypesElasticSearchService } from './protected/types/types-elastic-search.service';
 import { TypeGetEffect } from './protected/type/effects/type-get.effect';
+import { TypeUpdateEffect } from './protected/type/effects/type-update.effect';
 
 const routes: Routes = [
   {
@@ -103,6 +104,7 @@ const routes: Routes = [
     EffectsModule.run(FirebaseTypeCreateEffect),
     EffectsModule.run(ElasticTypesGetEffect),
     EffectsModule.run(TypeGetEffect),
+    EffectsModule.run(TypeUpdateEffect),
   ],
   providers: [
     AuthGuard,
