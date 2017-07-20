@@ -1,5 +1,6 @@
 import { Action } from '@ngrx/store';
 import { FirebaseTypeUpdateObject } from './types-firebase.service';
+import { TimelineEventsType } from '../type/type-states';
 
 export interface TypeCreateAction extends Action {
   type: 'TYPE_CREATE';
@@ -8,9 +9,7 @@ export interface TypeCreateAction extends Action {
 
 export interface TypeCreateSuccessAction extends Action {
   type: 'TYPE_CREATE_SUCCESS';
-  payload: {
-    key: string;
-  }
+  payload: TimelineEventsType;
 }
 
 export interface TypeCreateErrorAction extends Action {

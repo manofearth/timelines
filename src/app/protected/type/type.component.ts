@@ -58,8 +58,10 @@ export class TypeComponent implements OnInit, OnDestroy {
     this.store.select<TypeStateStatus>('type', 'status')
       .filter(status => status === 'idle' || status === 'error')
       .take(1)
-      .subscribe(() => {
-        this.activeModal.close();
+      .subscribe(status => {
+        if (status === 'idle') {
+          this.activeModal.close();
+        }
       });
   }
 

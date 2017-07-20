@@ -27,20 +27,23 @@
 - [x] Edit timeline. Add events group
 - [x] Edit timeline. Edit events group
 - [x] Edit timeline. Remove events group
-- [ ] Edit event. Select group
-- [ ] Edit event. Create type
+- [x] Events types list
+- [x] Events types list. Search before creating
+- [x] Events types list. Create new
+- [x] Events types list. Edit
 - [ ] Edit event. Select type
-- [ ] Edit event. Create info source
-- [ ] Edit event. Select info sources
+- [ ] Events types list. Delete
 - [ ] Events list
 - [ ] Events list. Search before creating
-- [ ] Events list. Add new
+- [ ] Events list. Create new
+- [ ] Events list. Edit
 - [ ] Events list. Delete
-- [x] Events types list
-- [ ] Events types list. Create new
-- [ ] Events types list. Delete
 - [ ] Info sources list
+- [ ] Info sources list. Search before creating
 - [ ] Info sources list. Create new
+- [ ] Info sources list. Edit
+- [ ] Edit event. Select info sources
 - [ ] Info sources list. Delete
-- [ ] Chart. Scaling
+- [ ] Edit event. Select group
 - [ ] Internationalization
+- [ ] Chart. Scaling

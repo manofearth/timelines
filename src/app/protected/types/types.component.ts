@@ -58,10 +58,13 @@ export class TypesComponent implements OnInit, OnDestroy {
       type: 'TYPE_CREATE',
       payload: {
         title: title,
+        kind: 'period',
       },
     };
 
     this.store.dispatch(action);
+
+
   }
 
   openType(e: Event, typeId: string) {

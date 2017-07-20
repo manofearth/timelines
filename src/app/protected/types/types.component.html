@@ -3,6 +3,7 @@
   <tl-search-field
     [placeholder]="'Создайте новый тип событий'"
     [searchService]="searchService"
+    (createClick)="create($event)"
   ></tl-search-field>
   <div *ngIf="state.error" class="alert alert-danger">{{ state.error.message }}</div>
   <div class="grid-row">

@@ -4,13 +4,14 @@ import { TypeCreateAction, TypeCreateErrorAction, TypeCreateSuccessAction } from
 import { Observable } from 'rxjs/Observable';
 import { Actions, Effect } from '@ngrx/effects';
 import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
-import { TypesFirebaseService } from '../types-firebase.service';
+import { FirebaseType, TypesFirebaseService } from '../types-firebase.service';
+import { toType } from '../../type/effects/type-get.effect';
 
 @Injectable()
 export class FirebaseTypeCreateEffect extends ProtectedFirebaseEffect<TypeCreateAction,
   TypeCreateSuccessAction,
   TypeCreateErrorAction,
-  firebase.database.Reference> {
+  FirebaseType> {
 
 
   constructor(
@@ -26,17 +27,17 @@ export class FirebaseTypeCreateEffect extends ProtectedFirebaseEffect<TypeCreate
     return super.createEffect();
   }
 
-  protected runEffect(action: TypeCreateAction): Observable<firebase.database.Reference> {
-    return this.fireTypes.pushObject(action.payload);
+  protected runEffect(action: TypeCreateAction): Observable<FirebaseType> {
+    return this.fireTypes
+      .pushObject(action.payload)
+      .switchMap(ref => this.fireTypes.getObject(ref.key).first<FirebaseType>());
   }
 
-  protected mapToSuccessAction(effectResult: firebase.database.Reference): TypeCreateSuccessAction {
+  protected mapToSuccessAction(type: FirebaseType): TypeCreateSuccessAction {
     return {
       type: 'TYPE_CREATE_SUCCESS',
-      payload: {
-        key: effectResult.key,
-      },
-    };
+      payload: toType(type)
+    }
   }
 
   protected getInterestedActionType(): 'TYPE_CREATE' {
