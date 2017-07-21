@@ -9,7 +9,6 @@ import { NgbModalModule, NgbTabsetModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule } from '@angular/forms';
 import {TimelineCanDeactivate} from './timeline/timeline-can-deactivate.service';
 import { EventComponent } from './event/event.component';
-import { SelectorComponent } from './shared/selector/selector.component';
 import { DateParser } from './shared/date-parser/date-parser.service';
 import { DateDirective } from './date/date.directive';
 import { ChartComponent } from './chart/chart.component';
@@ -24,6 +23,9 @@ import { TimelineEventsSelectorSearchService } from './timeline/timeline-events-
 import { TypesSearchService } from './types/types-search.service';
 import { SearchFieldComponent } from './shared/search-field/search-field.component';
 import { TypeComponent } from './type/type.component';
+import { SelectorListComponent } from './shared/selector-list/selector-list.component';
+import { SelectorSelectComponent } from './shared/selector-select/selector-select.component';
+import { SelectorInputComponent } from './shared/selector-input/selector-input.component';
 
 const routes: Routes = [
   {
@@ -65,12 +67,14 @@ const routes: Routes = [
     EventComponent,
     GroupComponent,
     TypeComponent,
-    SelectorComponent,
+    SelectorInputComponent,
     DateDirective,
     ChartComponent,
     ColorPickerComponent,
     TypesComponent,
     SearchFieldComponent,
+    SelectorListComponent,
+    SelectorSelectComponent,
   ],
   providers: [
     TimelineCanDeactivate,

@@ -1,0 +1,23 @@
+<div class="dropdown">
+
+  <button>Выбрать</button>
+
+  <div class="dropdown-menu">
+
+    <tl-search-field
+      [searchService]="searchService"
+      (enterKey)="onEnterKey()"
+      (arrowDownKey)="onArrowDownKey()"
+      (arrowUpKey)="onArrowUpKey()"
+      (escKey)="onEscKey()"
+      (createClick)="onItemCreate($event)"
+    ></tl-search-field>
+
+    <tl-selector-list
+      #list
+      [data]="searchResults"
+      (select)="onItemSelect($event)"
+    ></tl-selector-list>
+
+  </div>
+</div>

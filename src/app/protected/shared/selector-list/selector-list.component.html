@@ -1,0 +1,7 @@
+<div
+  *ngFor="let listItem of data; index as i;"
+  class="dropdown-item search-result-item"
+  [ngClass]="{'highlighted': i === highlightedIndex}"
+  [innerHtml]="listItem.title"
+  (click)="onItemSelect(listItem)"
+></div>

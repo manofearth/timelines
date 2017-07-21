@@ -11,13 +11,11 @@
   ></tl-search-field>
 
   <div class="dropdown-menu">
-    <div
-      *ngFor="let searchResultItem of searchResults; index as i;"
-      class="dropdown-item search-result-item"
-      [ngClass]="{'highlighted': i === highlightedIndex}"
-      [innerHtml]="searchResultItem.title"
-      (click)="onItemSelect(i)"
-    ></div>
+    <tl-selector-list
+      #list
+      [data]="searchResults"
+      (select)="onItemSelect($event)"
+    ></tl-selector-list>
   </div>
 
 </div>

@@ -4,39 +4,29 @@ import { SelectorSearchResultItem } from './selector-search-result-item';
 import { SearchFieldService } from '../search-field/search-field-service';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/do';
+import 'rxjs/add/observable/combineLatest';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observer } from 'rxjs/Observer';
 
 export abstract class SelectorSearchService implements SearchFieldService {
 
-  private _queryListener: Subject<string>;
-  private _results$: Observable<SelectorSearchResultItem[]>;
-  private _isSearchingListener: BehaviorSubject<boolean>;
+  upDownListener: Subject<'up' | 'down'>;
+  queryListener: Subject<string>;
+  results$: Observable<SelectorSearchResultItem[]>;
+  isSearching$: BehaviorSubject<boolean>;
 
   constructor() {
-    this._queryListener = new Subject<string>();
-    this._isSearchingListener = new BehaviorSubject<boolean>(false);
-    this._results$ = this._queryListener
+    this.queryListener = new Subject<string>();
+    this.upDownListener = new Subject<'up' | 'down'>();
+    this.isSearching$ = new BehaviorSubject<boolean>(false);
+    this.results$ = this.queryListener
       .asObservable()
       .do(() => {
-        this._isSearchingListener.next(true);
+        this.isSearching$.next(true);
       })
       .switchMap(this.search.bind(this))
       .do(() => {
-        this._isSearchingListener.next(false);
+        this.isSearching$.next(false);
       });
-  }
-
-  get queryListener(): Observer<string> {
-    return this._queryListener;
-  }
-
-  get results$(): Observable<SelectorSearchResultItem[]> {
-    return this._results$;
-  }
-
-  get isSearching$(): Observable<boolean> {
-    return this._isSearchingListener.asObservable();
   }
 
   toInitialSearchState() {

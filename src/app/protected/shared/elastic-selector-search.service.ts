@@ -1,7 +1,7 @@
-import { SelectorSearchService } from './selector/selector-search.service';
+import { SelectorSearchService } from './selector-input/selector-search.service';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
-import { SelectorSearchResultItem } from './selector/selector-search-result-item';
+import { SelectorSearchResultItem } from './selector-input/selector-search-result-item';
 import { ElasticSearchService, SearchHit, SearchResponseData } from './elastic-search.service';
 
 export abstract class ElasticSelectorSearchService<THitSource,

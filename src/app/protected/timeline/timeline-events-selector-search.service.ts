@@ -1,4 +1,4 @@
-import { SelectorSearchResultItem } from '../shared/selector/selector-search-result-item';
+import { SelectorSearchResultItem } from '../shared/selector-input/selector-search-result-item';
 import { Injectable } from '@angular/core';
 import { ElasticSelectorSearchService } from '../shared/elastic-selector-search.service';
 import {
