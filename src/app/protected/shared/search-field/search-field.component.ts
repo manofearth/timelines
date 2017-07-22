@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -35,17 +34,10 @@ export class SearchFieldComponent implements OnInit, OnDestroy {
   @ViewChild('btnCreate') btnCreate: ElementRef;
 
   inputControl: FormControl;
-  isSearching: boolean = false;
   hasResults: boolean = false;
 
   private valueChangesSub: Subscription;
-  private isSearchingSub: Subscription;
   private searchResultsSub: Subscription;
-
-  constructor(
-    private changeDetector: ChangeDetectorRef
-  ) {
-  }
 
   ngOnInit() {
     this.inputControl = new FormControl();
@@ -53,11 +45,6 @@ export class SearchFieldComponent implements OnInit, OnDestroy {
     this.valueChangesSub = this.inputControl.valueChanges
       .debounceTime(USER_INPUT_DEBOUNCE_TIME)
       .subscribe(this.searchService.queryListener);
-
-    this.isSearchingSub = this.searchService.isSearching$.subscribe(isSearching => {
-      this.isSearching = isSearching;
-      this.changeDetector.markForCheck();
-    });
 
     this.searchResultsSub = this.searchService.results$
       .map(results => results.length !== 0)
@@ -68,7 +55,6 @@ export class SearchFieldComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.valueChangesSub.unsubscribe();
-    this.isSearchingSub.unsubscribe();
     this.searchResultsSub.unsubscribe();
   }
 

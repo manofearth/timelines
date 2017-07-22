@@ -3,30 +3,53 @@ import { Subject } from 'rxjs/Subject';
 import { SelectorSearchResultItem } from './selector-search-result-item';
 import { SearchFieldService } from '../search-field/search-field-service';
 import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/observable/combineLatest';
+import 'rxjs/add/operator/startWith';
+import 'rxjs/add/operator/withLatestFrom';
+import 'rxjs/add/observable/merge';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { SelectorListService } from '../selector-list/selector-list-service';
 
-export abstract class SelectorSearchService implements SearchFieldService {
+export abstract class SelectorSearchService implements SearchFieldService, SelectorListService {
 
   upDownListener: Subject<'up' | 'down'>;
   queryListener: Subject<string>;
+
   results$: Observable<SelectorSearchResultItem[]>;
-  isSearching$: BehaviorSubject<boolean>;
+  isSearching$: Observable<boolean>;
+  currentIndex$: BehaviorSubject<number>;
 
   constructor() {
+
     this.queryListener = new Subject<string>();
     this.upDownListener = new Subject<'up' | 'down'>();
-    this.isSearching$ = new BehaviorSubject<boolean>(false);
+    this.currentIndex$ = new BehaviorSubject<number>(0);
+
     this.results$ = this.queryListener
-      .asObservable()
-      .do(() => {
-        this.isSearching$.next(true);
-      })
-      .switchMap(this.search.bind(this))
-      .do(() => {
-        this.isSearching$.next(false);
-      });
+      .switchMap(this.search.bind(this));
+
+    this.isSearching$ = Observable
+      .merge(
+        this.queryListener.asObservable().map(() => true),
+        this.results$.map(() => false)
+      )
+      .startWith(false);
+
+    Observable
+      .merge(
+        this.results$.map(() => 0),
+        this.upDownListener
+          .withLatestFrom(this.currentIndex$, this.results$)
+          .map(([action, currentIndex, results]) => {
+            let nextIndex = currentIndex + (action === 'up' ? 1 : -1);
+            if (nextIndex < 0) {
+              nextIndex = results.length - 1;
+            } else if (nextIndex >= results.length) {
+              nextIndex = 0;
+            }
+            return nextIndex;
+          })
+      )
+      .subscribe(this.currentIndex$);
   }
 
   toInitialSearchState() {

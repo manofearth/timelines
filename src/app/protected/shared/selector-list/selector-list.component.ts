@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { SelectorListItem } from './selector-list-item';
+import { SelectorListService } from './selector-list-service';
 
 @Component({
   selector: 'tl-selector-list',
@@ -9,42 +10,11 @@ import { SelectorListItem } from './selector-list-item';
 })
 export class SelectorListComponent {
 
+  @Input() service: SelectorListService;
+
   @Output() select = new EventEmitter<SelectorListItem>();
 
-  private _data: SelectorListItem[] = [];
-  private highlightedIndex: number = 0;
-
-  constructor(private changeDetector: ChangeDetectorRef) {
-  }
-
-  @Input()
-  set data(data: SelectorListItem[]) {
-    this._data = data;
-    this.changeDetector.markForCheck();
-  }
-
-  get data() {
-    return this._data;
-  }
-
-  highlightNext() {
-    this.highlightedIndex++;
-    if (this.highlightedIndex >= this.data.length) {
-      this.highlightedIndex = 0;
-    }
-    this.changeDetector.markForCheck();
-  }
-
-  highlightPrev() {
-    this.highlightedIndex--;
-    if (this.highlightedIndex < 0) {
-      this.highlightedIndex = this.data.length - 1;
-    }
-    this.changeDetector.markForCheck();
-  }
-
-  get highlightedItem(): SelectorListItem {
-    return this.data[this.highlightedIndex].item;
+  constructor() {
   }
 
   onItemSelect(item: SelectorListItem) {
