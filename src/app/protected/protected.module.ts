@@ -14,7 +14,6 @@ import { DateDirective } from './date/date.directive';
 import { ChartComponent } from './chart/chart.component';
 import { D3Service } from './d3/d3.service';
 import { WindowService } from './shared/window.service';
-import { TimelineEventsElasticSearchService } from './timeline/timeline-events-elastic-search.service';
 import { TimelineEventTableComponent } from './timeline/events/timeline-events-table.component';
 import { GroupComponent } from './group/group.component';
 import { ColorPickerComponent } from './shared/color-picker/color-picker.component';
@@ -24,7 +23,6 @@ import { TypesSearchService } from './types/types-search.service';
 import { SearchFieldComponent } from './shared/search-field/search-field.component';
 import { TypeComponent } from './type/type.component';
 import { SelectorListComponent } from './shared/selector-list/selector-list.component';
-import { SelectorSelectComponent } from './shared/selector-select/selector-select.component';
 import { SelectorInputComponent } from './shared/selector-input/selector-input.component';
 
 const routes: Routes = [
@@ -74,14 +72,13 @@ const routes: Routes = [
     TypesComponent,
     SearchFieldComponent,
     SelectorListComponent,
-    SelectorSelectComponent,
+    //SelectorSelectComponent,
   ],
   providers: [
     TimelineCanDeactivate,
     DateParser,
     D3Service,
     WindowService,
-    TimelineEventsElasticSearchService,
     TimelineEventsSelectorSearchService,
     TypesSearchService,
   ],

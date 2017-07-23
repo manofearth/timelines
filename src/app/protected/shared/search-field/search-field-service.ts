@@ -3,7 +3,6 @@ import { Observable } from 'rxjs/Observable';
 
 export interface SearchFieldService {
   queryListener: Observer<string>;
-  searchFieldActionsListener: Observer<SearchFieldAction>;
   isSearching$: Observable<boolean>;
   results$: Observable<any[]>;
 }

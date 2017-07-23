@@ -12,6 +12,7 @@ import { TypesState } from './protected/types/types-states';
 import { typesReducer } from './protected/types/types.reducer';
 import { initialTypeState, TypeState } from './protected/type/type-states';
 import { typeReducer } from './protected/type/type.reducer';
+import { selectorsReducer } from './protected/shared/selector-input/selector.reducer';
 
 export interface AppState {
   auth: AuthState;
@@ -61,6 +62,7 @@ interface AppReducers {
   event: ActionReducer<EventState>;
   types: ActionReducer<TypesState>;
   type: ActionReducer<TypeState>;
+  selectors: ActionReducer<TypeState>;
 }
 
 const reducers: AppReducers = {
@@ -70,6 +72,7 @@ const reducers: AppReducers = {
   event: eventReducer,
   types: typesReducer,
   type: typeReducer,
+  selectors: selectorsReducer,
 };
 
 const developmentReducer: ActionReducer<AppState> = compose(storeFreeze, combineReducers)(reducers);

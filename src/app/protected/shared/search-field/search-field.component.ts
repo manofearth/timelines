@@ -1,18 +1,11 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-  ViewChild
-} from '@angular/core';
-import { SearchFieldService } from './search-field-service';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/debounceTime';
+import { Store } from '@ngrx/store';
+import { AppState } from '../../../reducers';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'tl-search-field',
@@ -22,64 +15,85 @@ import 'rxjs/add/operator/map';
 })
 export class SearchFieldComponent implements OnInit, OnDestroy {
 
+  @Input() name: string;
   @Input() placeholder: string;
-  @Input() service: SearchFieldService;
-
-  @Output() escKey: EventEmitter<void> = new EventEmitter<void>();
-
-  @ViewChild('btnCreate') btnCreate: ElementRef;
 
   inputControl: FormControl;
-  hasResults: boolean = false;
+
+  isSearching$: Observable<boolean>;
 
   private valueChangesSub: Subscription;
-  private searchResultsSub: Subscription;
+
+  constructor(private store: Store<AppState>) {
+  }
 
   ngOnInit() {
     this.inputControl = new FormControl();
 
     this.valueChangesSub = this.inputControl.valueChanges
       .debounceTime(USER_INPUT_DEBOUNCE_TIME)
-      .subscribe(this.service.queryListener);
+      .map(value => ({
+        type: 'SEARCH_FIELD_INPUT',
+        payload: {
+          name: this.name,
+          value: value,
+        }
+      }))
+      .subscribe(this.store);
 
-    this.searchResultsSub = this.service.results$
-      .map(results => results.length !== 0)
-      .subscribe(hasResults => {
-        this.hasResults = hasResults;
-      });
+    this.isSearching$ = this.store.select('selectors', this.name, 'isSearching');
   }
 
   ngOnDestroy() {
     this.valueChangesSub.unsubscribe();
-    this.searchResultsSub.unsubscribe();
   }
 
   emitCreateEvent() {
-    this.service.searchFieldActionsListener.next({
-      type: 'create',
-      payload: this.inputControl.value
+    this.store.dispatch({
+      type: 'SEARCH_FIELD_CREATE_BUTTON',
+      payload: {
+        name: this.name,
+        value: this.inputControl.value
+      }
     });
   }
 
   onEnterKey() {
-    this.service.searchFieldActionsListener.next({
-      type: 'enter',
-      payload: this.inputControl.value
+    this.store.dispatch({
+      type: 'SEARCH_FIELD_ENTER_KEY',
+      payload: {
+        name: this.name,
+        value: this.inputControl.value
+      }
     });
   }
 
   onArrowDownKey() {
-    this.service.searchFieldActionsListener.next('down');
+    this.store.dispatch({
+      type: 'SEARCH_FIELD_DOWN_KEY',
+      payload: {
+        name: this.name,
+      }
+    });
   }
 
   onArrowUpKey() {
-    this.service.searchFieldActionsListener.next('up');
+    this.store.dispatch({
+      type: 'SEARCH_FIELD_UP_KEY',
+      payload: {
+        name: this.name,
+      }
+    });
   }
 
   onEscKey() {
-    this.escKey.emit();
+    this.store.dispatch({
+      type: 'SEARCH_FIELD_ESC_KEY',
+      payload: {
+        name: this.name,
+      }
+    });
   }
-
 }
 
 const USER_INPUT_DEBOUNCE_TIME = 300;

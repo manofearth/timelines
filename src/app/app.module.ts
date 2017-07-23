@@ -42,6 +42,8 @@ import { TypesFirebaseService } from './protected/types/types-firebase.service';
 import { TypesElasticSearchService } from './protected/types/types-elastic-search.service';
 import { TypeGetEffect } from './protected/type/effects/type-get.effect';
 import { TypeUpdateEffect } from './protected/type/effects/type-update.effect';
+import { EventsElasticSearchEffect } from './protected/events/effects/events-elastic-search.effect';
+import { TimelineEventsElasticSearchService } from './protected/timeline/timeline-events-elastic-search.service';
 
 const routes: Routes = [
   {
@@ -105,6 +107,7 @@ const routes: Routes = [
     EffectsModule.run(ElasticTypesGetEffect),
     EffectsModule.run(TypeGetEffect),
     EffectsModule.run(TypeUpdateEffect),
+    EffectsModule.run(EventsElasticSearchEffect),
   ],
   providers: [
     AuthGuard,
@@ -116,6 +119,7 @@ const routes: Routes = [
     EventToTimelineAttachingFirebaseService,
     TypesFirebaseService,
     TypesElasticSearchService,
+    TimelineEventsElasticSearchService,
   ],
   bootstrap: [AppComponent]
 })

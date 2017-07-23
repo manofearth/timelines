@@ -2,7 +2,7 @@
 
   <tl-search-field
     [placeholder]="placeholder"
-    [service]="service"
+    [name]="name"
     (enterKey)="onEnterKey()"
     (escKey)="onEscKey()"
     (createClick)="onItemCreate($event)"
@@ -10,7 +10,7 @@
 
   <div class="dropdown-menu">
     <tl-selector-list
-      [service]="service"
+      [name]="name"
       (select)="onItemSelect($event)"
     ></tl-selector-list>
   </div>

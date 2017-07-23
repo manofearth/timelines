@@ -1,8 +1,6 @@
 <tl-selector
   [placeholder]="'Добавьте событие'"
-  [service]="eventsSearchService"
-  (create)="create.emit($event)"
-  (choose)="attach.emit($event.id)"
+  [name]="'events_' + groupIndex"
 ></tl-selector>
 <table class="table table-hover">
   <tbody>

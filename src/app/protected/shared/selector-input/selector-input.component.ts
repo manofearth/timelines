@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import 'rxjs/add/operator/map';
-import { SelectorSearchService } from './selector-search.service';
-import { SelectorSearchResultItem } from './selector-search-result-item';
 import { Observable } from 'rxjs/Observable';
+import { AppState } from '../../../reducers';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'tl-selector',
@@ -12,33 +12,23 @@ import { Observable } from 'rxjs/Observable';
 })
 export class SelectorInputComponent implements OnInit {
 
-  @Output() create: EventEmitter<string> = new EventEmitter<string>();
-  @Output() choose: EventEmitter<any> = new EventEmitter<any>();
-
+  @Input() name: string;
   @Input() placeholder: string;
-  @Input() service: SelectorSearchService;
 
   show$: Observable<boolean>;
 
+  constructor(private store: Store<AppState>) {
+  }
+
   ngOnInit() {
-    this.show$ = this.service.results$.map(results => results.length > 0);
-  }
 
-  onEnterKey() {
-    this.onItemSelect(this.list.highlightedItem);
-  }
+    this.store.dispatch({
+      type: 'SELECTOR_INIT',
+      payload: {
+        name: this.name,
+      }
+    });
 
-  onEscKey() {
-    this.service.toInitialSearchState();
-  }
-
-  onItemSelect(item: SelectorSearchResultItem) {
-    this.choose.emit(item);
-    this.service.toInitialSearchState();
-  }
-
-  onItemCreate(userInput: string) {
-    this.create.emit(userInput);
-    this.service.toInitialSearchState();
+    this.show$ = this.store.select('selectors', this.name, 'results').map(results => results !== 0);
   }
 }

@@ -1,0 +1,19 @@
+import { SelectorSearchResultItem } from './selector-search-result-item';
+
+export interface SelectorsState {
+  [name: string]: SelectorState;
+}
+
+export interface SelectorState {
+  query: string;
+  isSearching: boolean;
+  results: SelectorSearchResultItem[];
+  highlightedIndex: number;
+}
+
+export const selectorInitialState: SelectorState = {
+  query: '',
+  isSearching: false,
+  results: [],
+  highlightedIndex: 0,
+};
