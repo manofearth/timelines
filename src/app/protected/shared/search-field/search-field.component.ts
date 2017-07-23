@@ -23,12 +23,8 @@ import 'rxjs/add/operator/map';
 export class SearchFieldComponent implements OnInit, OnDestroy {
 
   @Input() placeholder: string;
-  @Input() searchService: SearchFieldService;
+  @Input() service: SearchFieldService;
 
-  @Output() createClick: EventEmitter<string> = new EventEmitter<string>();
-  @Output() enterKey: EventEmitter<void> = new EventEmitter<void>();
-  @Output() arrowDownKey: EventEmitter<void> = new EventEmitter<void>();
-  @Output() arrowUpKey: EventEmitter<void> = new EventEmitter<void>();
   @Output() escKey: EventEmitter<void> = new EventEmitter<void>();
 
   @ViewChild('btnCreate') btnCreate: ElementRef;
@@ -44,9 +40,9 @@ export class SearchFieldComponent implements OnInit, OnDestroy {
 
     this.valueChangesSub = this.inputControl.valueChanges
       .debounceTime(USER_INPUT_DEBOUNCE_TIME)
-      .subscribe(this.searchService.queryListener);
+      .subscribe(this.service.queryListener);
 
-    this.searchResultsSub = this.searchService.results$
+    this.searchResultsSub = this.service.results$
       .map(results => results.length !== 0)
       .subscribe(hasResults => {
         this.hasResults = hasResults;
@@ -59,25 +55,25 @@ export class SearchFieldComponent implements OnInit, OnDestroy {
   }
 
   emitCreateEvent() {
-    this.createClick.emit(this.inputControl.value);
+    this.service.searchFieldActionsListener.next({
+      type: 'create',
+      payload: this.inputControl.value
+    });
   }
 
   onEnterKey() {
-    if (this.hasResults) {
-      this.enterKey.emit();
-    } else {
-      // workaround for bug: https://github.com/ng-bootstrap/ng-bootstrap/issues/1252#issuecomment-294338294
-      this.btnCreate.nativeElement.focus();
-      // causes btnCreate click, so no need to emit create event
-    }
+    this.service.searchFieldActionsListener.next({
+      type: 'enter',
+      payload: this.inputControl.value
+    });
   }
 
   onArrowDownKey() {
-    this.arrowDownKey.emit();
+    this.service.searchFieldActionsListener.next('down');
   }
 
   onArrowUpKey() {
-    this.arrowUpKey.emit();
+    this.service.searchFieldActionsListener.next('up');
   }
 
   onEscKey() {

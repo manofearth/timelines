@@ -10,12 +10,12 @@
     (keydown.arrowup)="onArrowUpKey($event)"
     (keydown.esc)="onEscKey($event)"
   >
-  <span class="search-in-progress-marker" [hidden]="(searchService.isSearching$ | async) === false">поиск...</span>
+  <span class="search-in-progress-marker" [hidden]="(service.isSearching$ | async) === false">поиск...</span>
   <button
     #btnCreate
     type="button"
     class="btn btn-link create-button"
     (click)="emitCreateEvent()"
-    [hidden]="searchService.isSearching$ | async">Создать
+    [hidden]="service.isSearching$ | async">Создать
   </button>
 </div>

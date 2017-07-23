@@ -1,6 +1,6 @@
 <tl-selector
   [placeholder]="'Добавьте событие'"
-  [searchService]="eventsSearchService"
+  [service]="eventsSearchService"
   (create)="create.emit($event)"
   (choose)="attach.emit($event.id)"
 ></tl-selector>

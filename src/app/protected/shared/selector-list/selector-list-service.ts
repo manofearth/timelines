@@ -3,5 +3,5 @@ import { Observable } from 'rxjs/Observable';
 
 export interface SelectorListService {
   results$: Observable<SelectorListItem[]>;
-  currentIndex$: Observable<number>;
+  currentItem$: Observable<SelectorListItem>;
 }

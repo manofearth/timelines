@@ -1,19 +1,16 @@
-<div class="dropdown" [ngClass]="{ show: searchResults.length !== 0 }">
+<div class="dropdown" [ngClass]="{ show: (show$ | async) }">
 
   <tl-search-field
     [placeholder]="placeholder"
-    [searchService]="searchService"
+    [service]="service"
     (enterKey)="onEnterKey()"
-    (arrowDownKey)="onArrowDownKey()"
-    (arrowUpKey)="onArrowUpKey()"
     (escKey)="onEscKey()"
     (createClick)="onItemCreate($event)"
   ></tl-search-field>
 
   <div class="dropdown-menu">
     <tl-selector-list
-      #list
-      [data]="searchResults"
+      [service]="service"
       (select)="onItemSelect($event)"
     ></tl-selector-list>
   </div>
