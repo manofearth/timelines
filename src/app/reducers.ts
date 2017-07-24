@@ -13,6 +13,7 @@ import { typesReducer } from './protected/types/types.reducer';
 import { initialTypeState, TypeState } from './protected/type/type-states';
 import { typeReducer } from './protected/type/type.reducer';
 import { selectorsReducer } from './protected/shared/selector-input/selector.reducer';
+import { SelectorsState } from './protected/shared/selector-input/selector-state';
 
 export interface AppState {
   auth: AuthState;
@@ -21,6 +22,7 @@ export interface AppState {
   event: EventState;
   types: TypesState;
   type: TypeState;
+  selectors: SelectorsState;
 }
 
 export const initialState: AppState = {
@@ -53,6 +55,7 @@ export const initialState: AppState = {
     types: [],
   },
   type: initialTypeState,
+  selectors: {},
 };
 
 interface AppReducers {
@@ -62,7 +65,7 @@ interface AppReducers {
   event: ActionReducer<EventState>;
   types: ActionReducer<TypesState>;
   type: ActionReducer<TypeState>;
-  selectors: ActionReducer<TypeState>;
+  selectors: ActionReducer<SelectorsState>;
 }
 
 const reducers: AppReducers = {

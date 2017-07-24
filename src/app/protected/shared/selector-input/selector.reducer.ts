@@ -1,44 +1,47 @@
-import { selectorInitialState, SelectorsState } from './selector-state';
+import { selectorInitialState, SelectorsState, SelectorState } from './selector-state';
 import {
   SearchFieldDownKeyAction,
+  SearchFieldEscKeyAction,
   SearchFieldInputAction,
   SearchFieldUpKeyAction
 } from '../search-field/search-field-actions';
 import { SelectorInitAction } from './selector-actions';
-import { EventsSearchSuccessAction } from '../../events/events-actions';
+import { EventsSearchErrorAction, EventsSearchSuccessAction } from '../../events/effects/events-elastic-search.effect';
 
 type SelectorAction = SearchFieldInputAction | SelectorInitAction | SearchFieldUpKeyAction | SearchFieldDownKeyAction
-  | EventsSearchSuccessAction;
+  | EventsSearchSuccessAction | EventsSearchErrorAction | SearchFieldEscKeyAction;
 
 export function selectorsReducer(state: SelectorsState, action: SelectorAction): SelectorsState {
 
   switch (action.type) {
 
     case 'SELECTOR_INIT':
-      return {
-        ...state,
-        [action.payload.name]: selectorInitialState
-      };
+      return updateSelectorState(state, action.payload.name, selectorInitialState);
 
     case 'SEARCH_FIELD_INPUT':
-      return {
-        ...state,
-        [action.payload.name]: {
-          query: action.payload.value,
-          results: [],
-          highlightedIndex: 0,
-          isSearching: true,
-        }
-      };
+      return updateSelectorState(state, action.payload.name, {
+        query: action.payload.value,
+        results: [],
+        highlightedIndex: 0,
+        isSearching: true,
+        error: null,
+      });
 
     case 'SEARCH_FIELD_DOWN_KEY':
-      return setIndexWith(state, action, nextIndex);
+      return setIndexWith(state, action.payload.name, nextIndex);
 
     case 'SEARCH_FIELD_UP_KEY':
-      return setIndexWith(state, action, prevIndex);
+      return setIndexWith(state, action.payload.name, prevIndex);
+
+    case 'SEARCH_FIELD_ESC_KEY':
+      return updateSelectorState(state, action.payload.name, {
+        results: [],
+        highlightedIndex: 0,
+        error: null,
+      });
 
     case 'EVENTS_SEARCH_SUCCESS':
-      const results = action.payload.results.hits.hits.map(hit => ({
+      const results = action.payload.result.hits.hits.map(hit => ({
         title: hit.highlight.title[0],
         item: {
           id: hit._id,
@@ -46,36 +49,32 @@ export function selectorsReducer(state: SelectorsState, action: SelectorAction):
         }
       }));
 
-      return {
-        ...state,
-        [action.payload.name]: {
-          ...state[action.payload.name],
-          results: results,
-          highlightedIndex: 0,
-          isSearching: false,
-        }
-      };
+      return updateSelectorState(state, action.payload.name, {
+        results: results,
+        highlightedIndex: 0,
+        isSearching: false,
+      });
+
+    case 'EVENTS_SEARCH_ERROR':
+      return updateSelectorState(state, action.payload.name, {
+        isSearching: false,
+        error: action.payload.error,
+      });
 
     default:
       return state;
   }
 }
 
-function setIndexWith(state, action, calculateNextIndex) {
-  const selectorState = state[action.payload.name];
+function setIndexWith(state, name, calculateNextIndex) {
+  const selectorState = state[name];
   const nextIndex = calculateNextIndex(selectorState.highlightedIndex, selectorState.results.length - 1);
 
   if (nextIndex === selectorState.highlightedIndex) {
     return state;
   }
 
-  return {
-    ...state,
-    [action.payload.name]: {
-      ...selectorState,
-      highlightedIndex: nextIndex,
-    }
-  };
+  return updateSelectorState(state, name, { highlightedIndex: nextIndex });
 }
 
 function nextIndex(currentIndex: number, maxIndex: number) {
@@ -102,4 +101,14 @@ function prevIndex(currentIndex: number, maxIndex: number) {
   } else {
     return currentIndex - 1;
   }
+}
+
+function updateSelectorState(state: SelectorsState, name: string, partOfSelectorState: Partial<SelectorState>): SelectorsState {
+  return {
+    ...state,
+    [name]: {
+      ...state[name],
+      ...partOfSelectorState,
+    }
+  };
 }

@@ -18,8 +18,6 @@ import { TimelineEventTableComponent } from './timeline/events/timeline-events-t
 import { GroupComponent } from './group/group.component';
 import { ColorPickerComponent } from './shared/color-picker/color-picker.component';
 import { TypesComponent } from './types/types.component';
-import { TimelineEventsSelectorSearchService } from './timeline/timeline-events-selector-search.service';
-import { TypesSearchService } from './types/types-search.service';
 import { SearchFieldComponent } from './shared/search-field/search-field.component';
 import { TypeComponent } from './type/type.component';
 import { SelectorListComponent } from './shared/selector-list/selector-list.component';
@@ -79,8 +77,6 @@ const routes: Routes = [
     DateParser,
     D3Service,
     WindowService,
-    TimelineEventsSelectorSearchService,
-    TypesSearchService,
   ],
   entryComponents: [
     EventComponent,

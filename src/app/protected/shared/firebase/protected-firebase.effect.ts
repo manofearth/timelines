@@ -58,7 +58,7 @@ export abstract class ProtectedFirebaseEffect<TIncomingAction extends Action,
   }
 }
 
-function toError(error: Error | string): Error {
+export function toError(error: Error | string): Error {
 
   if (error instanceof Error) {
     return error;

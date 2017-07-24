@@ -1,6 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
-import { TimelineEventsElasticSearchService } from '../../timeline/timeline-events-elastic-search.service';
+import {
+  EventHitHighlight,
+  EventHitSource,
+  TimelineEventsElasticSearchService
+} from '../../timeline/timeline-events-elastic-search.service';
+import { SearchFieldInputAction } from '../../shared/search-field/search-field-actions';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/of';
+import { Observable } from 'rxjs/Observable';
+import { toError } from '../../shared/firebase/protected-firebase.effect';
+import { Action } from '@ngrx/store';
+import { SearchResponseData } from '../../shared/elastic-search.service';
 
 @Injectable()
 export class EventsElasticSearchEffect {
@@ -11,21 +23,45 @@ export class EventsElasticSearchEffect {
   ) {
   }
 
-  @Effect() effect = this.actions
+  @Effect() effect: Observable<EventsSearchResultAction> = this.actions
     .ofType('SEARCH_FIELD_INPUT')
-    .do(val => { console.log(val);})
-    .filter(action => action.payload.name.startsWith('events_'))
+    .filter<SearchFieldInputAction>(action => action.payload.name.startsWith('events_'))
     .switchMap(action =>
       this.elasticSearchTypes
         .search(action.payload.value)
-        .map(results => [action, results])
-    )
-    .map(([action, results]) => ({
-      type: 'EVENTS_SEARCH_SUCCESS',
-      payload: {
-        name: action.payload.name,
-        results: results,
-      }
-    }));
+        .map<EventsSearchResponseData, EventsSearchResultAction>(result => ({
+          type: 'EVENTS_SEARCH_SUCCESS',
+          payload: {
+            name: action.payload.name,
+            result: result,
+          }
+        }))
+        .catch(err => Observable.of<EventsSearchErrorAction>({
+          type: 'EVENTS_SEARCH_ERROR',
+          payload: {
+            name: action.payload.name,
+            error: toError(err)
+          },
+        }))
+    );
 
+}
+
+export type EventsSearchResultAction = EventsSearchSuccessAction | EventsSearchErrorAction;
+export type EventsSearchResponseData = SearchResponseData<EventHitSource, EventHitHighlight>;
+
+export interface EventsSearchSuccessAction extends Action {
+  type: 'EVENTS_SEARCH_SUCCESS';
+  payload: {
+    name: string;
+    result: EventsSearchResponseData;
+  }
+}
+
+export interface EventsSearchErrorAction extends Action {
+  type: 'EVENTS_SEARCH_ERROR';
+  payload: {
+    name: string;
+    error: Error;
+  }
 }

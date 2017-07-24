@@ -5,7 +5,6 @@ import { TypeCreateAction } from './type-create-actions';
 import { TypesGetAction } from './types-get-actions';
 import { TypesState } from './types-states';
 import { Subscription } from 'rxjs/Subscription';
-import { TypesSearchService } from './types-search.service';
 import { TypeGetAction } from '../type/type-get-actions';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TypeComponent } from '../type/type.component';
@@ -24,7 +23,6 @@ export class TypesComponent implements OnInit, OnDestroy {
   private stateSub: Subscription;
 
   constructor(
-    public searchService: TypesSearchService,
     private store: Store<AppState>,
     private changeDetector: ChangeDetectorRef,
     private modalService: NgbModal,

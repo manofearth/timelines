@@ -6,6 +6,13 @@ import 'rxjs/add/operator/debounceTime';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../../reducers';
 import { Observable } from 'rxjs/Observable';
+import {
+  SearchFieldCreateButtonAction,
+  SearchFieldDownKeyAction,
+  SearchFieldEnterKeyAction,
+  SearchFieldEscKeyAction,
+  SearchFieldUpKeyAction
+} from './search-field-actions';
 
 @Component({
   selector: 'tl-search-field',
@@ -49,50 +56,55 @@ export class SearchFieldComponent implements OnInit, OnDestroy {
   }
 
   emitCreateEvent() {
-    this.store.dispatch({
+    const action: SearchFieldCreateButtonAction = {
       type: 'SEARCH_FIELD_CREATE_BUTTON',
       payload: {
         name: this.name,
         value: this.inputControl.value
       }
-    });
+    };
+    this.store.dispatch(action);
   }
 
   onEnterKey() {
-    this.store.dispatch({
+    const action: SearchFieldEnterKeyAction = {
       type: 'SEARCH_FIELD_ENTER_KEY',
       payload: {
         name: this.name,
         value: this.inputControl.value
       }
-    });
+    };
+    this.store.dispatch(action);
   }
 
   onArrowDownKey() {
-    this.store.dispatch({
+    const action: SearchFieldDownKeyAction = {
       type: 'SEARCH_FIELD_DOWN_KEY',
       payload: {
         name: this.name,
       }
-    });
+    };
+    this.store.dispatch(action);
   }
 
   onArrowUpKey() {
-    this.store.dispatch({
+    const action: SearchFieldUpKeyAction = {
       type: 'SEARCH_FIELD_UP_KEY',
       payload: {
         name: this.name,
       }
-    });
+    };
+    this.store.dispatch(action);
   }
 
   onEscKey() {
-    this.store.dispatch({
+    const action: SearchFieldEscKeyAction = {
       type: 'SEARCH_FIELD_ESC_KEY',
       payload: {
         name: this.name,
       }
-    });
+    };
+    this.store.dispatch(action);
   }
 }
 

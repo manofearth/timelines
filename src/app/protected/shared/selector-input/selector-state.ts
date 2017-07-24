@@ -9,6 +9,7 @@ export interface SelectorState {
   isSearching: boolean;
   results: SelectorSearchResultItem[];
   highlightedIndex: number;
+  error: Error;
 }
 
 export const selectorInitialState: SelectorState = {
@@ -16,4 +17,5 @@ export const selectorInitialState: SelectorState = {
   isSearching: false,
   results: [],
   highlightedIndex: 0,
+  error: null,
 };

@@ -21,3 +21,26 @@ export interface SearchFieldDownKeyAction extends Action {
     name: string;
   }
 }
+
+export interface SearchFieldEnterKeyAction extends Action {
+  type: 'SEARCH_FIELD_ENTER_KEY';
+  payload: {
+    name: string;
+    value: string;
+  };
+}
+
+export interface SearchFieldCreateButtonAction extends Action {
+  type: 'SEARCH_FIELD_CREATE_BUTTON';
+  payload: {
+    name: string;
+    value: string;
+  };
+}
+
+export interface SearchFieldEscKeyAction extends Action {
+  type: 'SEARCH_FIELD_ESC_KEY';
+  payload: {
+    name: string;
+  };
+}
