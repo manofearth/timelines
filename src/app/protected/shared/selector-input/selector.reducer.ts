@@ -7,9 +7,10 @@ import {
 } from '../search-field/search-field-actions';
 import { SelectorInitAction } from './selector-actions';
 import { EventsSearchErrorAction, EventsSearchSuccessAction } from '../../events/effects/events-elastic-search.effect';
+import { SelectorInputSelectAction } from './selector-input.component';
 
 type SelectorAction = SearchFieldInputAction | SelectorInitAction | SearchFieldUpKeyAction | SearchFieldDownKeyAction
-  | EventsSearchSuccessAction | EventsSearchErrorAction | SearchFieldEscKeyAction;
+  | EventsSearchSuccessAction | EventsSearchErrorAction | SearchFieldEscKeyAction | SelectorInputSelectAction;
 
 export function selectorsReducer(state: SelectorsState, action: SelectorAction): SelectorsState {
 

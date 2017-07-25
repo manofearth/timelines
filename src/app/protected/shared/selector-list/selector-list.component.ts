@@ -3,6 +3,7 @@ import { SelectorListItem } from './selector-list-item';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../../reducers';
 import { Observable } from 'rxjs/Observable';
+import { SelectorListSelectAction } from './selector-list-actions';
 
 @Component({
   selector: 'tl-selector-list',
@@ -28,7 +29,14 @@ export class SelectorListComponent implements OnInit {
   }
 
   onItemSelect(item: SelectorListItem) {
-    this.select.next(item);
+    const action: SelectorListSelectAction = {
+      type: 'SELECTOR_LIST_SELECT',
+      payload: {
+        name: this.name,
+        item: item.item
+      },
+    };
+    this.store.dispatch(action);
   }
 
 }
