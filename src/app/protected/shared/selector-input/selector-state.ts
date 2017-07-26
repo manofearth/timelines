@@ -10,6 +10,7 @@ export interface SelectorState {
   results: SelectorSearchResultItem[];
   highlightedIndex: number;
   error: Error;
+  selectedItem: SelectorSearchResultItem;
 }
 
 export const selectorInitialState: SelectorState = {
@@ -18,4 +19,5 @@ export const selectorInitialState: SelectorState = {
   results: [],
   highlightedIndex: 0,
   error: null,
+  selectedItem: null,
 };

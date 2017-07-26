@@ -1,16 +1,17 @@
 import { selectorInitialState, SelectorsState, SelectorState } from './selector-state';
 import {
-  SearchFieldDownKeyAction,
+  SearchFieldDownKeyAction, SearchFieldEnterKeyAction,
   SearchFieldEscKeyAction,
   SearchFieldInputAction,
   SearchFieldUpKeyAction
 } from '../search-field/search-field-actions';
 import { SelectorInitAction } from './selector-actions';
 import { EventsSearchErrorAction, EventsSearchSuccessAction } from '../../events/effects/events-elastic-search.effect';
-import { SelectorInputSelectAction } from './selector-input.component';
+import { SelectorListSelectAction } from '../selector-list/selector-list-actions';
 
 type SelectorAction = SearchFieldInputAction | SelectorInitAction | SearchFieldUpKeyAction | SearchFieldDownKeyAction
-  | EventsSearchSuccessAction | EventsSearchErrorAction | SearchFieldEscKeyAction | SelectorInputSelectAction;
+  | EventsSearchSuccessAction | EventsSearchErrorAction | SearchFieldEscKeyAction | SelectorListSelectAction
+  | SearchFieldEnterKeyAction;
 
 export function selectorsReducer(state: SelectorsState, action: SelectorAction): SelectorsState {
 
@@ -60,6 +61,16 @@ export function selectorsReducer(state: SelectorsState, action: SelectorAction):
       return updateSelectorState(state, action.payload.name, {
         isSearching: false,
         error: action.payload.error,
+      });
+
+    case 'SELECTOR_LIST_SELECT':
+      return updateSelectorState(state, action.payload.name, {
+        selectedItem: action.payload.item,
+      });
+
+    case 'SEARCH_FIELD_ENTER_KEY':
+      return updateSelectorState(state, action.payload.name, {
+        selectedItem: state[action.payload.name].results[state[action.payload.name].highlightedIndex],
       });
 
     default:

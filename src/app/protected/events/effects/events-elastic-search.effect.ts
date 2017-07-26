@@ -12,6 +12,8 @@ import { Observable } from 'rxjs/Observable';
 import { toError } from '../../shared/firebase/protected-firebase.effect';
 import { Action } from '@ngrx/store';
 import { SearchResponseData } from '../../shared/elastic-search.service';
+import { SearchFieldInputAction } from '../../shared/search-field/search-field-actions';
+import { TIMELINE_EVENTS_SELECTOR_NAME_PREFIX } from '../../timeline/events/timeline-events-table.component';
 
 @Injectable()
 export class EventsElasticSearchEffect {
@@ -23,10 +25,11 @@ export class EventsElasticSearchEffect {
   }
 
   @Effect() effect: Observable<EventsSearchResultAction> = this.actions
-    .ofType('EVENTS_SEARCH')
-    .switchMap<EventsSearchAction, EventsSearchResultAction>(action =>
+    .ofType('SEARCH_FIELD_INPUT')
+    .filter<SearchFieldInputAction>(action => action.payload.name.startsWith(TIMELINE_EVENTS_SELECTOR_NAME_PREFIX))
+    .switchMap<SearchFieldInputAction, EventsSearchResultAction>(action =>
       this.elasticSearchTypes
-        .search(action.payload.query)
+        .search(action.payload.value)
         .map<EventsSearchResponseData, EventsSearchResultAction>(result => ({
           type: 'EVENTS_SEARCH_SUCCESS',
           payload: {
@@ -47,14 +50,6 @@ export class EventsElasticSearchEffect {
 
 export type EventsSearchResultAction = EventsSearchSuccessAction | EventsSearchErrorAction;
 export type EventsSearchResponseData = SearchResponseData<EventHitSource, EventHitHighlight>;
-
-export interface EventsSearchAction extends Action {
-  type: 'EVENTS_SEARCH';
-  payload: {
-    name: string;
-    query: string;
-  }
-}
 
 export interface EventsSearchSuccessAction extends Action {
   type: 'EVENTS_SEARCH_SUCCESS';

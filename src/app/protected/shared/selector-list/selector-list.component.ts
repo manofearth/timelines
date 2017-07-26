@@ -33,7 +33,7 @@ export class SelectorListComponent implements OnInit {
       type: 'SELECTOR_LIST_SELECT',
       payload: {
         name: this.name,
-        item: item.item
+        item: item
       },
     };
     this.store.dispatch(action);

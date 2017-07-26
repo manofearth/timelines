@@ -11,15 +11,13 @@ import 'rxjs/add/operator/withLatestFrom';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
 import { SearchFieldInputAction } from '../../shared/search-field/search-field-actions';
-import { EventsSearchAction } from '../../events/effects/events-elastic-search.effect';
-import { SelectorInputSelectAction } from '../../shared/selector-input/selector-input.component';
 
 @Component({
   selector: 'tl-events-table',
   templateUrl: './timeline-events-table.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TimelineEventTableComponent implements OnInit, OnDestroy {
+export class TimelineEventTableComponent implements OnInit {
 
   @Input() groupIndex: number;
 
@@ -29,9 +27,6 @@ export class TimelineEventTableComponent implements OnInit, OnDestroy {
   @Output() detach: EventEmitter<string> = new EventEmitter();
 
   event$: Observable<TimelineEvent[]>;
-
-  private eventSelectSub: Subscription;
-  private searchEventsSub: Subscription;
 
   constructor(
     public store: Store<AppState>,
@@ -43,12 +38,6 @@ export class TimelineEventTableComponent implements OnInit, OnDestroy {
     this.event$ = this.store.select('timeline', 'timeline', 'groups', this.groupIndex.toString(), 'events');
 
     this.attachToTimelineOnSelect();
-    this.searchEventOnSearchFieldInput();
-  }
-
-  ngOnDestroy() {
-    this.eventSelectSub.unsubscribe();
-    this.searchEventsSub.unsubscribe();
   }
 
   trackByEventRow(ignore: number, event: TimelineEvent) {
@@ -56,7 +45,7 @@ export class TimelineEventTableComponent implements OnInit, OnDestroy {
   }
 
   get eventSelectorName() {
-    return 'timeline-events-selector_group_' + this.groupIndex;
+    return TIMELINE_EVENTS_SELECTOR_NAME_PREFIX + this.groupIndex;
   }
 
   private attachToTimelineOnSelect() {
@@ -74,18 +63,6 @@ export class TimelineEventTableComponent implements OnInit, OnDestroy {
       }))
       .subscribe(this.store);
   }
-
-  private searchEventOnSearchFieldInput() {
-    this.searchEventsSub = this.actions
-      .ofType('SEARCH_FIELD_INPUT')
-      .filter<SearchFieldInputAction>(action => action.payload.name === this.eventSelectorName)
-      .map<SearchFieldInputAction, EventsSearchAction>(action => ({
-        type: 'EVENTS_SEARCH',
-        payload: {
-          name: this.eventSelectorName,
-          query: action.payload.value
-        }
-      }))
-      .subscribe(this.store);
-  }
 }
+
+export const TIMELINE_EVENTS_SELECTOR_NAME_PREFIX = 'timeline-events-selector-';
