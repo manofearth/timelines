@@ -1,50 +1,38 @@
 import { Injectable } from '@angular/core';
-import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
 import { Actions, Effect } from '@ngrx/effects';
 import { Observable } from 'rxjs/Observable';
-import {
-  EventAttachToTimelineAction,
-  EventAttachToTimelineErrorAction,
-  EventAttachToTimelineSuccessAction
-} from '../event-actions';
-import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 import { EventToTimelineAttachingFirebaseService } from '../event-to-timeline-attaching-firebase.service';
+import { Store } from '@ngrx/store';
+import { AppState } from '../../../reducers';
+import { TimelineState } from '../../timeline/timeline-states';
+import { toError } from '../../shared/firebase/protected-firebase.effect';
 
 @Injectable()
-export class EventFirebaseAttachEffect extends ProtectedFirebaseEffect<EventAttachToTimelineAction,
-  EventAttachToTimelineSuccessAction,
-  EventAttachToTimelineErrorAction,
-  void> {
+export class EventFirebaseAttachEffect {
 
-  @Effect()
-  effect(): Observable<EventAttachToTimelineSuccessAction | EventAttachToTimelineErrorAction> {
-    return super.createEffect();
-  }
-
-  protected runEffect(action: EventAttachToTimelineAction): Observable<void> {
-    return this.eventToTimelineAttacher
-      .attach(action.payload.timelineId, action.payload.groupId, action.payload.eventId);
-  }
-
-  protected mapToSuccessAction(): EventAttachToTimelineSuccessAction {
-    return {
-      type: 'EVENT_ATTACH_TO_TIMELINE_SUCCESS',
-    };
-  }
-
-  protected getInterestedActionType(): 'EVENT_ATTACH_TO_TIMELINE' {
-    return 'EVENT_ATTACH_TO_TIMELINE';
-  }
-
-  protected getErrorActionType(): 'EVENT_ATTACH_TO_TIMELINE_ERROR' {
-    return 'EVENT_ATTACH_TO_TIMELINE_ERROR';
-  }
+  @Effect() effect = this.actions
+    .ofType('TIMELINE_EVENT_SELECTED')
+    .withLatestFrom(this.store.select<TimelineState>(state => state.timeline))
+    .switchMap(([action, timelineState]) =>
+      this.eventToTimelineAttacher
+        .attach(
+          timelineState.timeline.id,
+          timelineState.timeline.groups[timelineState.currentGroupIndex].id,
+          action.payload.id
+        )
+        .map(() => ({
+          type: 'EVENT_ATTACH_TO_TIMELINE_SUCCESS',
+        }))
+        .catch(err => Observable.of({
+          type: 'EVENT_ATTACH_TO_TIMELINE_ERROR',
+          payload: toError(err),
+        }))
+    );
 
   constructor(
-    actions: Actions,
-    auth: AuthFirebaseService,
+    private actions: Actions,
+    private store: Store<AppState>,
     private eventToTimelineAttacher: EventToTimelineAttachingFirebaseService,
   ) {
-    super(actions, auth);
   }
 }

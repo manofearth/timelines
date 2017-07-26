@@ -66,11 +66,15 @@ export function selectorsReducer(state: SelectorsState, action: SelectorAction):
     case 'SELECTOR_LIST_SELECT':
       return updateSelectorState(state, action.payload.name, {
         selectedItem: action.payload.item,
+        results: [],
+        query: '',
       });
 
     case 'SEARCH_FIELD_ENTER_KEY':
       return updateSelectorState(state, action.payload.name, {
         selectedItem: state[action.payload.name].results[state[action.payload.name].highlightedIndex],
+        results: [],
+        query: '',
       });
 
     default:

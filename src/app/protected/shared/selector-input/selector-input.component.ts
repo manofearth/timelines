@@ -31,6 +31,14 @@ export class SelectorInputComponent implements OnInit {
       }
     });
 
-    this.show$ = this.store.select('selectors', this.name, 'results').map(results => results !== 0);
+    this.show$ = this.store.select(this.hasSearchResults.bind(this));
+  }
+
+  hasSearchResults(state: AppState): boolean {
+    if (state.selectors[this.name]) {
+      return state.selectors[this.name].results.length !== 0;
+    } else {
+      return false;
+    }
   }
 }

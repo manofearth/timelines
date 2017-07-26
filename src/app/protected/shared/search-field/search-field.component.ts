@@ -30,6 +30,7 @@ export class SearchFieldComponent implements OnInit, OnDestroy {
   isSearching$: Observable<boolean>;
 
   private valueChangesSub: Subscription;
+  private querySub: Subscription;
 
   constructor(private store: Store<AppState>) {
   }
@@ -49,10 +50,25 @@ export class SearchFieldComponent implements OnInit, OnDestroy {
       .subscribe(this.store);
 
     this.isSearching$ = this.store.select('selectors', this.name, 'isSearching');
+
+    this.querySub = this.store
+      .select(this.pickSearchQuery.bind(this))
+      .subscribe(query => {
+        this.inputControl.setValue(query, { emitEvent: false });
+      });
   }
 
   ngOnDestroy() {
     this.valueChangesSub.unsubscribe();
+    this.querySub.unsubscribe();
+  }
+
+  pickSearchQuery(state: AppState) {
+    if (state.selectors[this.name]) {
+      return state.selectors[this.name].query;
+    } else {
+      return '';
+    }
   }
 
   emitCreateEvent() {
