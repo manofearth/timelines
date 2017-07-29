@@ -22,6 +22,7 @@ import { SearchFieldComponent } from './shared/search-field/search-field.compone
 import { TypeComponent } from './type/type.component';
 import { SelectorListComponent } from './shared/selector-list/selector-list.component';
 import { SelectorInputComponent } from './shared/selector-input/selector-input.component';
+import { SelectorSelectComponent } from './shared/selector-select/selector-select.component';
 
 const routes: Routes = [
   {
@@ -70,7 +71,7 @@ const routes: Routes = [
     TypesComponent,
     SearchFieldComponent,
     SelectorListComponent,
-    //SelectorSelectComponent,
+    SelectorSelectComponent,
   ],
   providers: [
     TimelineCanDeactivate,

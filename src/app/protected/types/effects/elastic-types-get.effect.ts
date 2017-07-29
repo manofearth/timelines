@@ -1,55 +1,47 @@
 import { Injectable } from '@angular/core';
-import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 import { Actions, Effect } from '@ngrx/effects';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
-import { TypesGetAction, TypesGetErrorAction, TypesGetSuccessAction } from '../types-get-actions';
-import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
-import {
-  TypesElasticSearchHit,
-  TypesElasticSearchResponse,
-  TypesElasticSearchService
-} from '../types-elastic-search.service';
+import { TypesElasticSearchHit, TypesElasticSearchService } from '../types-elastic-search.service';
 import { TimelineEventsTypeForList } from '../types-states';
+import { SearchFieldInputAction } from '../../shared/search-field/search-field-actions';
+import { Action } from '@ngrx/store';
+import { TYPES_SEARCH_FIELD_NAME, TypesComponentInitAction } from '../types.component';
+import { toError } from '../../shared/firebase/protected-firebase.effect';
 
 @Injectable()
-export class ElasticTypesGetEffect extends ProtectedFirebaseEffect<TypesGetAction,
-  TypesGetSuccessAction,
-  TypesGetErrorAction,
-  TypesElasticSearchResponse> {
+export class ElasticTypesGetEffect {
 
   constructor(
-    actions: Actions,
-    auth: AuthFirebaseService,
+    private actions: Actions,
     private elasticSearchTypes: TypesElasticSearchService,
   ) {
-    super(actions, auth);
   }
 
-  @Effect()
-  effect(): Observable<TypesGetSuccessAction | TypesGetErrorAction> {
-    return super.createEffect();
-  }
-
-  protected runEffect(action: TypesGetAction): Observable<TypesElasticSearchResponse> {
-    return this.elasticSearchTypes
-      .search(action.payload);
-  }
-
-  protected mapToSuccessAction(searchResult: TypesElasticSearchResponse): TypesGetSuccessAction {
-    return {
-      type: 'TYPES_GET_SUCCESS',
-      payload: searchResult.hits.hits.map(toTimelineEventsType),
-    };
-  }
-
-  protected getInterestedActionType(): 'TYPES_GET' {
-    return 'TYPES_GET';
-  }
-
-  protected getErrorActionType(): 'TYPES_GET_ERROR' {
-    return 'TYPES_GET_ERROR';
-  }
+  @Effect() effect: Observable<TypesGetSuccessAction | TypesGetErrorAction> = this.actions
+    .filter<InterestingAction>(action =>
+      action.type === 'TYPES_COMPONENT_INIT'
+      || action.type === 'SEARCH_FIELD_INPUT' && action.payload.name === TYPES_SEARCH_FIELD_NAME
+    )
+    .map<InterestingAction, string | null>(action => {
+      if (action.type === 'TYPES_COMPONENT_INIT') {
+        return null; // no search query
+      } else {
+        return action.payload.value;
+      }
+    })
+    .switchMap(query =>
+      this.elasticSearchTypes
+        .search(query)
+        .map(searchResult => ({
+          type: 'TYPES_GET_SUCCESS' as 'TYPES_GET_SUCCESS',
+          payload: searchResult.hits.hits.map(toTimelineEventsType),
+        }))
+        .catch(err => Observable.of({
+          type: 'TYPES_GET_ERROR' as 'TYPES_GET_ERROR',
+          payload: toError(err),
+        }))
+    );
 }
 
 function toTimelineEventsType(hit: TypesElasticSearchHit): TimelineEventsTypeForList {
@@ -57,4 +49,16 @@ function toTimelineEventsType(hit: TypesElasticSearchHit): TimelineEventsTypeFor
     id: hit._id,
     title: hit.highlight ? hit.highlight.title[0] : hit._source.title,
   }
+}
+
+type InterestingAction = TypesComponentInitAction | SearchFieldInputAction;
+
+export interface TypesGetSuccessAction extends Action {
+  type: 'TYPES_GET_SUCCESS';
+  payload: TimelineEventsTypeForList[];
+}
+
+export interface TypesGetErrorAction extends Action {
+  type: 'TYPES_GET_ERROR';
+  payload: Error;
 }

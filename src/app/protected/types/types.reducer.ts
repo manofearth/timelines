@@ -1,22 +1,31 @@
-import { TimelineEventsTypeForList, TypesState } from './types-states';
-import { TypesGetAction, TypesGetErrorAction, TypesGetSuccessAction } from './types-get-actions';
+import { TimelineEventsTypeForList, typesInitialState, TypesState } from './types-states';
+import { TypesGetErrorAction, TypesGetSuccessAction } from './effects/elastic-types-get.effect';
 import { TypeGetSuccessAction } from '../type/type-get-actions';
 import { TimelineEventsType } from '../type/type-states';
 import { TypeCreateSuccessAction } from './type-create-actions';
+import { TYPES_SEARCH_FIELD_NAME, TypesComponentInitAction } from './types.component';
+import { SearchFieldInputAction } from '../shared/search-field/search-field-actions';
 
-type TypesAction = TypesGetAction | TypesGetSuccessAction | TypesGetErrorAction | TypeGetSuccessAction
-  | TypeCreateSuccessAction;
+type TypesAction = TypesComponentInitAction | TypesGetSuccessAction | TypesGetErrorAction | TypeGetSuccessAction
+  | TypeCreateSuccessAction | SearchFieldInputAction;
 
 export function typesReducer(state: TypesState, action: TypesAction): TypesState {
   switch (action.type) {
-    case 'TYPES_GET':
-      return {
-        ...state,
-        isLoading: true,
-      };
+    case 'TYPES_COMPONENT_INIT':
+      return typesInitialState;
+    case 'SEARCH_FIELD_INPUT':
+      if (action.payload.name === TYPES_SEARCH_FIELD_NAME) {
+        return {
+          ...state,
+          isSearching: true,
+        }
+      }
+      return state;
     case 'TYPES_GET_SUCCESS':
       return {
+        ...state,
         isLoading: false,
+        isSearching: false,
         error: null,
         types: action.payload,
       };
@@ -24,6 +33,7 @@ export function typesReducer(state: TypesState, action: TypesAction): TypesState
       return {
         ...state,
         isLoading: false,
+        isSearching: false,
         error: action.payload,
       };
     case 'TYPE_GET_SUCCESS':
@@ -49,6 +59,7 @@ export function typesReducer(state: TypesState, action: TypesAction): TypesState
     case 'TYPE_CREATE_SUCCESS':
       return {
         ...state,
+        query: '',
         types: [
           ...state.types,
           extractTypeForList(action.payload)

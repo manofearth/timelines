@@ -26,7 +26,8 @@ export class EventsElasticSearchEffect {
 
   @Effect() effect: Observable<EventsSearchResultAction> = this.actions
     .ofType('SEARCH_FIELD_INPUT')
-    .filter<SearchFieldInputAction>(action => action.payload.name.startsWith(TIMELINE_EVENTS_SELECTOR_NAME_PREFIX))
+    .filter<SearchFieldInputAction>(action =>
+      action.payload.name.startsWith(TIMELINE_EVENTS_SELECTOR_NAME_PREFIX) && action.payload.value.length !== 0)
     .switchMap<SearchFieldInputAction, EventsSearchResultAction>(action =>
       this.elasticSearchTypes
         .search(action.payload.value)

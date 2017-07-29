@@ -1,6 +1,6 @@
 <div class="modal-header">
   <button type="button" class="close" aria-label="Close" (click)="dismiss()">
-    <span aria-hidden="true">&times;</span>
+    <span>&times;</span>
   </button>
   <h4 class="modal-title">Событие</h4>
 </div>
@@ -10,7 +10,7 @@
 
     <div class="row">
       <div class="col-md-12 form-group" [class.has-danger]="invalidControl('title')">
-        <input type="text" class="form-control" title="Имя события" placeholder="Имя события" formControlName="title">
+        <input class="form-control" title="Имя события" placeholder="Имя события" formControlName="title">
       </div>
     </div>
 
@@ -18,7 +18,7 @@
 
       <div class="col-md-3 form-group"
            [class.has-danger]="invalidControl('dateBegin')">
-        <input type="text" class="form-control" title="Начало периода" placeholder="Начало периода"
+        <input class="form-control" title="Начало периода" placeholder="Начало периода"
                formControlName="dateBegin" tl-date="beginning">
         <small *ngIf="invalidControl('dateBegin')" class="form-control-feedback">Неверный формат даты</small>
       </div>
@@ -26,13 +26,19 @@
       <div class="col-md-3 form-group"
            [class.has-danger]=
                "invalidControl('dateEnd') || dateEndLessDateBegin()">
-        <input type="text" class="form-control" title="Конец периода" placeholder="Конец периода"
+        <input class="form-control" title="Конец периода" placeholder="Конец периода"
                formControlName="dateEnd" tl-date="ending">
         <small *ngIf="invalidControl('dateEnd')" class="form-control-feedback">Неверный формат даты</small>
         <small *ngIf="dateEndLessDateBegin()" class="form-control-feedback">
           Период оканчивается раньше своего начала
         </small>
       </div>
+
+      <tl-selector-select
+          [name]="'event-type-selector'"
+          [stateMapFn]="mapEventSelectorState"
+      >
+      </tl-selector-select>
 
     </div>
 

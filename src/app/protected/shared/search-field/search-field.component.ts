@@ -3,6 +3,7 @@ import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/observable/combineLatest';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../../reducers';
 import { Observable } from 'rxjs/Observable';
@@ -24,10 +25,12 @@ export class SearchFieldComponent implements OnInit, OnDestroy {
 
   @Input() name: string;
   @Input() placeholder: string;
+  @Input() isSearching$: Observable<boolean> = Observable.of(false);
+  @Input() searchQuery$: Observable<string> = Observable.of('');
 
   inputControl: FormControl;
 
-  isSearching$: Observable<boolean>;
+  isCreateButtonHidden$: Observable<boolean>;
 
   private valueChangesSub: Subscription;
   private querySub: Subscription;
@@ -49,26 +52,18 @@ export class SearchFieldComponent implements OnInit, OnDestroy {
       }))
       .subscribe(this.store);
 
-    this.isSearching$ = this.store.select('selectors', this.name, 'isSearching');
+    this.querySub = this.searchQuery$.subscribe(query => {
+      this.inputControl.setValue(query, { emitEvent: false });
+    });
 
-    this.querySub = this.store
-      .select(this.pickSearchQuery.bind(this))
-      .subscribe(query => {
-        this.inputControl.setValue(query, { emitEvent: false });
-      });
+    this.isCreateButtonHidden$ = Observable
+      .combineLatest<boolean, boolean>(this.isSearching$, this.searchQuery$.map(query => query.length !== 0))
+      .map(([isSearching, hasQuery]) => !hasQuery || isSearching);
   }
 
   ngOnDestroy() {
     this.valueChangesSub.unsubscribe();
     this.querySub.unsubscribe();
-  }
-
-  pickSearchQuery(state: AppState) {
-    if (state.selectors[this.name]) {
-      return state.selectors[this.name].query;
-    } else {
-      return '';
-    }
   }
 
   emitCreateEvent() {

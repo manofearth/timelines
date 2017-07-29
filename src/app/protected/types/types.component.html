@@ -2,10 +2,12 @@
   <h3 class="grid-row">Типы событий</h3>
   <tl-search-field
     [placeholder]="'Создайте новый тип событий'"
-    [name]="'types'"
-    (createClick)="create($event)"
+    [name]="searchFieldName"
+    [isSearching$]="isSearching$"
+    [searchQuery$]="searchQuery$"
   ></tl-search-field>
   <div *ngIf="state.error" class="alert alert-danger">{{ state.error.message }}</div>
+  <div *ngIf="state.isLoading" class="alert alert-info">Загружаются...</div>
   <div class="grid-row">
     <table class="table table-hover">
       <tbody>

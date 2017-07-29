@@ -1,7 +1,8 @@
-<tl-selector
+<tl-selector-input
   [placeholder]="'Добавьте событие'"
   [name]="eventSelectorName"
-></tl-selector>
+  [stateMapFn]="eventSelectorStateMap"
+></tl-selector-input>
 <table class="table table-hover">
   <tbody>
   <tr *ngFor="let event of event$ | async; trackBy: trackByEventRow">

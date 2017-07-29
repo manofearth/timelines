@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { SelectorListItem } from './selector-list-item';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../../reducers';
@@ -11,21 +11,13 @@ import { SelectorListSelectAction } from './selector-list-actions';
   styleUrls: ['./selector-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SelectorListComponent implements OnInit {
+export class SelectorListComponent {
 
   @Input() name: string;
-
-  @Output() select = new EventEmitter<SelectorListItem>();
-
-  results$: Observable<SelectorListItem[]>;
-  currentIndex$: Observable<SelectorListItem>;
+  @Input() results$: Observable<SelectorListItem[]> = Observable.of([]);
+  @Input() highlightedIndex$: Observable<number> = Observable.of(0);
 
   constructor(private store: Store<AppState>) {
-  }
-
-  ngOnInit() {
-    this.results$ = this.store.select('selectors', this.name, 'results');
-    this.currentIndex$ = this.store.select('selectors', this.name, 'highlightedIndex');
   }
 
   onItemSelect(item: SelectorListItem) {

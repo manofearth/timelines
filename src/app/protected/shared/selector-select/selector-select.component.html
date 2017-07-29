@@ -1,22 +1,20 @@
-<div class="dropdown">
+<div class="dropdown" [ngClass]="{ show: isDropdownVisible }">
 
-  <button>Выбрать</button>
+  <button (click)="showDropdown()">Выбрать</button>
 
   <div class="dropdown-menu">
 
     <tl-search-field
-      [service]="service"
-      (enterKey)="onEnterKey()"
-      (arrowDownKey)="onArrowDownKey()"
-      (arrowUpKey)="onArrowUpKey()"
-      (escKey)="onEscKey()"
-      (createClick)="onItemCreate($event)"
+        [name]="name"
+        [placeholder]="'Поиск'"
+        [isSearching$]="isSearching$"
+        [searchQuery$]="searchQuery$"
     ></tl-search-field>
 
     <tl-selector-list
-      #list
-      [data]="searchResults"
-      (select)="onItemSelect($event)"
+        [name]="name"
+        [results$]="results$"
+        [highlightedIndex$]="highlightedIndex"
     ></tl-selector-list>
 
   </div>

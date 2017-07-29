@@ -11,6 +11,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
 import { EventInsertAndAttachToTimelineAction } from './event-actions';
 import { EventStatus } from './event-states';
+import { SelectorState } from '../shared/selector-input/selector-state';
 
 @Component({
   templateUrl: './event.component.html',
@@ -83,6 +84,10 @@ export class EventComponent implements OnInit, OnDestroy {
 
   dismiss() {
     this.activeModal.dismiss();
+  }
+
+  mapEventSelectorState(appState: AppState): SelectorState {
+    return appState.event.typeSelector;
   }
 
   private initForm(event: TimelineEvent) {

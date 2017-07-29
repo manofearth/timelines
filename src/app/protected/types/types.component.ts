@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Action, Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
 import { TypeCreateAction } from './type-create-actions';
-import { TypesGetAction } from './types-get-actions';
 import { TypesState } from './types-states';
 import { Subscription } from 'rxjs/Subscription';
 import { TypeGetAction } from '../type/type-get-actions';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TypeComponent } from '../type/type.component';
 import { TypeEraseAction } from '../type/type-erase-action';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'tl-types',
@@ -19,6 +19,11 @@ import { TypeEraseAction } from '../type/type-erase-action';
 export class TypesComponent implements OnInit, OnDestroy {
 
   state: TypesState;
+
+  isSearching$: Observable<boolean>;
+  searchQuery$: Observable<string>;
+
+  searchFieldName: string = TYPES_SEARCH_FIELD_NAME;
 
   private stateSub: Subscription;
 
@@ -36,6 +41,9 @@ export class TypesComponent implements OnInit, OnDestroy {
       this.changeDetector.markForCheck();
     });
 
+    this.isSearching$ = this.store.select<boolean>(state => state.types.isSearching);
+    this.searchQuery$ = this.store.select<string>(state => state.types.query);
+
     this.fetchTypes();
   }
 
@@ -44,8 +52,8 @@ export class TypesComponent implements OnInit, OnDestroy {
   }
 
   fetchTypes() {
-    const action: TypesGetAction = {
-      type: 'TYPES_GET',
+    const action: TypesComponentInitAction = {
+      type: 'TYPES_COMPONENT_INIT',
     };
 
     this.store.dispatch(action);
@@ -89,3 +97,9 @@ export class TypesComponent implements OnInit, OnDestroy {
     this.store.dispatch(action);
   }
 }
+
+export interface TypesComponentInitAction extends Action {
+  type: 'TYPES_COMPONENT_INIT';
+}
+
+export const TYPES_SEARCH_FIELD_NAME = 'types';

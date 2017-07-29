@@ -1,4 +1,5 @@
 import { TimelineDate } from '../shared/date';
+import { selectorInitialState, SelectorState } from '../shared/selector-input/selector-state';
 
 export interface Timeline {
   id: string;
@@ -36,4 +37,14 @@ export interface TimelineState {
   error: Error;
   timeline: Timeline;
   currentGroupIndex: number;
+  eventsSelector: SelectorState;
 }
+
+export const timelineInitialState: TimelineState = {
+  isLoading: true,
+  isSaving: false,
+  error: null,
+  timeline: null,
+  currentGroupIndex: 0,
+  eventsSelector: selectorInitialState,
+};

@@ -1,9 +1,5 @@
 import { SelectorSearchResultItem } from './selector-search-result-item';
 
-export interface SelectorsState {
-  [name: string]: SelectorState;
-}
-
 export interface SelectorState {
   query: string;
   isSearching: boolean;

@@ -1,19 +1,17 @@
-import { ActionReducer, combineReducers, Action } from '@ngrx/store';
+import { Action, ActionReducer, combineReducers } from '@ngrx/store';
 import { authReducer, AuthState } from './auth/auth.reducer';
 import { compose } from '@ngrx/core/compose';
 import { storeFreeze } from 'ngrx-store-freeze';
 import { timelinesReducer, TimelinesState } from './protected/timelines/timelines.reducer';
 import { environment } from '../environments/environment';
-import { timelineReducer } from './protected/timeline/timeline.reducer';
+import { timelineStateReducer } from './protected/timeline/timeline-state.reducer';
 import { eventReducer } from './protected/event/event.reducer';
-import { TimelineState } from './protected/timeline/timeline-states';
-import { EventState } from './protected/event/event-states';
-import { TypesState } from './protected/types/types-states';
+import { timelineInitialState, TimelineState } from './protected/timeline/timeline-states';
+import { eventInitialState, EventState } from './protected/event/event-states';
+import { typesInitialState, TypesState } from './protected/types/types-states';
 import { typesReducer } from './protected/types/types.reducer';
 import { initialTypeState, TypeState } from './protected/type/type-states';
 import { typeReducer } from './protected/type/type.reducer';
-import { selectorsReducer } from './protected/shared/selector-input/selector.reducer';
-import { SelectorsState } from './protected/shared/selector-input/selector-state';
 
 export interface AppState {
   auth: AuthState;
@@ -22,7 +20,6 @@ export interface AppState {
   event: EventState;
   types: TypesState;
   type: TypeState;
-  selectors: SelectorsState;
 }
 
 export const initialState: AppState = {
@@ -37,45 +34,23 @@ export const initialState: AppState = {
     newTimelineId: null,
     timelines: null,
   },
-  timeline: {
-    isLoading: true,
-    isSaving: false,
-    error: null,
-    timeline: null,
-    currentGroupIndex: 0,
-  },
-  event: {
-    status: null,
-    error: null,
-    event: null,
-  },
-  types: {
-    isLoading: true,
-    error: null,
-    types: [],
-  },
+  timeline: timelineInitialState,
+  event: eventInitialState,
+  types: typesInitialState,
   type: initialTypeState,
-  selectors: {},
 };
 
-interface AppReducers {
-  auth: ActionReducer<AuthState>;
-  timelines: ActionReducer<TimelinesState>;
-  timeline: ActionReducer<TimelineState>;
-  event: ActionReducer<EventState>;
-  types: ActionReducer<TypesState>;
-  type: ActionReducer<TypeState>;
-  selectors: ActionReducer<SelectorsState>;
+export type Reducers<TState> = {
+  [K in keyof TState]: ActionReducer<TState[K]>
 }
 
-const reducers: AppReducers = {
+const reducers: Reducers<AppState> = {
   auth: authReducer,
   timelines: timelinesReducer,
-  timeline: timelineReducer,
+  timeline: timelineStateReducer,
   event: eventReducer,
   types: typesReducer,
   type: typeReducer,
-  selectors: selectorsReducer,
 };
 
 const developmentReducer: ActionReducer<AppState> = compose(storeFreeze, combineReducers)(reducers);

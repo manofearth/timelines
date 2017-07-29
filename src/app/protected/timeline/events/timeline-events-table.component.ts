@@ -8,6 +8,7 @@ import 'rxjs/add/operator/withLatestFrom';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
 import { SelectorSearchResultItem } from '../../shared/selector-input/selector-search-result-item';
+import { SelectorState } from '../../shared/selector-input/selector-state';
 
 @Component({
   selector: 'tl-events-table',
@@ -36,7 +37,7 @@ export class TimelineEventTableComponent implements OnInit, OnDestroy {
     this.event$ = this.store.select(state => state.timeline.timeline.groups[this.groupIndex].events);
 
     this.eventSelectedSub = this.store
-      .select<SelectorSearchResultItem>(this.pickSelectedItem.bind(this))
+      .select<SelectorSearchResultItem>(state => state.timeline.eventsSelector.selectedItem)
       .filter(item => item !== null)
       .map((selectedItem): TimelineEventSelectedAction => ({
         type: 'TIMELINE_EVENT_SELECTED',
@@ -57,12 +58,8 @@ export class TimelineEventTableComponent implements OnInit, OnDestroy {
     return TIMELINE_EVENTS_SELECTOR_NAME_PREFIX + this.groupIndex;
   }
 
-  pickSelectedItem(state: AppState): SelectorSearchResultItem {
-    if (state.selectors[this.eventSelectorName]) {
-      return state.selectors[this.eventSelectorName].selectedItem;
-    } else {
-      return null;
-    }
+  eventSelectorStateMap(state: AppState): SelectorState {
+    return state.timeline.eventsSelector;
   }
 }
 

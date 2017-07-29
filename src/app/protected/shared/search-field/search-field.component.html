@@ -1,6 +1,5 @@
 <div class="search-field-container">
   <input
-    type="text"
     title="{{placeholder}}"
     class="form-control"
     placeholder="{{placeholder}}"
@@ -16,6 +15,6 @@
     type="button"
     class="btn btn-link create-button"
     (click)="emitCreateEvent()"
-    [hidden]="isSearching$ | async">Создать
+    [hidden]="isCreateButtonHidden$ | async">Создать
   </button>
 </div>

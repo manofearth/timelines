@@ -3,7 +3,7 @@ import {Subject} from '../../shared/rxjs';
 import {TimelineCanDeactivate} from './timeline-can-deactivate.service';
 import {Store} from '@ngrx/store';
 import {AppState} from '../../reducers';
-import {TimelineState} from './timeline.reducer';
+import {TimelineState} from './timeline-state.reducer';
 
 describe('TimelineCanDeactivate', () => {
 

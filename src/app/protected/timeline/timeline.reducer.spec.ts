@@ -1,7 +1,12 @@
 import {
-  TimelineState, TimelineGetSuccessAction, timelineReducer, TimelineGetErrorAction,
-  TimelineChangedAction, TimelineSaveSuccessAction, TimelineSaveErrorAction
-} from './timeline.reducer';
+  TimelineChangedAction,
+  TimelineGetErrorAction,
+  TimelineGetSuccessAction,
+  TimelineSaveErrorAction,
+  TimelineSaveSuccessAction,
+  TimelineState,
+  timelineStateReducer
+} from './timeline-state.reducer';
 
 describe('timeline reducer', () => {
 
@@ -26,7 +31,7 @@ describe('timeline reducer', () => {
       },
     };
 
-    const newState: TimelineState = timelineReducer(state, action);
+    const newState: TimelineState = timelineStateReducer(state, action);
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<TimelineState>{
@@ -65,7 +70,7 @@ describe('timeline reducer', () => {
       payload: new Error('some error'),
     };
 
-    const newState: TimelineState = timelineReducer(state, action);
+    const newState: TimelineState = timelineStateReducer(state, action);
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<TimelineState>{
@@ -97,7 +102,7 @@ describe('timeline reducer', () => {
       payload: { id: '-KYM3lCiVvKVV-mJt3eB', title: 'First World War' },
     };
 
-    const newState: TimelineState = timelineReducer(state, action);
+    const newState: TimelineState = timelineStateReducer(state, action);
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<TimelineState>{
@@ -121,7 +126,7 @@ describe('timeline reducer', () => {
       type: 'TIMELINE_SAVE_SUCCESS',
     };
 
-    const newState: TimelineState = timelineReducer(state, action);
+    const newState: TimelineState = timelineStateReducer(state, action);
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<TimelineState>{
@@ -146,7 +151,7 @@ describe('timeline reducer', () => {
       payload: new Error('some error'),
     };
 
-    const newState: TimelineState = timelineReducer(state, action);
+    const newState: TimelineState = timelineStateReducer(state, action);
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<TimelineState>{

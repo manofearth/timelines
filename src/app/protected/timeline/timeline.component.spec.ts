@@ -5,7 +5,7 @@ import { NO_ERRORS_SCHEMA, ChangeDetectorRef } from '@angular/core';
 import { Store, Action } from '@ngrx/store';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { APP_BASE_HREF } from '@angular/common';
-import { TimelineState, TimelineGetAction } from './timeline.reducer';
+import { TimelineState, TimelineGetAction } from './timeline-state.reducer';
 import { AppState } from '../../reducers';
 import { Title } from '@angular/platform-browser';
 import { FormBuilder } from '@angular/forms';

@@ -1,7 +1,7 @@
 <div
   *ngFor="let listItem of (results$ | async); index as i;"
   class="dropdown-item search-result-item"
-  [ngClass]="{'highlighted': i === (currentIndex$ | async)}"
+  [ngClass]="{'highlighted': i === (highlightedIndex$ | async)}"
   [innerHtml]="listItem.title"
   (click)="onItemSelect(listItem)"
 ></div>

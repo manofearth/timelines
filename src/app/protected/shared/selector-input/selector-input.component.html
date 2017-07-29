@@ -3,15 +3,15 @@
   <tl-search-field
     [placeholder]="placeholder"
     [name]="name"
-    (enterKey)="onEnterKey()"
-    (escKey)="onEscKey()"
-    (createClick)="onItemCreate($event)"
+    [isSearching$]="isSearching$"
+    [searchQuery$]="searchQuery$"
   ></tl-search-field>
 
   <div class="dropdown-menu">
     <tl-selector-list
       [name]="name"
-      (select)="onItemSelect($event)"
+      [results$]="results$"
+      [highlightedIndex$]="highlightedIndex$"
     ></tl-selector-list>
   </div>
 
