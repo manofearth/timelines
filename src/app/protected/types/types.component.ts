@@ -102,4 +102,5 @@ export interface TypesComponentInitAction extends Action {
   type: 'TYPES_COMPONENT_INIT';
 }
 
-export const TYPES_SEARCH_FIELD_NAME = 'types';
+export const TYPES_SEARCH_FIELD_NAME = 'types-search-field';
+export const TYPES_COMPONENT_NAME = 'types-component';

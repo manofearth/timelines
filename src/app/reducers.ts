@@ -5,7 +5,7 @@ import { storeFreeze } from 'ngrx-store-freeze';
 import { timelinesReducer, TimelinesState } from './protected/timelines/timelines.reducer';
 import { environment } from '../environments/environment';
 import { timelineStateReducer } from './protected/timeline/timeline-state.reducer';
-import { eventReducer } from './protected/event/event.reducer';
+import { eventStateReducer } from './protected/event/event-state.reducer';
 import { timelineInitialState, TimelineState } from './protected/timeline/timeline-states';
 import { eventInitialState, EventState } from './protected/event/event-states';
 import { typesInitialState, TypesState } from './protected/types/types-states';
@@ -48,7 +48,7 @@ const reducers: Reducers<AppState> = {
   auth: authReducer,
   timelines: timelinesReducer,
   timeline: timelineStateReducer,
-  event: eventReducer,
+  event: eventStateReducer,
   types: typesReducer,
   type: typeReducer,
 };

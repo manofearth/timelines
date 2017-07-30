@@ -11,7 +11,7 @@ import { Title } from '@angular/platform-browser';
 import { FormBuilder } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { EventComponent } from '../event/event.component';
-import { EventEraseAction, EventGetAction } from '../event/event.reducer';
+import { EventEraseAction, EventGetAction } from '../event/event-state.reducer';
 
 describe('TimelineComponent', () => {
 

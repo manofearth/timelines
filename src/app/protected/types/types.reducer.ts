@@ -3,7 +3,7 @@ import { TypesGetErrorAction, TypesGetSuccessAction } from './effects/elastic-ty
 import { TypeGetSuccessAction } from '../type/type-get-actions';
 import { TimelineEventsType } from '../type/type-states';
 import { TypeCreateSuccessAction } from './type-create-actions';
-import { TYPES_SEARCH_FIELD_NAME, TypesComponentInitAction } from './types.component';
+import { TYPES_COMPONENT_NAME, TYPES_SEARCH_FIELD_NAME, TypesComponentInitAction } from './types.component';
 import { SearchFieldInputAction } from '../shared/search-field/search-field-actions';
 
 type TypesAction = TypesComponentInitAction | TypesGetSuccessAction | TypesGetErrorAction | TypeGetSuccessAction
@@ -22,19 +22,25 @@ export function typesReducer(state: TypesState, action: TypesAction): TypesState
       }
       return state;
     case 'TYPES_GET_SUCCESS':
+      if (action.payload.name !== TYPES_COMPONENT_NAME && action.payload.name !== TYPES_SEARCH_FIELD_NAME) {
+        return state;
+      }
       return {
         ...state,
         isLoading: false,
         isSearching: false,
         error: null,
-        types: action.payload,
+        types: action.payload.results,
       };
     case 'TYPES_GET_ERROR':
+      if (action.payload.name !== TYPES_COMPONENT_NAME && action.payload.name !== TYPES_SEARCH_FIELD_NAME) {
+        return state;
+      }
       return {
         ...state,
         isLoading: false,
         isSearching: false,
-        error: action.payload,
+        error: action.payload.error,
       };
     case 'TYPE_GET_SUCCESS':
 

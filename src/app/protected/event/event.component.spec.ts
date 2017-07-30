@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
 import { Store, Action } from '@ngrx/store';
 import { AppState } from '../../reducers';
 import { TimelineEvent } from '../shared/timeline-event';
-import { EventInsertAction, EventInsertAndAttachToTimelineAction, EventState } from './event.reducer';
+import { EventInsertAction, EventInsertAndAttachToTimelineAction, EventState } from './event-state.reducer';
 
 describe('EventComponent', () => {
 

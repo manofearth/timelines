@@ -1,7 +1,7 @@
 import {
   EventCreateAction,
   EventState,
-  eventReducer,
+  eventStateReducer,
   EventUpdateAction,
   EventUpdateSuccessAction,
   EventUpdateErrorAction,
@@ -11,7 +11,7 @@ import {
   EventGetAction,
   EventGetSuccessAction,
   EventGetErrorAction,
-} from './event.reducer';
+} from './event-state.reducer';
 
 describe('eventReducer', () => {
 
@@ -27,7 +27,7 @@ describe('eventReducer', () => {
       event: null,
     });
 
-    const newState = eventReducer(state, action);
+    const newState = eventStateReducer(state, action);
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<EventState> {
@@ -54,7 +54,7 @@ describe('eventReducer', () => {
       event: <any> 'some event',
     });
 
-    const newState = eventReducer(state, action);
+    const newState = eventStateReducer(state, action);
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<EventState>{
@@ -75,7 +75,7 @@ describe('eventReducer', () => {
       event: <any> 'some event',
     });
 
-    const newState = eventReducer(state, action);
+    const newState = eventStateReducer(state, action);
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<EventState>{
@@ -97,7 +97,7 @@ describe('eventReducer', () => {
       event: <any> 'some event',
     });
 
-    const newState = eventReducer(state, action);
+    const newState = eventStateReducer(state, action);
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<EventState>{
@@ -119,7 +119,7 @@ describe('eventReducer', () => {
       event: <any> 'some event',
     });
 
-    const newState = eventReducer(state, action);
+    const newState = eventStateReducer(state, action);
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<EventState>{
@@ -141,7 +141,7 @@ describe('eventReducer', () => {
       event: <any> { id: null },
     });
 
-    const newState = eventReducer(state, action);
+    const newState = eventStateReducer(state, action);
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<EventState>{
@@ -163,7 +163,7 @@ describe('eventReducer', () => {
       event: <any> 'some event',
     });
 
-    const newState = eventReducer(state, action);
+    const newState = eventStateReducer(state, action);
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<EventState>{
@@ -185,7 +185,7 @@ describe('eventReducer', () => {
       event: <any> 'event stub',
     });
 
-    const newState = eventReducer(state, action);
+    const newState = eventStateReducer(state, action);
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<EventState> {
@@ -207,7 +207,7 @@ describe('eventReducer', () => {
       event: <any> 'event stub',
     });
 
-    const newState = eventReducer(state, action);
+    const newState = eventStateReducer(state, action);
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<EventState> {
@@ -229,7 +229,7 @@ describe('eventReducer', () => {
       event: <any> 'event stub',
     });
 
-    const newState = eventReducer(state, action);
+    const newState = eventStateReducer(state, action);
 
     expect(newState).not.toBe(state);
     expect(newState).toEqual(<EventState> {

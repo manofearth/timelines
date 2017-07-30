@@ -23,6 +23,7 @@ export class EventComponent implements OnInit, OnDestroy {
   form: EventForm;
   closeAfterSave: boolean = false;
   saveWasAttempted: boolean = false;
+  typeSelectorName: string = EVENT_TYPE_SELECTOR_NAME;
 
   attachTo: { timelineId: string, groupId: string } = null;
 
@@ -156,3 +157,5 @@ function validateEventForm(form: EventForm) {
 
   return ifEmptyObject(errors, null);
 }
+
+export const EVENT_TYPE_SELECTOR_NAME = 'event-type-selector';
