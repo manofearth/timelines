@@ -4,7 +4,6 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/switchMap';
 import { TypesElasticSearchHit, TypesElasticSearchService } from '../types-elastic-search.service';
-import { TimelineEventsTypeForList } from '../types-states';
 import { SearchFieldInputAction } from '../../shared/search-field/search-field-actions';
 import { Action } from '@ngrx/store';
 import { TYPES_COMPONENT_NAME, TYPES_SEARCH_FIELD_NAME, TypesComponentInitAction } from '../types.component';
@@ -12,7 +11,7 @@ import { toError } from '../../shared/firebase/protected-firebase.effect';
 import { EVENT_TYPE_SELECTOR_NAME } from '../../event/event.component';
 
 @Injectable()
-export class ElasticTypesGetEffect {
+export class ElasticTypesSearchEffect {
 
   constructor(
     private actions: Actions,
@@ -20,7 +19,7 @@ export class ElasticTypesGetEffect {
   ) {
   }
 
-  @Effect() effect: Observable<TypesGetSuccessAction | TypesGetErrorAction> = this.actions
+  @Effect() effect: Observable<TypesSearchSuccessAction | TypesSearchErrorAction> = this.actions
     .filter<InterestingAction>(action =>
       action.type === 'TYPES_COMPONENT_INIT'
       || (
@@ -39,14 +38,14 @@ export class ElasticTypesGetEffect {
       this.elasticSearchTypes
         .search(query)
         .map(searchResult => ({
-          type: 'TYPES_GET_SUCCESS' as 'TYPES_GET_SUCCESS',
+          type: 'TYPES_SEARCH_SUCCESS' as 'TYPES_SEARCH_SUCCESS',
           payload: {
             name: name,
-            results: searchResult.hits.hits.map(toTimelineEventsType)
+            hits: searchResult.hits.hits
           }
         }))
         .catch(err => Observable.of({
-          type: 'TYPES_GET_ERROR' as 'TYPES_GET_ERROR',
+          type: 'TYPES_SEARCH_ERROR' as 'TYPES_SEARCH_ERROR',
           payload: {
             name: name,
             error: toError(err)
@@ -55,25 +54,18 @@ export class ElasticTypesGetEffect {
     );
 }
 
-function toTimelineEventsType(hit: TypesElasticSearchHit): TimelineEventsTypeForList {
-  return {
-    id: hit._id,
-    title: hit.highlight ? hit.highlight.title[0] : hit._source.title,
-  }
-}
-
 type InterestingAction = TypesComponentInitAction | SearchFieldInputAction;
 
-export interface TypesGetSuccessAction extends Action {
-  type: 'TYPES_GET_SUCCESS';
+export interface TypesSearchSuccessAction extends Action {
+  type: 'TYPES_SEARCH_SUCCESS';
   payload: {
     name: string;
-    results: TimelineEventsTypeForList[];
+    hits: TypesElasticSearchHit[];
   }
 }
 
-export interface TypesGetErrorAction extends Action {
-  type: 'TYPES_GET_ERROR';
+export interface TypesSearchErrorAction extends Action {
+  type: 'TYPES_SEARCH_ERROR';
   payload: {
     name: string;
     error: Error;

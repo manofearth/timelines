@@ -7,7 +7,9 @@ import { SelectorState } from '../shared/selector-input/selector-state';
 import { selectorReducerFactory } from '../shared/selector-input/selector-reducer-factory';
 import { EVENT_TYPE_SELECTOR_NAME } from './event.component';
 import { SearchFieldInputAction } from '../shared/search-field/search-field-actions';
-import { TypesGetErrorAction, TypesGetSuccessAction } from '../types/effects/elastic-types-get.effect';
+import { TypesSearchErrorAction, TypesSearchSuccessAction } from '../types/effects/elastic-types-search.effect';
+import { SelectorListItem } from '../shared/selector-list/selector-list-item';
+import { TimelineEventsTypeForList } from '../types/types-states';
 
 const reducers: Reducers<EventState> = {
   status: eventStatusReducer,
@@ -87,7 +89,7 @@ function eventReducer(state: TimelineEvent, action: EventAction): TimelineEvent 
   }
 }
 
-type EventTypeSelectorReducerAction = SearchFieldInputAction | TypesGetSuccessAction | TypesGetErrorAction;
+type EventTypeSelectorReducerAction = SearchFieldInputAction | TypesSearchSuccessAction | TypesSearchErrorAction;
 
 function eventTypeSelectorPostReducer(state: SelectorState, action: EventTypeSelectorReducerAction): SelectorState {
   switch (action.type) {
@@ -96,16 +98,21 @@ function eventTypeSelectorPostReducer(state: SelectorState, action: EventTypeSel
         ...state,
         isSearching: true,
       };
-    case 'TYPES_GET_SUCCESS':
+    case 'TYPES_SEARCH_SUCCESS':
       return {
         ...state,
         isSearching: false,
-        results: action.payload.results.map(result => ({
-          title: result.title,
-          item: result,
-        })),
+        results: action.payload.hits.map(
+          (hit): SelectorListItem<TimelineEventsTypeForList> => ({
+            title: hit.highlight.title[0],
+            item: {
+              id: hit._id,
+              title: hit._source.title,
+            },
+          })
+        ),
       };
-    case 'TYPES_GET_ERROR':
+    case 'TYPES_SEARCH_ERROR':
       return {
         ...state,
         isSearching: false,

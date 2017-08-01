@@ -74,7 +74,7 @@ export function selectorReducerFactory(
       case 'SEARCH_FIELD_ENTER_KEY':
         newState = {
           ...state,
-          selectedItem: state[action.payload.name].results[state[action.payload.name].highlightedIndex],
+          selectedItem: state.results[state.highlightedIndex],
           results: [],
           query: '',
         };

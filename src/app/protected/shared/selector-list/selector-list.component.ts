@@ -14,13 +14,13 @@ import { SelectorListSelectAction } from './selector-list-actions';
 export class SelectorListComponent {
 
   @Input() name: string;
-  @Input() results$: Observable<SelectorListItem[]> = Observable.of([]);
+  @Input() results$: Observable<SelectorListItem<any>[]> = Observable.of([]);
   @Input() highlightedIndex$: Observable<number> = Observable.of(0);
 
   constructor(private store: Store<AppState>) {
   }
 
-  onItemSelect(item: SelectorListItem) {
+  onItemSelect(item: SelectorListItem<any>) {
     const action: SelectorListSelectAction = {
       type: 'SELECTOR_LIST_SELECT',
       payload: {

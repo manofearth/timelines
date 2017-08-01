@@ -21,7 +21,7 @@ export class SelectorInputComponent implements OnInit {
   show$: Observable<boolean>;
   isSearching$: Observable<boolean>;
   searchQuery$: Observable<string>;
-  results$: Observable<SelectorListItem[]>;
+  results$: Observable<SelectorListItem<any>[]>;
   highlightedIndex$: Observable<number>;
 
   constructor(
@@ -41,7 +41,7 @@ export class SelectorInputComponent implements OnInit {
     this.show$ = this.store.select<boolean>(state => this.stateMapFn(state).results.length !== 0);
     this.isSearching$ = this.store.select<boolean>(state => this.stateMapFn(state).isSearching);
     this.searchQuery$ = this.store.select<string>(state => this.stateMapFn(state).query);
-    this.results$ = this.store.select<SelectorListItem[]>(state => this.stateMapFn(state).results);
+    this.results$ = this.store.select<SelectorListItem<any>[]>(state => this.stateMapFn(state).results);
     this.highlightedIndex$ = this.store.select<number>(state => this.stateMapFn(state).highlightedIndex);
   }
 }

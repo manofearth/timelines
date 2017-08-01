@@ -1,4 +1,4 @@
-export interface SelectorListItem {
+export interface SelectorListItem<T> {
   title: string;
-  item: any;
+  item: T;
 }

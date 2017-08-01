@@ -1,12 +1,13 @@
 import { TimelineEventsTypeForList, typesInitialState, TypesState } from './types-states';
-import { TypesGetErrorAction, TypesGetSuccessAction } from './effects/elastic-types-get.effect';
+import { TypesSearchErrorAction, TypesSearchSuccessAction } from './effects/elastic-types-search.effect';
 import { TypeGetSuccessAction } from '../type/type-get-actions';
 import { TimelineEventsType } from '../type/type-states';
 import { TypeCreateSuccessAction } from './type-create-actions';
 import { TYPES_COMPONENT_NAME, TYPES_SEARCH_FIELD_NAME, TypesComponentInitAction } from './types.component';
 import { SearchFieldInputAction } from '../shared/search-field/search-field-actions';
+import { TypesElasticSearchHit } from './types-elastic-search.service';
 
-type TypesAction = TypesComponentInitAction | TypesGetSuccessAction | TypesGetErrorAction | TypeGetSuccessAction
+type TypesAction = TypesComponentInitAction | TypesSearchSuccessAction | TypesSearchErrorAction | TypeGetSuccessAction
   | TypeCreateSuccessAction | SearchFieldInputAction;
 
 export function typesReducer(state: TypesState, action: TypesAction): TypesState {
@@ -21,7 +22,7 @@ export function typesReducer(state: TypesState, action: TypesAction): TypesState
         }
       }
       return state;
-    case 'TYPES_GET_SUCCESS':
+    case 'TYPES_SEARCH_SUCCESS':
       if (action.payload.name !== TYPES_COMPONENT_NAME && action.payload.name !== TYPES_SEARCH_FIELD_NAME) {
         return state;
       }
@@ -30,9 +31,9 @@ export function typesReducer(state: TypesState, action: TypesAction): TypesState
         isLoading: false,
         isSearching: false,
         error: null,
-        types: action.payload.results,
+        types: action.payload.hits.map(toTimelineEventsType),
       };
-    case 'TYPES_GET_ERROR':
+    case 'TYPES_SEARCH_ERROR':
       if (action.payload.name !== TYPES_COMPONENT_NAME && action.payload.name !== TYPES_SEARCH_FIELD_NAME) {
         return state;
       }
@@ -80,5 +81,13 @@ function extractTypeForList(type: TimelineEventsType): TimelineEventsTypeForList
   return {
     id: type.id,
     title: type.title,
+  }
+}
+
+
+function toTimelineEventsType(hit: TypesElasticSearchHit): TimelineEventsTypeForList {
+  return {
+    id: hit._id,
+    title: hit.highlight ? hit.highlight.title[0] : hit._source.title,
   }
 }

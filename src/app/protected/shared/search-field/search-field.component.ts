@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/map';
@@ -28,6 +28,8 @@ export class SearchFieldComponent implements OnInit, OnDestroy {
   @Input() isSearching$: Observable<boolean> = Observable.of(false);
   @Input() searchQuery$: Observable<string> = Observable.of('');
 
+  @ViewChild('searchInput') searchInput: ElementRef;
+
   inputControl: FormControl;
 
   isCreateButtonHidden$: Observable<boolean>;
@@ -35,7 +37,9 @@ export class SearchFieldComponent implements OnInit, OnDestroy {
   private valueChangesSub: Subscription;
   private querySub: Subscription;
 
-  constructor(private store: Store<AppState>) {
+  constructor(
+    private store: Store<AppState>,
+  ) {
   }
 
   ngOnInit() {
@@ -116,6 +120,10 @@ export class SearchFieldComponent implements OnInit, OnDestroy {
       }
     };
     this.store.dispatch(action);
+  }
+
+  focus() {
+    this.searchInput.nativeElement.focus();
   }
 }
 
