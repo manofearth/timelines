@@ -6,9 +6,13 @@ import 'rxjs/add/operator/switchMap';
 import { TypesElasticSearchHit, TypesElasticSearchService } from '../types-elastic-search.service';
 import { SearchFieldInputAction } from '../../shared/search-field/search-field-actions';
 import { Action } from '@ngrx/store';
-import { TYPES_COMPONENT_NAME, TYPES_SEARCH_FIELD_NAME, TypesComponentInitAction } from '../types.component';
+import { TYPES_COMPONENT_NAME, TYPES_SEARCH_FIELD_NAME } from '../types.component';
 import { toError } from '../../shared/firebase/protected-firebase.effect';
 import { EVENT_TYPE_SELECTOR_NAME } from '../../event/event.component';
+import { SelectorSelectButtonAction } from '../../shared/selector-select/selector-select-actions';
+import { ComponentInitAction } from '../../../shared/component-init-action';
+
+type InterestingAction = ComponentInitAction | SearchFieldInputAction | SelectorSelectButtonAction;
 
 @Injectable()
 export class ElasticTypesSearchEffect {
@@ -21,15 +25,18 @@ export class ElasticTypesSearchEffect {
 
   @Effect() effect: Observable<TypesSearchSuccessAction | TypesSearchErrorAction> = this.actions
     .filter<InterestingAction>(action =>
-      action.type === 'TYPES_COMPONENT_INIT'
+      action.type === 'COMPONENT_INIT' && action.payload.name === TYPES_COMPONENT_NAME
       || (
         action.type === 'SEARCH_FIELD_INPUT'
         && (action.payload.name === TYPES_SEARCH_FIELD_NAME || action.payload.name === EVENT_TYPE_SELECTOR_NAME)
       )
+      || (
+        action.type === 'SELECTOR_SELECT_BUTTON' && action.payload.name === EVENT_TYPE_SELECTOR_NAME
+      )
     )
     .map<InterestingAction, { name: string, query: string }>(action => {
-      if (action.type === 'TYPES_COMPONENT_INIT') {
-        return { name: TYPES_COMPONENT_NAME, query: null }; // no search query
+      if (action.type === 'COMPONENT_INIT' || action.type === 'SELECTOR_SELECT_BUTTON') {
+        return { name: action.payload.name, query: null }; // no search query
       } else {
         return { name: action.payload.name, query: action.payload.value };
       }
@@ -53,8 +60,6 @@ export class ElasticTypesSearchEffect {
         }))
     );
 }
-
-type InterestingAction = TypesComponentInitAction | SearchFieldInputAction;
 
 export interface TypesSearchSuccessAction extends Action {
   type: 'TYPES_SEARCH_SUCCESS';

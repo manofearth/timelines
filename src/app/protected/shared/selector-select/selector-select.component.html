@@ -1,14 +1,21 @@
-<div class="dropdown" [ngClass]="{ show: isDropdownVisible }">
+<div class="dropdown" [ngClass]="{ show: (isDropdownVisible$ | async) }">
 
-  <button class="selector-select-main-button" (click)="onMainButtonClick()">{{(selectedItem$ | async).title}}</button>
+  <button
+      type="button"
+      class="selector-select-main-button"
+      (click)="onMainButtonClick()"
+  >
+    {{(selectedItem$ | async).title}}
+  </button>
 
   <div class="dropdown-menu">
 
-    <tl-search-field #searchField
+    <tl-search-field
         [name]="name"
         [placeholder]="'Поиск'"
         [isSearching$]="isSearching$"
         [searchQuery$]="searchQuery$"
+        [focusOnShown]="true"
     ></tl-search-field>
 
     <tl-selector-list

@@ -3,19 +3,20 @@ import { EventAction } from './event-actions';
 import { Reducers } from '../../reducers';
 import { ActionReducer, combineReducers } from '@ngrx/store';
 import { TimelineEvent } from '../shared/timeline-event';
-import { SelectorState } from '../shared/selector-input/selector-state';
-import { selectorReducerFactory } from '../shared/selector-input/selector-reducer-factory';
 import { EVENT_TYPE_SELECTOR_NAME } from './event.component';
 import { SearchFieldInputAction } from '../shared/search-field/search-field-actions';
 import { TypesSearchErrorAction, TypesSearchSuccessAction } from '../types/effects/elastic-types-search.effect';
 import { SelectorListItem } from '../shared/selector-list/selector-list-item';
 import { TimelineEventsTypeForList } from '../types/types-states';
+import { selectorSelectReducerFactory } from '../shared/selector-select/selector-select-reducer-factory';
+import { SelectorSelectState } from '../shared/selector-select/selector-select-state';
+import { SelectorSelectButtonAction, } from '../shared/selector-select/selector-select-actions';
 
 const reducers: Reducers<EventState> = {
   status: eventStatusReducer,
   error: eventErrorReducer,
   event: eventReducer,
-  typeSelector: selectorReducerFactory(name => name === EVENT_TYPE_SELECTOR_NAME, eventTypeSelectorPostReducer),
+  typeSelector: selectorSelectReducerFactory(name => name === EVENT_TYPE_SELECTOR_NAME, eventTypeSelectorPostReducer),
 };
 
 export const eventStateReducer: ActionReducer<EventState> = combineReducers(reducers);
@@ -89,10 +90,16 @@ function eventReducer(state: TimelineEvent, action: EventAction): TimelineEvent 
   }
 }
 
-type EventTypeSelectorReducerAction = SearchFieldInputAction | TypesSearchSuccessAction | TypesSearchErrorAction;
+type EventTypeSelectorReducerAction = SearchFieldInputAction | TypesSearchSuccessAction | TypesSearchErrorAction
+  | SelectorSelectButtonAction;
 
-function eventTypeSelectorPostReducer(state: SelectorState, action: EventTypeSelectorReducerAction): SelectorState {
+function eventTypeSelectorPostReducer(
+  state: SelectorSelectState<TimelineEventsTypeForList>,
+  action: EventTypeSelectorReducerAction
+): SelectorSelectState<TimelineEventsTypeForList> {
+
   switch (action.type) {
+    case 'SELECTOR_SELECT_BUTTON':
     case 'SEARCH_FIELD_INPUT':
       return {
         ...state,
@@ -104,7 +111,8 @@ function eventTypeSelectorPostReducer(state: SelectorState, action: EventTypeSel
         isSearching: false,
         results: action.payload.hits.map(
           (hit): SelectorListItem<TimelineEventsTypeForList> => ({
-            title: hit.highlight.title[0],
+            title: hit._source.title,
+            titleHighlighted: hit.highlight ? hit.highlight.title[0] : hit._source.title,
             item: {
               id: hit._id,
               title: hit._source.title,

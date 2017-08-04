@@ -2,10 +2,11 @@ import { TimelineAction } from './timeline-actions';
 import { Timeline, TimelineState } from './timeline-states';
 import { ActionReducer, combineReducers } from '@ngrx/store';
 import { Reducers } from '../../reducers';
-import { selectorReducerFactory } from '../shared/selector-input/selector-reducer-factory';
+import { selectorInputReducerFactory } from '../shared/selector-input/selector-input-reducer-factory';
 import { TIMELINE_EVENTS_SELECTOR_NAME_PREFIX } from './events/timeline-events-table.component';
-import { SelectorState } from '../shared/selector-input/selector-state';
+import { SelectorInputState } from '../shared/selector-input/selector-input-state';
 import { EventsSearchErrorAction, EventsSearchSuccessAction } from '../events/effects/events-elastic-search.effect';
+import { TimelineEventForList } from '../shared/timeline-event';
 
 const reducers: Reducers<TimelineState> = {
   isLoading: timelineIsLoadingReducer,
@@ -13,7 +14,7 @@ const reducers: Reducers<TimelineState> = {
   error: timelineErrorReducer,
   timeline: timelineReducer,
   currentGroupIndex: timelineCurrentGroupIndexReducer,
-  eventsSelector: selectorReducerFactory(
+  eventsSelector: selectorInputReducerFactory(
     name => name.startsWith(TIMELINE_EVENTS_SELECTOR_NAME_PREFIX),
     timelineEventsSelectorPostReducer
   ),
@@ -23,13 +24,16 @@ export const timelineStateReducer: ActionReducer<TimelineState> = combineReducer
 
 type EventsSelectorReducerAction = EventsSearchSuccessAction | EventsSearchErrorAction;
 
-function timelineEventsSelectorPostReducer(state: SelectorState, action: EventsSelectorReducerAction): SelectorState {
+function timelineEventsSelectorPostReducer(
+  state: SelectorInputState<TimelineEventForList>, action: EventsSelectorReducerAction
+): SelectorInputState<TimelineEventForList> {
 
   switch (action.type) {
 
     case 'EVENTS_SEARCH_SUCCESS':
       const results = action.payload.result.hits.hits.map(hit => ({
-        title: hit.highlight.title[0],
+        title: hit._source.title,
+        titleHighlighted: hit.highlight.title[0],
         item: {
           id: hit._id,
           title: hit._source.title,

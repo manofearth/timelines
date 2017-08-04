@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Action, Store } from '@ngrx/store';
 import { AppState } from '../../../reducers';
-import { TimelineEvent } from '../../shared/timeline-event';
+import { TimelineEvent, TimelineEventForList } from '../../shared/timeline-event';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/withLatestFrom';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
-import { SelectorSearchResultItem } from '../../shared/selector-input/selector-search-result-item';
-import { SelectorState } from '../../shared/selector-input/selector-state';
+import { SelectorInputState } from '../../shared/selector-input/selector-input-state';
+import { SelectorListItem } from '../../shared/selector-list/selector-list-item';
 
 @Component({
   selector: 'tl-events-table',
@@ -37,7 +37,7 @@ export class TimelineEventTableComponent implements OnInit, OnDestroy {
     this.event$ = this.store.select(state => state.timeline.timeline.groups[this.groupIndex].events);
 
     this.eventSelectedSub = this.store
-      .select<SelectorSearchResultItem>(state => state.timeline.eventsSelector.selectedItem)
+      .select<SelectorListItem<TimelineEventForList>>(state => state.timeline.eventsSelector.selectedItem)
       .filter(item => item !== null)
       .map((selectedItem): TimelineEventSelectedAction => ({
         type: 'TIMELINE_EVENT_SELECTED',
@@ -58,7 +58,7 @@ export class TimelineEventTableComponent implements OnInit, OnDestroy {
     return TIMELINE_EVENTS_SELECTOR_NAME_PREFIX + this.groupIndex;
   }
 
-  eventSelectorStateMap(state: AppState): SelectorState {
+  eventSelectorStateMap(state: AppState): SelectorInputState<TimelineEventForList> {
     return state.timeline.eventsSelector;
   }
 }

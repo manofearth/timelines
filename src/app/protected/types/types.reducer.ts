@@ -3,17 +3,22 @@ import { TypesSearchErrorAction, TypesSearchSuccessAction } from './effects/elas
 import { TypeGetSuccessAction } from '../type/type-get-actions';
 import { TimelineEventsType } from '../type/type-states';
 import { TypeCreateSuccessAction } from './type-create-actions';
-import { TYPES_COMPONENT_NAME, TYPES_SEARCH_FIELD_NAME, TypesComponentInitAction } from './types.component';
+import { TYPES_COMPONENT_NAME, TYPES_SEARCH_FIELD_NAME } from './types.component';
 import { SearchFieldInputAction } from '../shared/search-field/search-field-actions';
 import { TypesElasticSearchHit } from './types-elastic-search.service';
+import { ComponentInitAction } from '../../shared/component-init-action';
 
-type TypesAction = TypesComponentInitAction | TypesSearchSuccessAction | TypesSearchErrorAction | TypeGetSuccessAction
+type TypesAction = ComponentInitAction | TypesSearchSuccessAction | TypesSearchErrorAction | TypeGetSuccessAction
   | TypeCreateSuccessAction | SearchFieldInputAction;
 
 export function typesReducer(state: TypesState, action: TypesAction): TypesState {
   switch (action.type) {
-    case 'TYPES_COMPONENT_INIT':
-      return typesInitialState;
+    case 'COMPONENT_INIT':
+      if (action.payload.name === TYPES_COMPONENT_NAME) {
+        return typesInitialState;
+      } else {
+        return state;
+      }
     case 'SEARCH_FIELD_INPUT':
       if (action.payload.name === TYPES_SEARCH_FIELD_NAME) {
         return {

@@ -6,3 +6,8 @@ export interface TimelineEvent {
   dateBegin: TimelineDate;
   dateEnd: TimelineDate;
 }
+
+export interface TimelineEventForList {
+  id: string;
+  title: string;
+}

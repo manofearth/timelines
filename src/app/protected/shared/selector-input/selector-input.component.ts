@@ -4,7 +4,8 @@ import { Observable } from 'rxjs/Observable';
 import { AppState } from '../../../reducers';
 import { Store } from '@ngrx/store';
 import { SelectorListItem } from '../selector-list/selector-list-item';
-import { SelectorState } from './selector-state';
+import { SelectorInputState } from './selector-input-state';
+import { SelectorInputInitAction } from './selector-input-actions';
 
 @Component({
   selector: 'tl-selector-input',
@@ -16,7 +17,7 @@ export class SelectorInputComponent implements OnInit {
 
   @Input() name: string;
   @Input() placeholder: string;
-  @Input() stateMapFn: (state: AppState) => SelectorState;
+  @Input() stateMapFn: (state: AppState) => SelectorInputState<any>;
 
   show$: Observable<boolean>;
   isSearching$: Observable<boolean>;
@@ -25,23 +26,28 @@ export class SelectorInputComponent implements OnInit {
   highlightedIndex$: Observable<number>;
 
   constructor(
-    private store: Store<AppState>,
+    private store: Store<AppState>
   ) {
   }
 
   ngOnInit() {
 
-    this.store.dispatch({
-      type: 'SELECTOR_INIT',
-      payload: {
-        name: this.name,
-      }
-    });
+    this.dispatchInitAction();
 
     this.show$ = this.store.select<boolean>(state => this.stateMapFn(state).results.length !== 0);
     this.isSearching$ = this.store.select<boolean>(state => this.stateMapFn(state).isSearching);
     this.searchQuery$ = this.store.select<string>(state => this.stateMapFn(state).query);
     this.results$ = this.store.select<SelectorListItem<any>[]>(state => this.stateMapFn(state).results);
     this.highlightedIndex$ = this.store.select<number>(state => this.stateMapFn(state).highlightedIndex);
+  }
+
+  private dispatchInitAction() {
+    const action: SelectorInputInitAction = {
+      type: 'SELECTOR_INPUT_INIT',
+      payload: {
+        name: this.name,
+      }
+    };
+    this.store.dispatch(action);
   }
 }

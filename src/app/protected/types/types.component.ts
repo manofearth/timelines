@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { Action, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
 import { TypeCreateAction } from './type-create-actions';
 import { TypesState } from './types-states';
@@ -9,6 +9,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TypeComponent } from '../type/type.component';
 import { TypeEraseAction } from '../type/type-erase-action';
 import { Observable } from 'rxjs/Observable';
+import { ComponentInitAction } from '../../shared/component-init-action';
 
 @Component({
   selector: 'tl-types',
@@ -52,8 +53,11 @@ export class TypesComponent implements OnInit, OnDestroy {
   }
 
   fetchTypes() {
-    const action: TypesComponentInitAction = {
-      type: 'TYPES_COMPONENT_INIT',
+    const action: ComponentInitAction = {
+      type: 'COMPONENT_INIT',
+      payload: {
+        name: TYPES_COMPONENT_NAME,
+      }
     };
 
     this.store.dispatch(action);
@@ -84,8 +88,12 @@ export class TypesComponent implements OnInit, OnDestroy {
     this.store.dispatch(action);
 
     this.modalService.open(TypeComponent, { size: 'lg' }).result.then(
-      () => { this.dispatchTypeErase() },
-      () => { this.dispatchTypeErase() },
+      () => {
+        this.dispatchTypeErase()
+      },
+      () => {
+        this.dispatchTypeErase()
+      },
     );
   }
 
@@ -96,10 +104,6 @@ export class TypesComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(action);
   }
-}
-
-export interface TypesComponentInitAction extends Action {
-  type: 'TYPES_COMPONENT_INIT';
 }
 
 export const TYPES_SEARCH_FIELD_NAME = 'types-search-field';

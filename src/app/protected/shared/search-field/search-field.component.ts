@@ -1,4 +1,7 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DoCheck, ElementRef, Input, OnDestroy, OnInit,
+  ViewChild
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/map';
@@ -8,6 +11,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../../../reducers';
 import { Observable } from 'rxjs/Observable';
 import {
+  SearchFieldBaseAction,
   SearchFieldCreateButtonAction,
   SearchFieldDownKeyAction,
   SearchFieldEnterKeyAction,
@@ -21,12 +25,13 @@ import {
   styleUrls: ['./search-field.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SearchFieldComponent implements OnInit, OnDestroy {
+export class SearchFieldComponent implements OnInit, OnDestroy, DoCheck {
 
   @Input() name: string;
   @Input() placeholder: string;
   @Input() isSearching$: Observable<boolean> = Observable.of(false);
   @Input() searchQuery$: Observable<string> = Observable.of('');
+  @Input() focusOnShown: boolean = false;
 
   @ViewChild('searchInput') searchInput: ElementRef;
 
@@ -36,6 +41,7 @@ export class SearchFieldComponent implements OnInit, OnDestroy {
 
   private valueChangesSub: Subscription;
   private querySub: Subscription;
+  private inputBecomeVisible: boolean = false;
 
   constructor(
     private store: Store<AppState>,
@@ -43,6 +49,7 @@ export class SearchFieldComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+
     this.inputControl = new FormControl();
 
     this.valueChangesSub = this.inputControl.valueChanges
@@ -70,60 +77,51 @@ export class SearchFieldComponent implements OnInit, OnDestroy {
     this.querySub.unsubscribe();
   }
 
-  emitCreateEvent() {
-    const action: SearchFieldCreateButtonAction = {
-      type: 'SEARCH_FIELD_CREATE_BUTTON',
-      payload: {
-        name: this.name,
-        value: this.inputControl.value
+  ngDoCheck() {
+    if (!this.inputBecomeVisible) {
+      if (this.searchInput.nativeElement.offsetParent !== null) {
+        this.inputBecomeVisible = true;
+        if (this.focusOnShown) {
+          this.searchInput.nativeElement.focus();
+        }
       }
-    };
-    this.store.dispatch(action);
+    }
+  }
+
+  emitCreateEvent() {
+    this.dispatchAction<SearchFieldCreateButtonAction>(
+      'SEARCH_FIELD_CREATE_BUTTON',
+      { value: this.inputControl.value }
+    );
   }
 
   onEnterKey() {
-    const action: SearchFieldEnterKeyAction = {
-      type: 'SEARCH_FIELD_ENTER_KEY',
-      payload: {
-        name: this.name,
-        value: this.inputControl.value
-      }
-    };
-    this.store.dispatch(action);
+    this.dispatchAction<SearchFieldEnterKeyAction>(
+      'SEARCH_FIELD_ENTER_KEY',
+      { value: this.inputControl.value }
+    );
   }
 
   onArrowDownKey() {
-    const action: SearchFieldDownKeyAction = {
-      type: 'SEARCH_FIELD_DOWN_KEY',
-      payload: {
-        name: this.name,
-      }
-    };
-    this.store.dispatch(action);
+    this.dispatchAction<SearchFieldDownKeyAction>('SEARCH_FIELD_DOWN_KEY');
   }
 
   onArrowUpKey() {
-    const action: SearchFieldUpKeyAction = {
-      type: 'SEARCH_FIELD_UP_KEY',
-      payload: {
-        name: this.name,
-      }
-    };
-    this.store.dispatch(action);
+    this.dispatchAction<SearchFieldUpKeyAction>('SEARCH_FIELD_UP_KEY');
   }
 
   onEscKey() {
-    const action: SearchFieldEscKeyAction = {
-      type: 'SEARCH_FIELD_ESC_KEY',
-      payload: {
-        name: this.name,
-      }
-    };
-    this.store.dispatch(action);
+    this.dispatchAction<SearchFieldEscKeyAction>('SEARCH_FIELD_ESC_KEY');
   }
 
-  focus() {
-    this.searchInput.nativeElement.focus();
+  private dispatchAction<TAction extends SearchFieldBaseAction>(type: TAction['type'], payload: Object = {}) {
+    this.store.dispatch({
+      type,
+      payload: {
+        name: this.name,
+        ...payload
+      }
+    });
   }
 }
 

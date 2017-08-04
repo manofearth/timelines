@@ -9,7 +9,14 @@
   <form *ngIf="form" [formGroup]="form">
 
     <div class="row">
-      <div class="col-md-12 form-group" [class.has-danger]="invalidControl('title')">
+      <div class="col-md-3">
+        <tl-selector-select
+            [name]="typeSelectorName"
+            [stateMapFn]="mapEventSelectorState"
+            [placeholder]="'Выберите тип'"
+        ></tl-selector-select>
+      </div>
+      <div class="col-md-9 form-group" [class.has-danger]="invalidControl('title')">
         <input class="form-control" title="Имя события" placeholder="Имя события" formControlName="title">
       </div>
     </div>
@@ -33,13 +40,6 @@
           Период оканчивается раньше своего начала
         </small>
       </div>
-
-      <tl-selector-select
-          [name]="typeSelectorName"
-          [stateMapFn]="mapEventSelectorState"
-          [placeholder]="'Выберите тип'"
-      >
-      </tl-selector-select>
 
     </div>
 

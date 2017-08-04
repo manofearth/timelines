@@ -11,7 +11,8 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
 import { EventInsertAndAttachToTimelineAction } from './event-actions';
 import { EventStatus } from './event-states';
-import { SelectorState } from '../shared/selector-input/selector-state';
+import { SelectorInputState } from '../shared/selector-input/selector-input-state';
+import { TimelineEventsTypeForList } from '../types/types-states';
 
 @Component({
   templateUrl: './event.component.html',
@@ -87,7 +88,7 @@ export class EventComponent implements OnInit, OnDestroy {
     this.activeModal.dismiss();
   }
 
-  mapEventSelectorState(appState: AppState): SelectorState {
+  mapEventSelectorState(appState: AppState): SelectorInputState<TimelineEventsTypeForList> {
     return appState.event.typeSelector;
   }
 

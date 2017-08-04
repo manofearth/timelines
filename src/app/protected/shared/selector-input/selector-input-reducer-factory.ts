@@ -1,4 +1,4 @@
-import { selectorInitialState, SelectorState } from './selector-state';
+import { selectorInputInitialState, SelectorInputState } from './selector-input-state';
 import {
   SearchFieldDownKeyAction,
   SearchFieldEnterKeyAction,
@@ -6,32 +6,32 @@ import {
   SearchFieldInputAction,
   SearchFieldUpKeyAction
 } from '../search-field/search-field-actions';
-import { SelectorInitAction } from './selector-actions';
+import { SelectorInputInitAction } from './selector-input-actions';
 import { EventsSearchErrorAction, EventsSearchSuccessAction } from '../../events/effects/events-elastic-search.effect';
 import { SelectorListSelectAction } from '../selector-list/selector-list-actions';
 import { ActionReducer } from '@ngrx/store';
 
-type SelectorAction = SearchFieldInputAction | SelectorInitAction | SearchFieldUpKeyAction | SearchFieldDownKeyAction
+type SelectorAction = SearchFieldInputAction | SelectorInputInitAction | SearchFieldUpKeyAction | SearchFieldDownKeyAction
   | EventsSearchSuccessAction | EventsSearchErrorAction | SearchFieldEscKeyAction | SelectorListSelectAction
   | SearchFieldEnterKeyAction;
 
-export function selectorReducerFactory(
+export function selectorInputReducerFactory(
   filter: (name: string) => boolean,
-  postReducer: ActionReducer<SelectorState>,
-): ActionReducer<SelectorState> {
+  postReducer: ActionReducer<SelectorInputState<any>>,
+): ActionReducer<SelectorInputState<any>> {
 
-  return (state: SelectorState, action: SelectorAction): SelectorState => {
+  return (state: SelectorInputState<any>, action: SelectorAction): SelectorInputState<any> => {
 
     if (!action.payload || !action.payload.name || !filter(action.payload.name)) {
       return state;
     }
 
-    let newState: SelectorState = state;
+    let newState: SelectorInputState<any> = state;
 
     switch (action.type) {
 
-      case 'SELECTOR_INIT':
-        newState = selectorInitialState;
+      case 'SELECTOR_INPUT_INIT':
+        newState = selectorInputInitialState;
         break;
 
       case 'SEARCH_FIELD_INPUT':
@@ -87,7 +87,7 @@ export function selectorReducerFactory(
 
 type nextIndexFn = (currentIndex: number, maxIndex: number) => number;
 
-function setIndexWith(state: SelectorState, calculateNextIndex: nextIndexFn): SelectorState {
+function setIndexWith(state: SelectorInputState<any>, calculateNextIndex: nextIndexFn): SelectorInputState<any> {
   const nextIndex = calculateNextIndex(state.highlightedIndex, state.results.length - 1);
 
   if (nextIndex === state.highlightedIndex) {

@@ -1,10 +1,10 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AppState } from '../../../reducers';
 import { Store } from '@ngrx/store';
-import { SelectorState } from '../selector-input/selector-state';
 import { Observable } from 'rxjs/Observable';
 import { SelectorListItem } from '../selector-list/selector-list-item';
-import { SearchFieldComponent } from '../search-field/search-field.component';
+import { SelectorSelectState } from './selector-select-state';
+import { SelectorSelectButtonAction, SelectorSelectInitAction } from './selector-select-actions';
 
 @Component({
   selector: 'tl-selector-select',
@@ -15,26 +15,27 @@ export class SelectorSelectComponent implements OnInit {
 
   @Input() name: string;
   @Input() placeholder: string;
-  @Input() stateMapFn: (state: AppState) => SelectorState;
-
-  @ViewChild('searchField') searchField: SearchFieldComponent;
+  @Input() stateMapFn: (state: AppState) => SelectorSelectState<any>;
 
   isSearching$: Observable<boolean>;
   searchQuery$: Observable<string>;
   results$: Observable<SelectorListItem<any>[]>;
   highlightedIndex$: Observable<number>;
   selectedItem$: Observable<SelectorListItem<any>>;
-
-  isDropdownVisible: boolean;
+  isDropdownVisible$: Observable<boolean>;
 
   constructor(private store: Store<AppState>) {
   }
 
   ngOnInit() {
+
+    this.dispatchInitAction();
+
     this.isSearching$ = this.store.select(state => this.stateMapFn(state).isSearching);
     this.searchQuery$ = this.store.select(state => this.stateMapFn(state).query);
     this.results$ = this.store.select(state => this.stateMapFn(state).results);
     this.highlightedIndex$ = this.store.select(state => this.stateMapFn(state).highlightedIndex);
+    this.isDropdownVisible$ = this.store.select(state => this.stateMapFn(state).isDropdownVisible);
     this.selectedItem$ = this.store.select(state => this.stateMapFn(state).selectedItem).map(val => {
       if (val) {
         return val;
@@ -50,10 +51,22 @@ export class SelectorSelectComponent implements OnInit {
   }
 
   onMainButtonClick() {
-    setTimeout(() => {
-      this.searchField.focus();
-    }, 0); // to render on next tick
-    this.isDropdownVisible = true;
+    const action: SelectorSelectButtonAction = {
+      type: 'SELECTOR_SELECT_BUTTON',
+      payload: {
+        name: this.name,
+      }
+    };
+    this.store.dispatch(action);
   }
 
+  private dispatchInitAction() {
+    const action: SelectorSelectInitAction = {
+      type: 'SELECTOR_SELECT_INIT',
+      payload: {
+        name: this.name,
+      }
+    };
+    this.store.dispatch(action);
+  }
 }
