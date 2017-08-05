@@ -1,12 +1,14 @@
 import { TimelineAction } from './timeline-actions';
 import { Timeline, TimelineState } from './timeline-states';
-import { ActionReducer, combineReducers } from '@ngrx/store';
+import { Action, ActionReducer, combineReducers } from '@ngrx/store';
 import { Reducers } from '../../reducers';
-import { selectorInputReducerFactory } from '../shared/selector-input/selector-input-reducer-factory';
+import { selectorInputReducer } from '../shared/selector-input/selector-input-reducer';
 import { TIMELINE_EVENTS_SELECTOR_NAME_PREFIX } from './events/timeline-events-table.component';
 import { SelectorInputState } from '../shared/selector-input/selector-input-state';
 import { EventsSearchErrorAction, EventsSearchSuccessAction } from '../events/effects/events-elastic-search.effect';
 import { TimelineEventForList } from '../shared/timeline-event';
+import { reduceWhen } from '../../shared/reduce-when.fn';
+import { actionHasName } from '../../shared/action-has-name.fn';
 
 const reducers: Reducers<TimelineState> = {
   isLoading: timelineIsLoadingReducer,
@@ -14,11 +16,16 @@ const reducers: Reducers<TimelineState> = {
   error: timelineErrorReducer,
   timeline: timelineReducer,
   currentGroupIndex: timelineCurrentGroupIndexReducer,
-  eventsSelector: selectorInputReducerFactory(
-    name => name.startsWith(TIMELINE_EVENTS_SELECTOR_NAME_PREFIX),
-    timelineEventsSelectorPostReducer
-  ),
+  eventsSelector: reduceWhen<SelectorInputState<TimelineEventForList>>(
+    actionNameStartsWith(TIMELINE_EVENTS_SELECTOR_NAME_PREFIX),
+    timelineEventsSelectorPostReducer,
+    selectorInputReducer
+  )
 };
+
+function actionNameStartsWith(namePrefix: string) {
+  return (action: Action) => actionHasName(action) && action.payload.name.startsWith(namePrefix);
+}
 
 export const timelineStateReducer: ActionReducer<TimelineState> = combineReducers(reducers);
 

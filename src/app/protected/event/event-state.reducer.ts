@@ -1,23 +1,38 @@
 import { eventInitialState, EventState, EventStatus } from './event-states';
 import { EventAction } from './event-actions';
 import { Reducers } from '../../reducers';
-import { ActionReducer, combineReducers } from '@ngrx/store';
+import { Action, ActionReducer, combineReducers } from '@ngrx/store';
 import { TimelineEvent } from '../shared/timeline-event';
 import { EVENT_TYPE_SELECTOR_NAME } from './event.component';
 import { SearchFieldInputAction } from '../shared/search-field/search-field-actions';
 import { TypesSearchErrorAction, TypesSearchSuccessAction } from '../types/effects/elastic-types-search.effect';
 import { SelectorListItem } from '../shared/selector-list/selector-list-item';
 import { TimelineEventsTypeForList } from '../types/types-states';
-import { selectorSelectReducerFactory } from '../shared/selector-select/selector-select-reducer-factory';
 import { SelectorSelectState } from '../shared/selector-select/selector-select-state';
 import { SelectorSelectButtonAction, } from '../shared/selector-select/selector-select-actions';
+import { reduceWhen } from '../../shared/reduce-when.fn';
+import { actionHasName } from '../../shared/action-has-name.fn';
+import { selectorSelectReducer } from '../shared/selector-select/selector-select-reducer';
+import { selectorInputReducer } from '../shared/selector-input/selector-input-reducer';
+import { composeReducers } from '../../shared/compose-reducers.fn';
 
 const reducers: Reducers<EventState> = {
   status: eventStatusReducer,
   error: eventErrorReducer,
   event: eventReducer,
-  typeSelector: selectorSelectReducerFactory(name => name === EVENT_TYPE_SELECTOR_NAME, eventTypeSelectorPostReducer),
+  typeSelector: reduceWhen(
+    actionNameIs(EVENT_TYPE_SELECTOR_NAME),
+    composeReducers(
+      eventTypeSelectorPostReducer,
+      selectorSelectReducer,
+      selectorInputReducer,
+    )
+  ),
 };
+
+function actionNameIs(name: string) {
+  return (action: Action) => actionHasName(action) && action.payload.name === name;
+}
 
 export const eventStateReducer: ActionReducer<EventState> = combineReducers(reducers);
 
