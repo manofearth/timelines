@@ -10,3 +10,7 @@
   padding: 0.5rem 0.75rem;
   text-align: left;
 }
+
+.selector-select-main-button.has-danger {
+  border-color: #d9534f;
+}

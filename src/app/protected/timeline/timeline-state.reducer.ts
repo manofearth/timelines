@@ -9,6 +9,7 @@ import { EventsSearchErrorAction, EventsSearchSuccessAction } from '../events/ef
 import { TimelineEventForList } from '../shared/timeline-event';
 import { reduceWhen } from '../../shared/reduce-when.fn';
 import { actionHasName } from '../../shared/action-has-name.fn';
+import { composeReducers } from '../../shared/compose-reducers.fn';
 
 const reducers: Reducers<TimelineState> = {
   isLoading: timelineIsLoadingReducer,
@@ -18,8 +19,10 @@ const reducers: Reducers<TimelineState> = {
   currentGroupIndex: timelineCurrentGroupIndexReducer,
   eventsSelector: reduceWhen<SelectorInputState<TimelineEventForList>>(
     actionNameStartsWith(TIMELINE_EVENTS_SELECTOR_NAME_PREFIX),
-    timelineEventsSelectorPostReducer,
-    selectorInputReducer
+    composeReducers(
+      timelineEventsSelectorPostReducer,
+      selectorInputReducer,
+    )
   )
 };
 

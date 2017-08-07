@@ -16,6 +16,7 @@ export class SelectorSelectComponent implements OnInit {
   @Input() name: string;
   @Input() placeholder: string;
   @Input() stateMapFn: (state: AppState) => SelectorSelectState<any>;
+  @Input() hasDanger: boolean = false;
 
   isSearching$: Observable<boolean>;
   searchQuery$: Observable<string>;

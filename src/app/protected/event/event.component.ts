@@ -1,7 +1,7 @@
 //noinspection TypeScriptPreferShortImport
 import { Subscription } from '../../shared/rxjs';
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TimelineEvent } from '../shared/timeline-event';
 import { composeChildrenValidators } from '../../shared/compose-children-validators.validator';
@@ -9,7 +9,7 @@ import { ifEmptyObject } from '../../shared/helpers';
 import { TimelineDate } from '../shared/date';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
-import { EventInsertAndAttachToTimelineAction } from './event-actions';
+import { EventInsertAction, EventInsertAndAttachToTimelineAction, EventUpdateAction } from './event-actions';
 import { EventStatus } from './event-states';
 import { SelectorInputState } from '../shared/selector-input/selector-input-state';
 import { TimelineEventsTypeForList } from '../types/types-states';
@@ -28,8 +28,9 @@ export class EventComponent implements OnInit, OnDestroy {
 
   attachTo: { timelineId: string, groupId: string } = null;
 
-  private eventStateSubscription: Subscription;
-  private isSavingStateSubscription: Subscription;
+  private eventStateSub: Subscription;
+  private isSavingStateSub: Subscription;
+  private typeSub: Subscription;
 
   constructor(
     private fb: FormBuilder,
@@ -40,24 +41,26 @@ export class EventComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.eventStateSubscription = this.store.select('event', 'event').subscribe((event: TimelineEvent) => {
+    this.eventStateSub = this.store.select('event', 'event').subscribe((event: TimelineEvent) => {
       if (event !== null) {
         this.initForm(event);
         this.changeDetector.markForCheck();
       }
     });
 
-    this.isSavingStateSubscription = this.store.select('event', 'status').subscribe((status: EventStatus) => {
+    this.isSavingStateSub = this.store.select('event', 'status').subscribe((status: EventStatus) => {
       if (this.closeAfterSave && (status === 'INSERTED' || status === 'UPDATED')) {
         this.activeModal.close(this.form.value);
       }
     });
-
   }
 
   ngOnDestroy() {
-    this.eventStateSubscription.unsubscribe();
-    this.isSavingStateSubscription.unsubscribe();
+    this.eventStateSub.unsubscribe();
+    this.isSavingStateSub.unsubscribe();
+    if (this.typeSub) {
+      this.typeSub.unsubscribe();
+    }
   }
 
   invalidControl(controlName: string): boolean {
@@ -79,7 +82,7 @@ export class EventComponent implements OnInit, OnDestroy {
       if (this.isNew() && this.attachTo !== null) {
         this.dispatchInsertAndAttachToTimelineAction();
       } else {
-        this.dispatchInsertAction();
+        this.dispatchSaveAction();
       }
     }
   }
@@ -98,18 +101,49 @@ export class EventComponent implements OnInit, OnDestroy {
       title: [event.title, Validators.required],
       dateBegin: [event.dateBegin, Validators.required],
       dateEnd: [event.dateEnd, Validators.required],
+      type: [null, Validators.required],
     }, { validator: validateEventForm });
+
+    this.typeSub = this.store
+      .select<string>(state => {
+        if (state.event.typeSelector.selectedItem) {
+          return state.event.typeSelector.selectedItem.item.id;
+        } else {
+          return null;
+        }
+      })
+      .subscribe(typeId => {
+        this.form.controls.type.setValue(typeId, { emitEvent: false });
+        this.form.controls.type.markAsTouched();
+      });
   }
 
   private isNew(): boolean {
     return this.form.controls.id.value === null;
   }
 
+  private dispatchSaveAction() {
+    if (this.isNew()) {
+      this.dispatchInsertAction();
+    } else {
+      this.dispatchUpdateAction();
+    }
+  }
+
   private dispatchInsertAction() {
-    this.store.dispatch({
-      type: this.isNew() ? 'EVENT_INSERT' : 'EVENT_UPDATE',
+    const action: EventInsertAction = {
+      type: 'EVENT_INSERT',
       payload: this.form.value,
-    });
+    };
+    this.store.dispatch(action);
+  }
+
+  private dispatchUpdateAction() {
+    const action: EventUpdateAction = {
+      type: 'EVENT_UPDATE',
+      payload: this.form.value,
+    };
+    this.store.dispatch(action);
   }
 
   private dispatchInsertAndAttachToTimelineAction() {
@@ -137,6 +171,7 @@ export interface EventForm extends FormGroup {
     title: FormControl;
     dateBegin: DateFormControl;
     dateEnd: DateFormControl;
+    type: FormControl;
   };
   errors: EventFormErrors | null;
   setValue(value: TimelineEvent);

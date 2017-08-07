@@ -14,6 +14,7 @@
             [name]="typeSelectorName"
             [stateMapFn]="mapEventSelectorState"
             [placeholder]="'Выберите тип'"
+            [hasDanger]="invalidControl('type')"
         ></tl-selector-select>
       </div>
       <div class="col-md-9 form-group" [class.has-danger]="invalidControl('title')">

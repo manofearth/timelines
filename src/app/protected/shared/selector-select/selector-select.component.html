@@ -3,6 +3,7 @@
   <button
       type="button"
       class="selector-select-main-button"
+      [class.has-danger]="hasDanger"
       (click)="onMainButtonClick()"
   >
     {{(selectedItem$ | async).title}}

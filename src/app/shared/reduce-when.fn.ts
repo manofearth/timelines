@@ -7,7 +7,7 @@ export function reduceWhen<TState>(
 
   return (state: TState, action: Action) => {
     if (filter(action)) {
-      reducer(state, action);
+      return reducer(state, action);
     } else {
       return state;
     }
