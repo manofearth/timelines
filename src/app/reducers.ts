@@ -5,7 +5,7 @@ import { storeFreeze } from 'ngrx-store-freeze';
 import { timelinesReducer, TimelinesState } from './protected/timelines/timelines.reducer';
 import { environment } from '../environments/environment';
 import { timelineStateReducer } from './protected/timeline/timeline-state.reducer';
-import { eventStateReducer } from './protected/event/event-state.reducer';
+import { eventStateReducer } from './protected/event/reducers/event-state.reducer';
 import { timelineInitialState, TimelineState } from './protected/timeline/timeline-states';
 import { eventInitialState, EventState } from './protected/event/event-states';
 import { typesInitialState, TypesState } from './protected/types/types-states';

@@ -44,4 +44,5 @@ export interface FirebaseTimelineEvent {
   title: string;
   dateBegin: TimelineDate;
   dateEnd: TimelineDate;
+  typeId: string;
 }

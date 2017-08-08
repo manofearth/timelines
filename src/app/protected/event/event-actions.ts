@@ -16,16 +16,6 @@ export interface EventGetAction extends EventActionBase {
   payload: string; // id
 }
 
-export interface EventGetSuccessAction extends EventActionBase {
-  type: 'EVENT_GET_SUCCESS';
-  payload: TimelineEvent;
-}
-
-export interface EventGetErrorAction extends EventActionBase {
-  type: 'EVENT_GET_ERROR';
-  payload: Error;
-}
-
 export interface EventCreateAction extends EventActionBase {
   type: 'EVENT_CREATE';
   payload: string; // title
@@ -107,9 +97,3 @@ export interface EventAttachToTimelineErrorAction extends EventActionBase {
   type: 'EVENT_ATTACH_TO_TIMELINE_ERROR';
   payload: Error;
 }
-
-export type EventAction = EventGetAction | EventCreateAction | EventUpdateAction | EventUpdateSuccessAction
-  | EventUpdateErrorAction | EventInsertAction | EventInsertSuccessAction | EventInsertErrorAction
-  | EventInsertAndAttachToTimelineAction | EventGetSuccessAction | EventGetErrorAction | EventEraseAction
-  | EventDetachAction | EventDetachSuccessAction | EventDetachErrorAction | EventAttachToTimelineAction
-  | EventAttachToTimelineSuccessAction | EventAttachToTimelineErrorAction;

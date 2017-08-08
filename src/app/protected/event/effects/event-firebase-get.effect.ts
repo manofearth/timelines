@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
-import { EventGetAction, EventGetErrorAction, EventGetSuccessAction } from '../event-actions';
+import { EventGetAction } from '../event-actions';
 import { Observable } from 'rxjs/Observable';
 import { EventsFirebaseService, FirebaseTimelineEvent } from '../events-firebase.service';
 import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
-import { TimelineEvent } from '../../shared/timeline-event';
 import { Actions, Effect } from '@ngrx/effects';
+import { Action } from '@ngrx/store';
 
 @Injectable()
 export class EventFirebaseGetEffect extends ProtectedFirebaseEffect<EventGetAction,
@@ -25,7 +25,7 @@ export class EventFirebaseGetEffect extends ProtectedFirebaseEffect<EventGetActi
   protected mapToSuccessAction(effectResult: FirebaseTimelineEvent): EventGetSuccessAction {
     return {
       type: 'EVENT_GET_SUCCESS',
-      payload: toTimelineEvent(effectResult),
+      payload: effectResult,
     };
   }
 
@@ -46,11 +46,12 @@ export class EventFirebaseGetEffect extends ProtectedFirebaseEffect<EventGetActi
   }
 }
 
-function toTimelineEvent(firebaseEvent: FirebaseTimelineEvent): TimelineEvent {
-  return {
-    id: firebaseEvent.$key,
-    title: firebaseEvent.title,
-    dateBegin: firebaseEvent.dateBegin,
-    dateEnd: firebaseEvent.dateEnd,
-  };
+export interface EventGetSuccessAction extends Action {
+  type: 'EVENT_GET_SUCCESS';
+  payload: FirebaseTimelineEvent;
+}
+
+export interface EventGetErrorAction extends Action {
+  type: 'EVENT_GET_ERROR';
+  payload: Error;
 }

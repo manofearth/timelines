@@ -6,6 +6,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../../../reducers';
 import { TimelineState } from '../../timeline/timeline-states';
 import { toError } from '../../shared/firebase/protected-firebase.effect';
+import { EventAttachToTimelineErrorAction, EventAttachToTimelineSuccessAction } from '../event-actions';
 
 @Injectable()
 export class EventFirebaseAttachEffect {
@@ -13,7 +14,7 @@ export class EventFirebaseAttachEffect {
   @Effect() effect = this.actions
     .ofType('TIMELINE_EVENT_SELECTED')
     .withLatestFrom(this.store.select<TimelineState>(state => state.timeline))
-    .switchMap(([action, timelineState]) =>
+    .switchMap(([action, timelineState]): Observable<EventAttachToTimelineSuccessAction | EventAttachToTimelineErrorAction> =>
       this.eventToTimelineAttacher
         .attach(
           timelineState.timeline.id,
