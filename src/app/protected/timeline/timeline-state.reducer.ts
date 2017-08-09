@@ -1,4 +1,4 @@
-import { TimelineAction } from './timeline-actions';
+import { TimelineAction, TimelineChangedAction, TimelineGetSuccessAction } from './timeline-actions';
 import { Timeline, TimelineState } from './timeline-states';
 import { Action, ActionReducer, combineReducers } from '@ngrx/store';
 import { Reducers } from '../../reducers';
@@ -10,6 +10,7 @@ import { TimelineEventForList } from '../shared/timeline-event';
 import { reduceWhen } from '../../shared/reduce-when.fn';
 import { actionHasName } from '../../shared/action-has-name.fn';
 import { composeReducers } from '../../shared/compose-reducers.fn';
+import { EventChangedAction } from '../event/event.component';
 
 const reducers: Reducers<TimelineState> = {
   isLoading: timelineIsLoadingReducer,
@@ -103,7 +104,8 @@ function timelineErrorReducer(state: Error, action: TimelineAction): Error {
   }
 }
 
-function timelineReducer(state: Timeline, action: TimelineAction): Timeline {
+type TimelineReducerAction = TimelineGetSuccessAction | TimelineChangedAction | EventChangedAction;
+function timelineReducer(state: Timeline, action: TimelineReducerAction): Timeline {
   switch (action.type) {
     case 'TIMELINE_GET_SUCCESS':
       return action.payload;
@@ -112,6 +114,40 @@ function timelineReducer(state: Timeline, action: TimelineAction): Timeline {
         ...state,
         ...action.payload,
       };
+    case 'EVENT_CHANGED':
+      const eventIndex = state.groups.reduce<{ groupIndex: number, eventIndex: number }>((acc, group, i) => {
+        if (acc !== null) {
+          return acc; // already found
+        }
+        const eventIndexInGroup = group.events.findIndex(event => event.id === action.payload.id);
+        if (eventIndexInGroup === -1) {
+          return null;
+        } else {
+          return {
+            groupIndex: i,
+            eventIndex: eventIndexInGroup,
+          };
+        }
+      }, null);
+
+      if (eventIndex === null) {
+        return state;
+      } else {
+        const groupsClone = [...state.groups];
+        const eventsClone = [...groupsClone[eventIndex.groupIndex].events];
+        groupsClone[eventIndex.groupIndex] = {
+          ...groupsClone[eventIndex.groupIndex],
+          events: eventsClone,
+        };
+        eventsClone[eventIndex.eventIndex] = {
+          ...eventsClone[eventIndex.eventIndex],
+          title: action.payload.title,
+        };
+        return {
+          ...state,
+          groups: groupsClone,
+        };
+      }
     default:
       return state;
   }

@@ -10,9 +10,12 @@ import {
 } from '../event-actions';
 import { EventGetErrorAction, EventGetSuccessAction } from '../effects/event-firebase-get.effect';
 import { FirebaseTimelineEvent } from '../events-firebase.service';
+import { InputChangedAction } from '../../shared/input/input.directive';
+import { EVENT_TITLE_INPUT_NAME } from '../event.component';
 
 type EventReducerAction = EventGetSuccessAction | EventGetErrorAction | EventUpdateAction | EventInsertAction
-  | EventEraseAction | EventCreateAction | EventInsertAndAttachToTimelineAction | EventInsertSuccessAction;
+  | EventEraseAction | EventCreateAction | EventInsertAndAttachToTimelineAction | EventInsertSuccessAction
+  | InputChangedAction;
 
 export function eventReducer(state: TimelineEvent, action: EventReducerAction): TimelineEvent {
   switch (action.type) {
@@ -34,6 +37,13 @@ export function eventReducer(state: TimelineEvent, action: EventReducerAction): 
       return action.payload.event;
     case 'EVENT_INSERT_SUCCESS':
       return { ...state, id: action.payload };
+    case 'INPUT_CHANGED':
+      switch (action.payload.name) {
+        case EVENT_TITLE_INPUT_NAME:
+          return { ...state, title: action.payload.value };
+        default:
+          return state;
+      }
     default:
       return state;
   }

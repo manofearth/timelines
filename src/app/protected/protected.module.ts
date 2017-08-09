@@ -23,6 +23,7 @@ import { TypeComponent } from './type/type.component';
 import { SelectorListComponent } from './shared/selector-list/selector-list.component';
 import { SelectorInputComponent } from './shared/selector-input/selector-input.component';
 import { SelectorSelectComponent } from './shared/selector-select/selector-select.component';
+import { InputDirective } from './shared/input/input.directive';
 
 const routes: Routes = [
   {
@@ -72,6 +73,7 @@ const routes: Routes = [
     SearchFieldComponent,
     SelectorListComponent,
     SelectorSelectComponent,
+    InputDirective,
   ],
   providers: [
     TimelineCanDeactivate,

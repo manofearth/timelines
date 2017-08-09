@@ -5,8 +5,8 @@
   <h4 class="modal-title">Событие</h4>
 </div>
 <div class="modal-body container-fluid">
-  <div *ngIf="!form">Загружается...</div>
-  <form *ngIf="form" [formGroup]="form">
+  <div *ngIf="(status$ | async) === 'LOADING'">Загружается...</div>
+  <div *ngIf="(status$ | async) !== 'LOADING'">
 
     <div class="row">
       <div class="col-md-3">
@@ -14,37 +14,26 @@
             [name]="typeSelectorName"
             [stateMapFn]="mapEventSelectorState"
             [placeholder]="'Выберите тип'"
-            [hasDanger]="invalidControl('type')"
         ></tl-selector-select>
       </div>
-      <div class="col-md-9 form-group" [class.has-danger]="invalidControl('title')">
-        <input class="form-control" title="Имя события" placeholder="Имя события" formControlName="title">
+      <div class="col-md-9 form-group">
+        <input [tlInput]="titleInputName" [stateMapFn]="mapTitleState" class="form-control" title="Имя события" placeholder="Имя события">
       </div>
     </div>
 
     <div class="row">
 
-      <div class="col-md-3 form-group"
-           [class.has-danger]="invalidControl('dateBegin')">
-        <input class="form-control" title="Начало периода" placeholder="Начало периода"
-               formControlName="dateBegin" tl-date="beginning">
-        <small *ngIf="invalidControl('dateBegin')" class="form-control-feedback">Неверный формат даты</small>
+      <div class="col-md-3 form-group">
+        <input class="form-control" title="Начало периода" placeholder="Начало периода" tl-date="beginning">
       </div>
 
-      <div class="col-md-3 form-group"
-           [class.has-danger]=
-               "invalidControl('dateEnd') || dateEndLessDateBegin()">
-        <input class="form-control" title="Конец периода" placeholder="Конец периода"
-               formControlName="dateEnd" tl-date="ending">
-        <small *ngIf="invalidControl('dateEnd')" class="form-control-feedback">Неверный формат даты</small>
-        <small *ngIf="dateEndLessDateBegin()" class="form-control-feedback">
-          Период оканчивается раньше своего начала
-        </small>
+      <div class="col-md-3 form-group">
+        <input class="form-control" title="Конец периода" placeholder="Конец периода" tl-date="ending">
       </div>
 
     </div>
 
-  </form>
+  </div>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-primary" (click)="save()">Сохранить</button>
