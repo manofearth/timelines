@@ -10,7 +10,6 @@ import { TimelineEventForList } from '../shared/timeline-event';
 import { reduceWhen } from '../../shared/reduce-when.fn';
 import { actionHasName } from '../../shared/action-has-name.fn';
 import { composeReducers } from '../../shared/compose-reducers.fn';
-import { EventChangedAction } from '../event/event.component';
 
 const reducers: Reducers<TimelineState> = {
   isLoading: timelineIsLoadingReducer,
@@ -104,7 +103,7 @@ function timelineErrorReducer(state: Error, action: TimelineAction): Error {
   }
 }
 
-type TimelineReducerAction = TimelineGetSuccessAction | TimelineChangedAction | EventChangedAction;
+type TimelineReducerAction = TimelineGetSuccessAction | TimelineChangedAction;
 function timelineReducer(state: Timeline, action: TimelineReducerAction): Timeline {
   switch (action.type) {
     case 'TIMELINE_GET_SUCCESS':
@@ -114,40 +113,6 @@ function timelineReducer(state: Timeline, action: TimelineReducerAction): Timeli
         ...state,
         ...action.payload,
       };
-    case 'EVENT_CHANGED':
-      const eventIndex = state.groups.reduce<{ groupIndex: number, eventIndex: number }>((acc, group, i) => {
-        if (acc !== null) {
-          return acc; // already found
-        }
-        const eventIndexInGroup = group.events.findIndex(event => event.id === action.payload.id);
-        if (eventIndexInGroup === -1) {
-          return null;
-        } else {
-          return {
-            groupIndex: i,
-            eventIndex: eventIndexInGroup,
-          };
-        }
-      }, null);
-
-      if (eventIndex === null) {
-        return state;
-      } else {
-        const groupsClone = [...state.groups];
-        const eventsClone = [...groupsClone[eventIndex.groupIndex].events];
-        groupsClone[eventIndex.groupIndex] = {
-          ...groupsClone[eventIndex.groupIndex],
-          events: eventsClone,
-        };
-        eventsClone[eventIndex.eventIndex] = {
-          ...eventsClone[eventIndex.eventIndex],
-          title: action.payload.title,
-        };
-        return {
-          ...state,
-          groups: groupsClone,
-        };
-      }
     default:
       return state;
   }

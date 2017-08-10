@@ -16,7 +16,7 @@
             [placeholder]="'Выберите тип'"
         ></tl-selector-select>
       </div>
-      <div class="col-md-9 form-group">
+      <div class="col-md-9 form-group" [class.has-danger]="isTitleEmpty$ | async">
         <input [tlInput]="titleInputName" [stateMapFn]="mapTitleState" class="form-control" title="Имя события" placeholder="Имя события">
       </div>
     </div>

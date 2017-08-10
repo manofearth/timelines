@@ -41,7 +41,6 @@ export class InputDirective implements OnInit, OnDestroy {
     };
     this.store.dispatch(action);
   }
-
 }
 
 export interface InputChangedAction extends Action {

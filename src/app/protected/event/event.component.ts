@@ -2,13 +2,12 @@
 import { Subscription } from '../../shared/rxjs';
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Action, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
 import { EventStatus } from './event-states';
 import { SelectorInputState } from '../shared/selector-input/selector-input-state';
 import { TimelineEventsTypeForList } from '../types/types-states';
 import { Observable } from 'rxjs/Observable';
-import { TimelineEvent } from '../shared/timeline-event';
 
 @Component({
   templateUrl: './event.component.html',
@@ -21,11 +20,11 @@ export class EventComponent implements OnInit, OnDestroy {
   titleInputName: string = EVENT_TITLE_INPUT_NAME;
 
   status$: Observable<EventStatus>;
+  isTitleEmpty$: Observable<boolean>;
 
   attachTo: { timelineId: string, groupId: string } = null;
 
   private typeSub: Subscription;
-  private eventStateSub: Subscription;
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -35,19 +34,10 @@ export class EventComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.status$ = this.store.select(state => state.event.status);
-
-    this.eventStateSub = this.store
-      .select<TimelineEvent>(state => state.event.event)
-      .filter(event => event !== null)
-      .map<TimelineEvent, EventChangedAction>(event => ({
-        type: 'EVENT_CHANGED',
-        payload: event,
-      }))
-      .subscribe(this.store);
+    this.isTitleEmpty$ = this.store.select(state => state.event.validation.emptyTitle);
   }
 
   ngOnDestroy() {
-    this.eventStateSub.unsubscribe();
     if (this.typeSub) {
       this.typeSub.unsubscribe();
     }
@@ -62,14 +52,9 @@ export class EventComponent implements OnInit, OnDestroy {
   }
 
   mapTitleState(appState: AppState): string {
-    return appState.event.event.title;
+    return appState.event.event ? appState.event.event.title : '';
   }
 }
 
 export const EVENT_TYPE_SELECTOR_NAME = 'event-type-selector';
 export const EVENT_TITLE_INPUT_NAME = 'event-title-input';
-
-export interface EventChangedAction extends Action {
-  type: 'EVENT_CHANGED';
-  payload: TimelineEvent;
-}
