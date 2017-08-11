@@ -2,11 +2,11 @@ export interface TypesState {
   isLoading: boolean;
   isSearching: boolean;
   error: Error;
-  types: TimelineEventsTypeForList[];
+  types: TimelineEventsTypeLight[];
   query: string;
 }
 
-export interface TimelineEventsTypeForList {
+export interface TimelineEventsTypeLight {
   id: string;
   title: string;
 }

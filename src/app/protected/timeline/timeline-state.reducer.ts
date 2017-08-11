@@ -6,7 +6,7 @@ import { selectorInputReducer } from '../shared/selector-input/selector-input-re
 import { TIMELINE_EVENTS_SELECTOR_NAME_PREFIX } from './events/timeline-events-table.component';
 import { SelectorInputState } from '../shared/selector-input/selector-input-state';
 import { EventsSearchErrorAction, EventsSearchSuccessAction } from '../events/effects/events-elastic-search.effect';
-import { TimelineEventForList } from '../shared/timeline-event';
+import { TimelineEventLight } from '../shared/timeline-event';
 import { reduceWhen } from '../../shared/reduce-when.fn';
 import { actionHasName } from '../../shared/action-has-name.fn';
 import { composeReducers } from '../../shared/compose-reducers.fn';
@@ -17,7 +17,7 @@ const reducers: Reducers<TimelineState> = {
   error: timelineErrorReducer,
   timeline: timelineReducer,
   currentGroupIndex: timelineCurrentGroupIndexReducer,
-  eventsSelector: reduceWhen<SelectorInputState<TimelineEventForList>>(
+  eventsSelector: reduceWhen<SelectorInputState<TimelineEventLight>>(
     actionNameStartsWith(TIMELINE_EVENTS_SELECTOR_NAME_PREFIX),
     composeReducers(
       timelineEventsSelectorPostReducer,
@@ -35,8 +35,8 @@ export const timelineStateReducer: ActionReducer<TimelineState> = combineReducer
 type EventsSelectorReducerAction = EventsSearchSuccessAction | EventsSearchErrorAction;
 
 function timelineEventsSelectorPostReducer(
-  state: SelectorInputState<TimelineEventForList>, action: EventsSelectorReducerAction
-): SelectorInputState<TimelineEventForList> {
+  state: SelectorInputState<TimelineEventLight>, action: EventsSelectorReducerAction
+): SelectorInputState<TimelineEventLight> {
 
   switch (action.type) {
 

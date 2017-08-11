@@ -1,3 +1,4 @@
+export function getPropSafely<T>(object: T, property: keyof T, defaultValue: any): any
 export function getPropSafely(object: Object, propertyPath: string, defaultValue?: any): any {
   if (object === null || object === undefined) {
     return defaultValue;

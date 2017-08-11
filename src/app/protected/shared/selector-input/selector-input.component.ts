@@ -17,7 +17,7 @@ export class SelectorInputComponent implements OnInit {
 
   @Input() name: string;
   @Input() placeholder: string;
-  @Input() stateMapFn: (state: AppState) => SelectorInputState<any>;
+  @Input() stateSelector: (state: AppState) => SelectorInputState<any>;
 
   show$: Observable<boolean>;
   isSearching$: Observable<boolean>;
@@ -34,11 +34,11 @@ export class SelectorInputComponent implements OnInit {
 
     this.dispatchInitAction();
 
-    this.show$ = this.store.select<boolean>(state => this.stateMapFn(state).results.length !== 0);
-    this.isSearching$ = this.store.select<boolean>(state => this.stateMapFn(state).isSearching);
-    this.searchQuery$ = this.store.select<string>(state => this.stateMapFn(state).query);
-    this.results$ = this.store.select<SelectorListItem<any>[]>(state => this.stateMapFn(state).results);
-    this.highlightedIndex$ = this.store.select<number>(state => this.stateMapFn(state).highlightedIndex);
+    this.show$ = this.store.select<boolean>(state => this.stateSelector(state).results.length !== 0);
+    this.isSearching$ = this.store.select<boolean>(state => this.stateSelector(state).isSearching);
+    this.searchQuery$ = this.store.select<string>(state => this.stateSelector(state).query);
+    this.results$ = this.store.select<SelectorListItem<any>[]>(state => this.stateSelector(state).results);
+    this.highlightedIndex$ = this.store.select<number>(state => this.stateSelector(state).highlightedIndex);
   }
 
   private dispatchInitAction() {

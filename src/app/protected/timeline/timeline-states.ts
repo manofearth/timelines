@@ -1,6 +1,6 @@
 import { TimelineDate } from '../shared/date';
 import { selectorInputInitialState, SelectorInputState } from '../shared/selector-input/selector-input-state';
-import { TimelineEventForList } from '../shared/timeline-event';
+import { TimelineEventLight } from '../shared/timeline-event';
 
 export interface Timeline {
   id: string;
@@ -38,7 +38,7 @@ export interface TimelineState {
   error: Error;
   timeline: Timeline;
   currentGroupIndex: number;
-  eventsSelector: SelectorInputState<TimelineEventForList>;
+  eventsSelector: SelectorInputState<TimelineEventLight>;
 }
 
 export const timelineInitialState: TimelineState = {

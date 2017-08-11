@@ -1,70 +1,70 @@
-import { Directive, HostListener, Input, ElementRef, Renderer, forwardRef } from '@angular/core';
+import { Directive, ElementRef, HostListener, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { DateParser, DateParserContext } from '../shared/date-parser/date-parser.service';
 import { TimelineDate } from '../shared/date';
 import { Logger } from '../../shared/logger.service';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { AppState } from '../../reducers';
+import { Action, Store } from '@ngrx/store';
+import { Subscription } from 'rxjs/Subscription';
 import { getPropSafely } from '../shared/helpers';
 
 @Directive({
-  selector: 'input[tl-date][formControlName]',
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => DateDirective),
-      multi: true
-    },
-  ],
+  selector: 'input[tlDate]',
 })
-export class DateDirective implements ControlValueAccessor {
+export class DateDirective implements OnInit, OnDestroy {
 
-  @Input('tl-date') private context: string;
+  @Input('tlDate') private name: string;
+  @Input() stateSelector: (state: AppState) => TimelineDate;
+  @Input() context: string;
 
-  private date: TimelineDate = null;
-  private propagateChange: (value: TimelineDate) => void = () => {
-  };
-  private propagateTouch: () => void = () => {
-  };
+  private stateSub: Subscription;
 
-  constructor(private inputEl: ElementRef,
-              private renderer: Renderer,
-              private parser: DateParser,
-              private logger: Logger) {
+  constructor(
+    private el: ElementRef,
+    private renderer: Renderer2,
+    private parser: DateParser,
+    private logger: Logger,
+    private store: Store<AppState>,
+  ) {
   }
 
-  @HostListener('change', ['$event.target.value']) onChange(value: string) {
-    if (value === '') {
-      this.date = null;
-    } else {
-      try {
-        this.date = this.parser.parse(value, { context: toParserContext(this.context) });
-      } catch (e) {
-        this.logger.error('Date parse error: ' + e.message);
-        this.date = null;
-      }
-    }
-    this.propagateChange(this.date);
+  ngOnInit() {
+    this.stateSub = this.store.select<TimelineDate>(this.stateSelector).subscribe(state => {
+      this.renderer.setProperty(this.el.nativeElement, 'value', getPropSafely<TimelineDate>(state, 'title', ''));
+    });
+  }
+
+  ngOnDestroy() {
+    this.stateSub.unsubscribe();
   }
 
   //noinspection JSUnusedGlobalSymbols
-  @HostListener('blur') onBlur() {
-    this.propagateTouch();
+  @HostListener('change', ['$event.target.value'])
+  onChange(value: string) {
+    this.dispatchChangedAction(this.parseDate(value));
   }
 
-  get value(): TimelineDate {
-    return this.date;
+  private parseDate(value: string): TimelineDate {
+    if (value === '') {
+      return null;
+    } else {
+      try {
+        return this.parser.parse(value, { context: toParserContext(this.context) });
+      } catch (e) {
+        this.logger.error('Date parse error: ' + e.message);
+        return null;
+      }
+    }
   }
 
-  writeValue(value: TimelineDate) {
-    this.date = value;
-    this.renderer.setElementProperty(this.inputEl.nativeElement, 'value', getPropSafely(value, 'title', ''));
-  }
-
-  registerOnChange(fn: any): void {
-    this.propagateChange = fn;
-  }
-
-  registerOnTouched(fn: any): void {
-    this.propagateTouch = fn;
+  private dispatchChangedAction(date: TimelineDate) {
+    const action: DateChangedAction = {
+      type: 'DATE_CHANGED',
+      payload: {
+        name: this.name,
+        value: date,
+      }
+    };
+    this.store.dispatch(action);
   }
 
 }
@@ -74,5 +74,13 @@ function toParserContext(contextAsString: string) {
     return DateParserContext.ENDING_DATE;
   } else {
     return DateParserContext.BEGINNING_DATE;
+  }
+}
+
+export interface DateChangedAction extends Action {
+  type: 'DATE_CHANGED';
+  payload: {
+    name: string;
+    value: TimelineDate | null;
   }
 }

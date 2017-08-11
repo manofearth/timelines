@@ -11,11 +11,18 @@ import {
 import { EventGetErrorAction, EventGetSuccessAction } from '../effects/event-firebase-get.effect';
 import { FirebaseTimelineEvent } from '../events-firebase.service';
 import { InputChangedAction } from '../../shared/input/input.directive';
-import { EVENT_TITLE_INPUT_NAME } from '../event.component';
+import {
+  EVENT_DATE_BEGIN_INPUT_NAME,
+  EVENT_DATE_END_INPUT_NAME,
+  EVENT_TITLE_INPUT_NAME,
+  EVENT_TYPE_SELECTOR_NAME
+} from '../event.component';
+import { DateChangedAction } from '../../date/date.directive';
+import { SelectorSelectSelectedAction } from '../../shared/selector-select/selector-select.component';
 
 type EventReducerAction = EventGetSuccessAction | EventGetErrorAction | EventUpdateAction | EventInsertAction
   | EventEraseAction | EventCreateAction | EventInsertAndAttachToTimelineAction | EventInsertSuccessAction
-  | InputChangedAction;
+  | InputChangedAction | DateChangedAction | SelectorSelectSelectedAction;
 
 export function eventReducer(state: TimelineEvent, action: EventReducerAction): TimelineEvent {
   switch (action.type) {
@@ -29,6 +36,7 @@ export function eventReducer(state: TimelineEvent, action: EventReducerAction): 
     case 'EVENT_CREATE':
       return {
         id: null,
+        type: null,
         title: action.payload,
         dateBegin: null,
         dateEnd: null,
@@ -44,6 +52,22 @@ export function eventReducer(state: TimelineEvent, action: EventReducerAction): 
         default:
           return state;
       }
+    case 'DATE_CHANGED':
+      switch (action.payload.name) {
+        case EVENT_DATE_BEGIN_INPUT_NAME:
+          return { ...state, dateBegin: action.payload.value };
+        case EVENT_DATE_END_INPUT_NAME:
+          return { ...state, dateEnd: action.payload.value };
+        default:
+          return state;
+      }
+    case 'SELECTOR_SELECT_SELECTED':
+      switch (action.payload.name) {
+        case EVENT_TYPE_SELECTOR_NAME:
+          return { ...state, type: action.payload.value };
+        default:
+          return state;
+      }
     default:
       return state;
   }
@@ -52,6 +76,7 @@ export function eventReducer(state: TimelineEvent, action: EventReducerAction): 
 function toTimelineEvent(firebaseEvent: FirebaseTimelineEvent): TimelineEvent {
   return {
     id: firebaseEvent.$key,
+    type: null,
     title: firebaseEvent.title,
     dateBegin: firebaseEvent.dateBegin,
     dateEnd: firebaseEvent.dateEnd,

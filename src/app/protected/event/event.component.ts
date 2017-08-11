@@ -6,8 +6,11 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
 import { EventStatus } from './event-states';
 import { SelectorInputState } from '../shared/selector-input/selector-input-state';
-import { TimelineEventsTypeForList } from '../types/types-states';
+import { TimelineEventsTypeLight } from '../types/types-states';
 import { Observable } from 'rxjs/Observable';
+import { TimelineDate } from '../shared/date';
+import { TimelineEvent } from '../shared/timeline-event';
+import { getPropSafely } from '../shared/helpers';
 
 @Component({
   templateUrl: './event.component.html',
@@ -18,9 +21,14 @@ export class EventComponent implements OnInit, OnDestroy {
 
   typeSelectorName: string = EVENT_TYPE_SELECTOR_NAME;
   titleInputName: string = EVENT_TITLE_INPUT_NAME;
+  dateBeginInputName: string = EVENT_DATE_BEGIN_INPUT_NAME;
+  dateEndInputName: string = EVENT_DATE_END_INPUT_NAME;
 
   status$: Observable<EventStatus>;
+  isTypeEmpty$: Observable<boolean>;
   isTitleEmpty$: Observable<boolean>;
+  isDateBeginEmpty$: Observable<boolean>;
+  isDateEndEmpty$: Observable<boolean>;
 
   attachTo: { timelineId: string, groupId: string } = null;
 
@@ -34,7 +42,10 @@ export class EventComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.status$ = this.store.select(state => state.event.status);
+    this.isTypeEmpty$ = this.store.select(state => state.event.validation.emptyType);
     this.isTitleEmpty$ = this.store.select(state => state.event.validation.emptyTitle);
+    this.isDateBeginEmpty$ = this.store.select(state => state.event.validation.emptyDateBegin);
+    this.isDateEndEmpty$ = this.store.select(state => state.event.validation.emptyDateEnd);
   }
 
   ngOnDestroy() {
@@ -47,14 +58,24 @@ export class EventComponent implements OnInit, OnDestroy {
     this.activeModal.dismiss();
   }
 
-  mapEventSelectorState(appState: AppState): SelectorInputState<TimelineEventsTypeForList> {
+  selectTypeSelectorState(appState: AppState): SelectorInputState<TimelineEventsTypeLight> {
     return appState.event.typeSelector;
   }
 
-  mapTitleState(appState: AppState): string {
-    return appState.event.event ? appState.event.event.title : '';
+  selectTitle(appState: AppState): string {
+    return getPropSafely<TimelineEvent>(appState.event.event, 'title', '');
+  }
+
+  selectDateBegin(appState: AppState): TimelineDate {
+    return getPropSafely<TimelineEvent>(appState.event.event, 'dateBegin', null);
+  }
+
+  selectDateEnd(appState: AppState): TimelineDate {
+    return getPropSafely<TimelineEvent>(appState.event.event, 'dateEnd', null);
   }
 }
 
 export const EVENT_TYPE_SELECTOR_NAME = 'event-type-selector';
 export const EVENT_TITLE_INPUT_NAME = 'event-title-input';
+export const EVENT_DATE_BEGIN_INPUT_NAME = 'event-date-begin-input';
+export const EVENT_DATE_END_INPUT_NAME = 'event-date-end-input';

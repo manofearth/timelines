@@ -2,15 +2,15 @@ import { SelectorSelectButtonAction } from '../../shared/selector-select/selecto
 import { SearchFieldInputAction } from '../../shared/search-field/search-field-actions';
 import { TypesSearchErrorAction, TypesSearchSuccessAction } from '../../types/effects/elastic-types-search.effect';
 import { SelectorSelectState } from '../../shared/selector-select/selector-select-state';
-import { TimelineEventsTypeForList } from '../../types/types-states';
+import { TimelineEventsTypeLight } from '../../types/types-states';
 import { SelectorListItem } from '../../shared/selector-list/selector-list-item';
 
 type EventTypeSelectorReducerAction = SearchFieldInputAction | TypesSearchSuccessAction | TypesSearchErrorAction
   | SelectorSelectButtonAction;
 
 export function eventTypeSelectorReducer(
-  state: SelectorSelectState<TimelineEventsTypeForList>, action: EventTypeSelectorReducerAction
-): SelectorSelectState<TimelineEventsTypeForList> {
+  state: SelectorSelectState<TimelineEventsTypeLight>, action: EventTypeSelectorReducerAction
+): SelectorSelectState<TimelineEventsTypeLight> {
 
   switch (action.type) {
     case 'SELECTOR_SELECT_BUTTON':
@@ -24,7 +24,7 @@ export function eventTypeSelectorReducer(
         ...state,
         isSearching: false,
         results: action.payload.hits.map(
-          (hit): SelectorListItem<TimelineEventsTypeForList> => ({
+          (hit): SelectorListItem<TimelineEventsTypeLight> => ({
             title: hit._source.title,
             titleHighlighted: hit.highlight ? hit.highlight.title[0] : hit._source.title,
             item: {

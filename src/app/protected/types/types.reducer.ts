@@ -1,4 +1,4 @@
-import { TimelineEventsTypeForList, typesInitialState, TypesState } from './types-states';
+import { TimelineEventsTypeLight, typesInitialState, TypesState } from './types-states';
 import { TypesSearchErrorAction, TypesSearchSuccessAction } from './effects/elastic-types-search.effect';
 import { TypeGetSuccessAction } from '../type/type-get-actions';
 import { TimelineEventsType } from '../type/type-states';
@@ -82,7 +82,7 @@ export function typesReducer(state: TypesState, action: TypesAction): TypesState
   }
 }
 
-function extractTypeForList(type: TimelineEventsType): TimelineEventsTypeForList {
+function extractTypeForList(type: TimelineEventsType): TimelineEventsTypeLight {
   return {
     id: type.id,
     title: type.title,
@@ -90,7 +90,7 @@ function extractTypeForList(type: TimelineEventsType): TimelineEventsTypeForList
 }
 
 
-function toTimelineEventsType(hit: TypesElasticSearchHit): TimelineEventsTypeForList {
+function toTimelineEventsType(hit: TypesElasticSearchHit): TimelineEventsTypeLight {
   return {
     id: hit._id,
     title: hit.highlight ? hit.highlight.title[0] : hit._source.title,

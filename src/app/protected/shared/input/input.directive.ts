@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs/Subscription';
 export class InputDirective implements OnInit, OnDestroy {
 
   @Input('tlInput') name: string;
-  @Input() stateMapFn: (state: AppState) => string;
+  @Input() stateSelector: (state: AppState) => string;
 
   private stateSub: Subscription;
 
@@ -20,7 +20,7 @@ export class InputDirective implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.stateSub = this.store.select<string>(this.stateMapFn).subscribe(state => {
+    this.stateSub = this.store.select<string>(this.stateSelector).subscribe(state => {
       this.renderer.setProperty(this.el.nativeElement, 'value', state);
     });
   }

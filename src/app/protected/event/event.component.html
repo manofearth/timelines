@@ -11,24 +11,40 @@
     <div class="row">
       <div class="col-md-3">
         <tl-selector-select
-            [name]="typeSelectorName"
-            [stateMapFn]="mapEventSelectorState"
-            [placeholder]="'Выберите тип'"
+          [name]="typeSelectorName"
+          [stateSelector]="selectTypeSelectorState"
+          [placeholder]="'Выберите тип'"
+          [hasDanger]="isTypeEmpty$ | async"
         ></tl-selector-select>
       </div>
       <div class="col-md-9 form-group" [class.has-danger]="isTitleEmpty$ | async">
-        <input [tlInput]="titleInputName" [stateMapFn]="mapTitleState" class="form-control" title="Имя события" placeholder="Имя события">
+        <input [tlInput]="titleInputName" [stateSelector]="selectTitle" class="form-control" title="Имя события"
+               placeholder="Имя события">
       </div>
     </div>
 
     <div class="row">
 
-      <div class="col-md-3 form-group">
-        <input class="form-control" title="Начало периода" placeholder="Начало периода" tl-date="beginning">
+      <div class="col-md-3 form-group" [class.has-danger]="isDateBeginEmpty$ | async">
+        <input
+          class="form-control"
+          title="Начало периода"
+          placeholder="Начало периода"
+          [tlDate]="dateBeginInputName"
+          [stateSelector]="selectDateBegin"
+          [context]="'beginning'"
+        >
       </div>
 
-      <div class="col-md-3 form-group">
-        <input class="form-control" title="Конец периода" placeholder="Конец периода" tl-date="ending">
+      <div class="col-md-3 form-group" [class.has-danger]="isDateEndEmpty$ | async">
+        <input
+          class="form-control"
+          title="Конец периода"
+          placeholder="Конец периода"
+          [tlDate]="dateEndInputName"
+          [stateSelector]="selectDateEnd"
+          [context]="'ending'"
+        >
       </div>
 
     </div>

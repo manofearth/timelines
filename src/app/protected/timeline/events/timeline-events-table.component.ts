@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Action, Store } from '@ngrx/store';
 import { AppState } from '../../../reducers';
-import { TimelineEvent, TimelineEventForList } from '../../shared/timeline-event';
+import { TimelineEvent, TimelineEventLight } from '../../shared/timeline-event';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/withLatestFrom';
@@ -37,7 +37,7 @@ export class TimelineEventTableComponent implements OnInit, OnDestroy {
     this.event$ = this.store.select(state => state.timeline.timeline.groups[this.groupIndex].events);
 
     this.eventSelectedSub = this.store
-      .select<SelectorListItem<TimelineEventForList>>(state => state.timeline.eventsSelector.selectedItem)
+      .select<SelectorListItem<TimelineEventLight>>(state => state.timeline.eventsSelector.selectedItem)
       .filter(item => item !== null)
       .map((selectedItem): TimelineEventSelectedAction => ({
         type: 'TIMELINE_EVENT_SELECTED',
@@ -58,7 +58,7 @@ export class TimelineEventTableComponent implements OnInit, OnDestroy {
     return TIMELINE_EVENTS_SELECTOR_NAME_PREFIX + this.groupIndex;
   }
 
-  eventSelectorStateMap(state: AppState): SelectorInputState<TimelineEventForList> {
+  eventSelectorStateMap(state: AppState): SelectorInputState<TimelineEventLight> {
     return state.timeline.eventsSelector;
   }
 }

@@ -1,13 +1,13 @@
 import { TimelineEvent } from '../shared/timeline-event';
 import { selectorInputInitialState, SelectorInputState } from '../shared/selector-input/selector-input-state';
-import { TimelineEventsTypeForList } from '../types/types-states';
+import { TimelineEventsTypeLight } from '../types/types-states';
 import { EventValidationState } from './reducers/event-validation.reducer';
 
 export interface EventState {
   status: EventStatus;
   error: Error;
   event: TimelineEvent;
-  typeSelector: SelectorInputState<TimelineEventsTypeForList>;
+  typeSelector: SelectorInputState<TimelineEventsTypeLight>;
   validation: EventValidationState;
 }
 
