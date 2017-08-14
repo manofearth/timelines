@@ -8,7 +8,7 @@ import { EventStatus } from './event-states';
 import { SelectorInputState } from '../shared/selector-input/selector-input-state';
 import { TimelineEventsTypeLight } from '../types/types-states';
 import { Observable } from 'rxjs/Observable';
-import { TimelineDate } from '../shared/date';
+import { TimelineDate } from '../shared/date/date';
 import { TimelineEvent } from '../shared/timeline-event';
 import { getPropSafely } from '../shared/helpers';
 
@@ -29,6 +29,9 @@ export class EventComponent implements OnInit, OnDestroy {
   isTitleEmpty$: Observable<boolean>;
   isDateBeginEmpty$: Observable<boolean>;
   isDateEndEmpty$: Observable<boolean>;
+  isDateBeginGreaterEnd$: Observable<boolean>;
+  isDateBeginNotValid$: Observable<boolean>;
+  isDateEndNotValid$: Observable<boolean>;
 
   attachTo: { timelineId: string, groupId: string } = null;
 
@@ -46,6 +49,11 @@ export class EventComponent implements OnInit, OnDestroy {
     this.isTitleEmpty$ = this.store.select(state => state.event.validation.emptyTitle);
     this.isDateBeginEmpty$ = this.store.select(state => state.event.validation.emptyDateBegin);
     this.isDateEndEmpty$ = this.store.select(state => state.event.validation.emptyDateEnd);
+    this.isDateBeginGreaterEnd$ = this.store.select(state => state.event.validation.periodBeginGreaterEnd);
+    this.isDateBeginNotValid$ = this.store.select(state =>
+      state.event.validation.emptyDateBegin || state.event.validation.periodBeginGreaterEnd);
+    this.isDateEndNotValid$ = this.store.select(state =>
+      state.event.validation.emptyDateEnd || state.event.validation.periodBeginGreaterEnd);
   }
 
   ngOnDestroy() {

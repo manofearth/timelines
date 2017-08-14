@@ -11,7 +11,7 @@ import { eventReducer } from './event.reducer';
 import { eventStatusReducer } from './event-status.reducer';
 import { eventErrorReducer } from './event-error.reducer';
 import { eventTypeSelectorReducer } from './event-type-selector.reducer';
-import { EventValidationAction, eventValidationReducer } from './event-validation.reducer';
+import { eventValidationReducer } from './event-validation.reducer';
 
 export type EventStateWithoutValidate = Pick<EventState, 'status' | 'error' | 'event' | 'typeSelector'>;
 const reducersWithoutValidate: Reducers<EventStateWithoutValidate> = {
@@ -39,7 +39,7 @@ export const eventStateReducer: ActionReducer<EventState> = (state, action) => {
   if (state === interState) {
     return state;
   } else {
-    (interState as EventState).validation = eventValidationReducer(state.validation, action as EventValidationAction, interState);
+    (interState as EventState).validation = eventValidationReducer(state.validation, interState);
     return interState as EventState;
   }
 };

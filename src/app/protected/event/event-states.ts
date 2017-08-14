@@ -6,7 +6,7 @@ import { EventValidationState } from './reducers/event-validation.reducer';
 export interface EventState {
   status: EventStatus;
   error: Error;
-  event: TimelineEvent;
+  event: TimelineEvent | null;
   typeSelector: SelectorInputState<TimelineEventsTypeLight>;
   validation: EventValidationState;
 }

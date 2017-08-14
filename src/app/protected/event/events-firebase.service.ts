@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
 import { FirebaseObjectObservable } from 'angularfire2/database';
-import { TimelineDate } from '../shared/date';
+import { TimelineDate } from '../shared/date/date';
 
 @Injectable()
 export class EventsFirebaseService extends ProtectedFirebaseService<FirebaseTimelineEvent, FirebaseEventUpdateObject> {

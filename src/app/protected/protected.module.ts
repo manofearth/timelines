@@ -10,7 +10,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import {TimelineCanDeactivate} from './timeline/timeline-can-deactivate.service';
 import { EventComponent } from './event/event.component';
 import { DateParser } from './shared/date-parser/date-parser.service';
-import { DateDirective } from './date/date.directive';
+import { DateDirective } from './shared/date/date.directive';
 import { ChartComponent } from './chart/chart.component';
 import { D3Service } from './d3/d3.service';
 import { WindowService } from './shared/window.service';

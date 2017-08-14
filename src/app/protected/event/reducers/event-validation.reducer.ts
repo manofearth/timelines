@@ -1,72 +1,48 @@
 import { EventStateWithoutValidate } from './event-state.reducer';
-import { EventGetSuccessAction } from '../effects/event-firebase-get.effect';
-import {
-  EVENT_DATE_BEGIN_INPUT_NAME,
-  EVENT_DATE_END_INPUT_NAME,
-  EVENT_TITLE_INPUT_NAME,
-  EVENT_TYPE_SELECTOR_NAME
-} from '../event.component';
-import { InputChangedAction } from '../../shared/input/input.directive';
-import { DateChangedAction } from '../../date/date.directive';
-import { SelectorSelectSelectedAction } from '../../shared/selector-select/selector-select.component';
+import { dateIsGreater } from '../../shared/date/date-comparators';
 
 export interface EventValidationState {
   emptyType: boolean;
   emptyTitle: boolean;
   emptyDateBegin: boolean;
   emptyDateEnd: boolean;
+  periodBeginGreaterEnd: boolean;
 }
 
-export type EventValidationAction =
-  EventGetSuccessAction
-  | InputChangedAction
-  | DateChangedAction
-  | SelectorSelectSelectedAction;
+const initialState: EventValidationState = {
+  emptyType: false,
+  emptyTitle: false,
+  emptyDateBegin: false,
+  emptyDateEnd: false,
+  periodBeginGreaterEnd: false,
+};
 
-export function eventValidationReducer(state: EventValidationState, action: EventValidationAction, stateToValidate: EventStateWithoutValidate): EventValidationState {
+export function eventValidationReducer(
+  state: EventValidationState | null, stateToValidate: EventStateWithoutValidate): EventValidationState {
 
-  switch (action.type) {
-    case 'EVENT_GET_SUCCESS':
-      return {
-        emptyType: !stateToValidate.event.type,
-        emptyTitle: !stateToValidate.event.title,
-        emptyDateBegin: !stateToValidate.event.dateBegin,
-        emptyDateEnd: !stateToValidate.event.dateEnd,
-      };
-    case 'INPUT_CHANGED':
-      if (action.payload.name === EVENT_TITLE_INPUT_NAME) {
-        return validateRequired(state, 'emptyTitle', action.payload.value);
-      }
-      return state;
-    case 'DATE_CHANGED':
-      switch (action.payload.name) {
-        case EVENT_DATE_BEGIN_INPUT_NAME:
-          return validateRequired(state, 'emptyDateBegin', action.payload.value);
-        case EVENT_DATE_END_INPUT_NAME:
-          return validateRequired(state, 'emptyDateEnd', action.payload.value);
-        default:
-          return state;
-      }
-    case 'SELECTOR_SELECT_SELECTED':
-      switch (action.payload.name) {
-        case EVENT_TYPE_SELECTOR_NAME:
-          return validateRequired(state, 'emptyType', action.payload.value);
-        default:
-          return state;
-      }
-    default:
-      return state;
+  if (stateToValidate.event === null) {
+    return null;
   }
+
+  return sameIfNotChanged(state === null ? initialState : state, {
+    emptyType: !stateToValidate.event.type,
+    emptyTitle: !stateToValidate.event.title,
+    emptyDateBegin: !stateToValidate.event.dateBegin,
+    emptyDateEnd: !stateToValidate.event.dateEnd,
+    periodBeginGreaterEnd: dateIsGreater(stateToValidate.event.dateBegin, stateToValidate.event.dateEnd),
+  });
 }
 
-function validateRequired(state: EventValidationState, isValidProperty: keyof EventValidationState, value: any): EventValidationState {
-  const isValueEmpty = !value;
-  if (isValueEmpty === state[isValidProperty]) {
-    return state;
-  } else {
+function sameIfNotChanged(
+  current: EventValidationState, contender: Partial<EventValidationState>): EventValidationState {
+
+  const hasChanged = Object.keys(contender).some(key => current[key] !== contender[key]);
+  if (hasChanged) {
     return {
-      ...state,
-      [isValidProperty]: isValueEmpty,
-    }
+      ...current,
+      ...contender,
+    };
+  } else {
+    return current;
   }
 }

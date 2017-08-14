@@ -1,4 +1,4 @@
-import { TimelineDate } from './date';
+import { TimelineDate } from './date/date';
 import { TimelineEventsTypeLight } from '../types/types-states';
 
 export interface TimelineEvent {

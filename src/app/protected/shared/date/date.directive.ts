@@ -1,11 +1,11 @@
 import { Directive, ElementRef, HostListener, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { DateParser, DateParserContext } from '../shared/date-parser/date-parser.service';
-import { TimelineDate } from '../shared/date';
-import { Logger } from '../../shared/logger.service';
-import { AppState } from '../../reducers';
+import { DateParser, DateParserContext } from '../date-parser/date-parser.service';
+import { TimelineDate } from './date';
+import { Logger } from '../../../shared/logger.service';
+import { AppState } from '../../../reducers';
 import { Action, Store } from '@ngrx/store';
 import { Subscription } from 'rxjs/Subscription';
-import { getPropSafely } from '../shared/helpers';
+import { getPropSafely } from '../helpers';
 
 @Directive({
   selector: 'input[tlDate]',

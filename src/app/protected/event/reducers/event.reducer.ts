@@ -17,7 +17,7 @@ import {
   EVENT_TITLE_INPUT_NAME,
   EVENT_TYPE_SELECTOR_NAME
 } from '../event.component';
-import { DateChangedAction } from '../../date/date.directive';
+import { DateChangedAction } from '../../shared/date/date.directive';
 import { SelectorSelectSelectedAction } from '../../shared/selector-select/selector-select.component';
 
 type EventReducerAction = EventGetSuccessAction | EventGetErrorAction | EventUpdateAction | EventInsertAction

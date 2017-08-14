@@ -25,7 +25,7 @@
 
     <div class="row">
 
-      <div class="col-md-3 form-group" [class.has-danger]="isDateBeginEmpty$ | async">
+      <div class="col-md-3 form-group" [class.has-danger]="isDateBeginNotValid$ | async">
         <input
           class="form-control"
           title="Начало периода"
@@ -34,9 +34,10 @@
           [stateSelector]="selectDateBegin"
           [context]="'beginning'"
         >
+        <small *ngIf="isDateBeginEmpty$ | async" class="form-control-feedback">Неверный формат даты</small>
       </div>
 
-      <div class="col-md-3 form-group" [class.has-danger]="isDateEndEmpty$ | async">
+      <div class="col-md-3 form-group" [class.has-danger]="isDateEndNotValid$ | async">
         <input
           class="form-control"
           title="Конец периода"
@@ -45,6 +46,10 @@
           [stateSelector]="selectDateEnd"
           [context]="'ending'"
         >
+        <small *ngIf="isDateEndEmpty$ | async" class="form-control-feedback">Неверный формат даты</small>
+        <small *ngIf="isDateBeginGreaterEnd$ | async" class="form-control-feedback">
+          Период оканчивается раньше своего начала
+        </small>
       </div>
 
     </div>

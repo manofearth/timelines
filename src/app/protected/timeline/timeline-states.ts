@@ -1,4 +1,4 @@
-import { TimelineDate } from '../shared/date';
+import { TimelineDate } from '../shared/date/date';
 import { selectorInputInitialState, SelectorInputState } from '../shared/selector-input/selector-input-state';
 import { TimelineEventLight } from '../shared/timeline-event';
 

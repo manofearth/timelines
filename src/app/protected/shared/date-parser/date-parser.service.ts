@@ -1,5 +1,5 @@
 import { parse, PegDateParserYear, PegDateParserCentury } from './peg-date-parser';
-import { TimelineDate } from '../date';
+import { TimelineDate } from '../date/date';
 import { Injectable } from '@angular/core';
 
 export enum DateParserContext {
