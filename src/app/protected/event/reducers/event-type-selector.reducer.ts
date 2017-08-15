@@ -1,15 +1,44 @@
-import { SelectorSelectButtonAction } from '../../shared/selector-select/selector-select-actions';
+import {
+  SelectorSelectButtonAction,
+  SelectorSelectInitAction
+} from '../../shared/selector-select/selector-select-actions';
 import { SearchFieldInputAction } from '../../shared/search-field/search-field-actions';
 import { TypesSearchErrorAction, TypesSearchSuccessAction } from '../../types/effects/elastic-types-search.effect';
-import { SelectorSelectState } from '../../shared/selector-select/selector-select-state';
+import { selectorSelectInitialState, SelectorSelectState } from '../../shared/selector-select/selector-select-state';
 import { TimelineEventsTypeLight } from '../../types/types-states';
 import { SelectorListItem } from '../../shared/selector-list/selector-list-item';
+import { EventGetSuccessAction } from '../effects/event-firebase-get.effect';
+import { toType } from '../../type/effects/type-get.effect';
 
-type EventTypeSelectorReducerAction = SearchFieldInputAction | TypesSearchSuccessAction | TypesSearchErrorAction
-  | SelectorSelectButtonAction;
 
-export function eventTypeSelectorReducer(
-  state: SelectorSelectState<TimelineEventsTypeLight>, action: EventTypeSelectorReducerAction
+type EventTypeSelectorReducerActionAllActions = EventGetSuccessAction;
+
+export function eventTypeSelectorReducerAllActions(
+  state: SelectorSelectState<TimelineEventsTypeLight>, action: EventTypeSelectorReducerActionAllActions
+): SelectorSelectState<TimelineEventsTypeLight> {
+  switch (action.type) {
+    case 'EVENT_GET_SUCCESS':
+      return {
+        ...selectorSelectInitialState,
+        selectedItem: {
+          title: action.payload.type.title,
+          titleHighlighted: action.payload.type.title,
+          item: toType(action.payload.type),
+        }
+      };
+    default:
+      return state;
+  }
+}
+
+type EventTypeSelectorReducerActionFilteredByName = SearchFieldInputAction
+  | TypesSearchSuccessAction
+  | TypesSearchErrorAction
+  | SelectorSelectButtonAction
+  | SelectorSelectInitAction;
+
+export function eventTypeSelectorReducerFilteredByName(
+  state: SelectorSelectState<TimelineEventsTypeLight>, action: EventTypeSelectorReducerActionFilteredByName
 ): SelectorSelectState<TimelineEventsTypeLight> {
 
   switch (action.type) {

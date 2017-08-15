@@ -4,18 +4,12 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
 import {
-  TimelineChangedAction,
   TimelineChangeCurrentGroupAction,
+  TimelineChangedAction,
   TimelineCreateGroupAction,
   TimelineGetAction
 } from './timeline-actions';
-import {
-  Timeline,
-  TimelineChangedPayload,
-  TimelineEventForTimeline,
-  TimelineEventsGroup,
-  TimelineState
-} from './timeline-states';
+import { Timeline, TimelineChangedPayload, TimelineEventsGroup, TimelineState } from './timeline-states';
 import { ActivatedRoute, Params } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
@@ -25,8 +19,7 @@ import {
   EventAttachToTimelineAction,
   EventCreateAction,
   EventDetachAction,
-  EventEraseAction,
-  EventGetAction
+  EventEraseAction
 } from '../event/event-actions';
 import { toInt } from '../../shared/helpers';
 import { GroupComponent } from '../group/group.component';
@@ -115,18 +108,9 @@ export class TimelineComponent implements OnInit, OnDestroy {
     modal.componentInstance.attachTo = { timelineId: this.timeline.id, groupId: groupId };
   }
 
-  openTimelineEvent(id: string) {
-    this.store.dispatch(<EventGetAction> {
-      type: 'EVENT_GET',
-      payload: id,
-    });
+  openTimelineEvent() {
     this.modalService.open(EventComponent, { size: 'lg' }).result.then(
       () => {
-        // refresh timeline events by getting whole timeline from base
-        this.store.dispatch(<TimelineGetAction> {
-          type: 'TIMELINE_GET',
-          payload: this.timeline.id,
-        });
         this.dispatchEventEraseAction();
       },
       () => {
@@ -163,8 +147,8 @@ export class TimelineComponent implements OnInit, OnDestroy {
     this.store.dispatch(action);
   }
 
-  onBarSelect(event: TimelineEventForTimeline) {
-    this.openTimelineEvent(event.id);
+  onBarSelect() {
+    this.openTimelineEvent();
   }
 
   onTabChange(event: NgbTabChangeEvent) {

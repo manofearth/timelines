@@ -1,54 +1,51 @@
 import { Injectable } from '@angular/core';
-import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
-import { EventGetAction } from '../event-actions';
 import { Observable } from 'rxjs/Observable';
 import { EventsFirebaseService, FirebaseTimelineEvent } from '../events-firebase.service';
-import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 import { Actions, Effect } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
+import { TimelineEventClickAction } from '../../timeline/events/timeline-events-table.component';
+import { toError } from '../../shared/firebase/protected-firebase.effect';
+import { FirebaseType, TypesFirebaseService } from '../../types/types-firebase.service';
 
 @Injectable()
-export class EventFirebaseGetEffect extends ProtectedFirebaseEffect<EventGetAction,
-  EventGetSuccessAction,
-  EventGetErrorAction,
-  FirebaseTimelineEvent> {
+export class EventFirebaseGetEffect {
 
   @Effect()
-  effect(): Observable<EventGetSuccessAction | EventGetErrorAction> {
-    return super.createEffect();
-  }
-
-  protected runEffect(action: EventGetAction): Observable<FirebaseTimelineEvent> {
-    return this.fireEvents.getObject(action.payload);
-  }
-
-  protected mapToSuccessAction(effectResult: FirebaseTimelineEvent): EventGetSuccessAction {
-    return {
-      type: 'EVENT_GET_SUCCESS',
-      payload: effectResult,
-    };
-  }
-
-  protected getInterestedActionType(): 'EVENT_GET' {
-    return 'EVENT_GET';
-  }
-
-  protected getErrorActionType(): 'EVENT_GET_ERROR' {
-    return 'EVENT_GET_ERROR';
-  }
+  effect: Observable<EventGetSuccessAction | EventGetErrorAction> = this.actions
+    .ofType('TIMELINE_EVENT_CLICK')
+    .switchMap((action: TimelineEventClickAction) => this.fireEvents
+      .getObject(action.payload.eventId)
+      .switchMap((fireEvent: FirebaseTimelineEvent) => this.fireTypes
+        .getObject(fireEvent.typeId)
+        .map((type: FirebaseType) => ({
+          event: fireEvent,
+          type: type,
+        }))
+      )
+      .map(eventAndType => ({
+        type: 'EVENT_GET_SUCCESS',
+        payload: eventAndType,
+      }))
+      .catch(err => Observable.of<EventGetErrorAction>({
+        type: 'EVENT_GET_ERROR',
+        payload: toError(err),
+      }))
+    );
 
   constructor(
-    actions: Actions,
-    auth: AuthFirebaseService,
+    private actions: Actions,
     private fireEvents: EventsFirebaseService,
+    private fireTypes: TypesFirebaseService,
   ) {
-    super(actions, auth);
   }
 }
 
 export interface EventGetSuccessAction extends Action {
   type: 'EVENT_GET_SUCCESS';
-  payload: FirebaseTimelineEvent;
+  payload: {
+    event: FirebaseTimelineEvent,
+    type: FirebaseType,
+  };
 }
 
 export interface EventGetErrorAction extends Action {

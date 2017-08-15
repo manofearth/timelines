@@ -13,7 +13,7 @@ export function selectorSelectReducer(
 
   switch (action.type) {
     case 'SELECTOR_SELECT_INIT':
-      return selectorSelectInitialState;
+      return state || selectorSelectInitialState;
     case 'SELECTOR_SELECT_BUTTON':
       return {
         ...state,

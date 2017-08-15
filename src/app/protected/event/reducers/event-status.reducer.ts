@@ -2,7 +2,6 @@ import { eventInitialState, EventStatus } from '../event-states';
 import {
   EventCreateAction,
   EventEraseAction,
-  EventGetAction,
   EventInsertAction,
   EventInsertAndAttachToTimelineAction,
   EventInsertErrorAction,
@@ -12,9 +11,10 @@ import {
   EventUpdateSuccessAction
 } from '../event-actions';
 import { EventGetErrorAction, EventGetSuccessAction } from '../effects/event-firebase-get.effect';
+import { TimelineEventClickAction } from '../../timeline/events/timeline-events-table.component';
 
 type EventStatusReducerAction =
-  EventGetAction
+  | TimelineEventClickAction
   | EventGetSuccessAction
   | EventGetErrorAction
   | EventUpdateErrorAction
@@ -29,7 +29,7 @@ type EventStatusReducerAction =
 
 export function eventStatusReducer(state: EventStatus, action: EventStatusReducerAction): EventStatus {
   switch (action.type) {
-    case 'EVENT_GET':
+    case 'TIMELINE_EVENT_CLICK':
       return 'LOADING';
     case 'EVENT_GET_SUCCESS':
       return 'LOADED';

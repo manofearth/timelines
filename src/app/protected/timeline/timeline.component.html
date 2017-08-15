@@ -19,7 +19,7 @@
           <tl-events-table
             [groupIndex]="i"
             (create)="createAndOpenTimelineEvent($event, group.id)"
-            (open)="openTimelineEvent($event)"
+            (open)="openTimelineEvent()"
             (attach)="attachEvent($event, group.id)"
             (detach)="detachEvent($event, group.id)">
           </tl-events-table>

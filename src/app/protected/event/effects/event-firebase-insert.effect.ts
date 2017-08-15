@@ -1,47 +1,47 @@
 import { Injectable } from '@angular/core';
-import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
-import { EventInsertAction, EventInsertErrorAction, EventInsertSuccessAction } from '../event-actions';
+import { toError } from '../../shared/firebase/protected-firebase.effect';
 import { Observable } from 'rxjs/Observable';
 import { Actions, Effect } from '@ngrx/effects';
-import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 import { EventsFirebaseService } from '../events-firebase.service';
 import { toFirebaseEventUpdateObject } from './event-firebase-update.effect';
+import { Action, Store } from '@ngrx/store';
+import { AppState } from '../../../reducers';
+import { isNew } from '../../shared/event/is-new.fn';
+import { TimelineEvent } from '../../shared/event/timeline-event';
 
 @Injectable()
-export class EventFirebaseInsertEffect extends ProtectedFirebaseEffect<EventInsertAction,
-  EventInsertSuccessAction,
-  EventInsertErrorAction,
-  firebase.database.Reference> {
+export class EventFirebaseInsertEffect {
 
   @Effect()
-  effect(): Observable<EventInsertSuccessAction | EventInsertErrorAction> {
-    return super.createEffect();
-  }
-
-  protected runEffect(action: EventInsertAction): Observable<firebase.database.Reference> {
-    return this.fireEvents.pushObject(toFirebaseEventUpdateObject(action.payload));
-  }
-
-  protected mapToSuccessAction(effectResult: firebase.database.Reference): EventInsertSuccessAction {
-    return {
-      type: 'EVENT_INSERT_SUCCESS',
-      payload: effectResult.key
-    };
-  }
-
-  protected getInterestedActionType(): 'EVENT_INSERT' {
-    return 'EVENT_INSERT';
-  }
-
-  protected getErrorActionType(): 'EVENT_INSERT_ERROR' {
-    return 'EVENT_INSERT_ERROR';
-  }
+  effect: Observable<EventInsertSuccessAction | EventInsertErrorAction> = this.actions
+    .ofType('EVENT_SAVE_BUTTON')
+    .withLatestFrom(this.store.select<TimelineEvent>(state => state.event.event), (action, event) => event)
+    .filter(event => isNew(event))
+    .switchMap(event => this.fireEvents
+      .pushObject(toFirebaseEventUpdateObject(event))
+      .map((ref): EventInsertSuccessAction => ({
+        type: 'EVENT_INSERT_SUCCESS',
+        payload: ref.key,
+      }))
+      .catch(err => Observable.of<EventInsertErrorAction>({
+        type: 'EVENT_INSERT_ERROR',
+        payload: toError(err),
+      }))
+    );
 
   constructor(
-    actions: Actions,
-    auth: AuthFirebaseService,
+    private actions: Actions,
+    private store: Store<AppState>,
     private fireEvents: EventsFirebaseService,
   ) {
-    super(actions, auth);
   }
+}
+
+export interface EventInsertSuccessAction extends Action {
+  type: 'EVENT_INSERT_SUCCESS';
+}
+
+export interface EventInsertErrorAction extends Action {
+  type: 'EVENT_INSERT_ERROR';
+  payload: Error;
 }

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Action, Store } from '@ngrx/store';
 import { AppState } from '../../../reducers';
-import { TimelineEvent, TimelineEventLight } from '../../shared/timeline-event';
+import { TimelineEvent, TimelineEventLight } from '../../shared/event/timeline-event';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/withLatestFrom';
@@ -50,6 +50,17 @@ export class TimelineEventTableComponent implements OnInit, OnDestroy {
     this.eventSelectedSub.unsubscribe();
   }
 
+  onEventLinkClick(eventId: string) {
+    const action: TimelineEventClickAction = {
+      type: 'TIMELINE_EVENT_CLICK',
+      payload: {
+        eventId: eventId,
+      }
+    };
+    this.store.dispatch(action);
+    this.open.emit();
+  }
+
   trackByEventRow(ignore: number, event: TimelineEvent) {
     return event.id;
   }
@@ -69,5 +80,12 @@ export interface TimelineEventSelectedAction extends Action {
   type: 'TIMELINE_EVENT_SELECTED';
   payload: {
     id: string;
+  }
+}
+
+export interface TimelineEventClickAction extends Action {
+  type: 'TIMELINE_EVENT_CLICK';
+  payload: {
+    eventId: string;
   }
 }

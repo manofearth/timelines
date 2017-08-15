@@ -1,6 +1,6 @@
 import { TimelineDate } from '../shared/date/date';
 import { selectorInputInitialState, SelectorInputState } from '../shared/selector-input/selector-input-state';
-import { TimelineEventLight } from '../shared/timeline-event';
+import { TimelineEventLight } from '../shared/event/timeline-event';
 
 export interface Timeline {
   id: string;

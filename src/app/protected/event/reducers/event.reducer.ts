@@ -1,11 +1,9 @@
 import { eventInitialState } from '../event-states';
-import { TimelineEvent } from '../../shared/timeline-event';
+import { TimelineEvent } from '../../shared/event/timeline-event';
 import {
   EventCreateAction,
   EventEraseAction,
-  EventInsertAction,
   EventInsertAndAttachToTimelineAction,
-  EventInsertSuccessAction,
   EventUpdateAction
 } from '../event-actions';
 import { EventGetErrorAction, EventGetSuccessAction } from '../effects/event-firebase-get.effect';
@@ -19,18 +17,25 @@ import {
 } from '../event.component';
 import { DateChangedAction } from '../../shared/date/date.directive';
 import { SelectorSelectSelectedAction } from '../../shared/selector-select/selector-select.component';
+import { FirebaseType } from '../../types/types-firebase.service';
+import { EventInsertSuccessAction } from '../effects/event-firebase-insert.effect';
+import { toType } from '../../type/effects/type-get.effect';
 
-type EventReducerAction = EventGetSuccessAction | EventGetErrorAction | EventUpdateAction | EventInsertAction
-  | EventEraseAction | EventCreateAction | EventInsertAndAttachToTimelineAction | EventInsertSuccessAction
-  | InputChangedAction | DateChangedAction | SelectorSelectSelectedAction;
+type EventReducerAction = EventGetSuccessAction
+  | EventGetErrorAction
+  | EventUpdateAction
+  | EventEraseAction
+  | EventCreateAction
+  | EventInsertAndAttachToTimelineAction
+  | EventInsertSuccessAction
+  | InputChangedAction
+  | DateChangedAction
+  | SelectorSelectSelectedAction;
 
 export function eventReducer(state: TimelineEvent, action: EventReducerAction): TimelineEvent {
   switch (action.type) {
     case 'EVENT_GET_SUCCESS':
-      return toTimelineEvent(action.payload);
-    case 'EVENT_UPDATE':
-    case 'EVENT_INSERT':
-      return action.payload;
+      return toTimelineEvent(action.payload.event, action.payload.type);
     case 'EVENT_ERASE':
       return eventInitialState.event;
     case 'EVENT_CREATE':
@@ -73,10 +78,10 @@ export function eventReducer(state: TimelineEvent, action: EventReducerAction): 
   }
 }
 
-function toTimelineEvent(firebaseEvent: FirebaseTimelineEvent): TimelineEvent {
+function toTimelineEvent(firebaseEvent: FirebaseTimelineEvent, firebaseType: FirebaseType): TimelineEvent {
   return {
     id: firebaseEvent.$key,
-    type: null,
+    type: toType(firebaseType),
     title: firebaseEvent.title,
     dateBegin: firebaseEvent.dateBegin,
     dateEnd: firebaseEvent.dateEnd,

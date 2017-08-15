@@ -2,14 +2,14 @@
 import { Subscription } from '../../shared/rxjs';
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Store } from '@ngrx/store';
+import { Action, Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
 import { EventStatus } from './event-states';
 import { SelectorInputState } from '../shared/selector-input/selector-input-state';
 import { TimelineEventsTypeLight } from '../types/types-states';
 import { Observable } from 'rxjs/Observable';
 import { TimelineDate } from '../shared/date/date';
-import { TimelineEvent } from '../shared/timeline-event';
+import { TimelineEvent } from '../shared/event/timeline-event';
 import { getPropSafely } from '../shared/helpers';
 
 @Component({
@@ -62,6 +62,14 @@ export class EventComponent implements OnInit, OnDestroy {
     }
   }
 
+  save() {
+    const action: EventSaveButtonAction = {
+      type: 'EVENT_SAVE_BUTTON',
+    };
+    this.store.dispatch(action);
+    this.activeModal.close();
+  }
+
   dismiss() {
     this.activeModal.dismiss();
   }
@@ -87,3 +95,7 @@ export const EVENT_TYPE_SELECTOR_NAME = 'event-type-selector';
 export const EVENT_TITLE_INPUT_NAME = 'event-title-input';
 export const EVENT_DATE_BEGIN_INPUT_NAME = 'event-date-begin-input';
 export const EVENT_DATE_END_INPUT_NAME = 'event-date-end-input';
+
+export interface EventSaveButtonAction extends Action {
+  type: 'EVENT_SAVE_BUTTON';
+}

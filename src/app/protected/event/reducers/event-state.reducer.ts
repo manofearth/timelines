@@ -10,7 +10,10 @@ import { composeReducers } from '../../../shared/compose-reducers.fn';
 import { eventReducer } from './event.reducer';
 import { eventStatusReducer } from './event-status.reducer';
 import { eventErrorReducer } from './event-error.reducer';
-import { eventTypeSelectorReducer } from './event-type-selector.reducer';
+import {
+  eventTypeSelectorReducerAllActions,
+  eventTypeSelectorReducerFilteredByName
+} from './event-type-selector.reducer';
 import { eventValidationReducer } from './event-validation.reducer';
 
 export type EventStateWithoutValidate = Pick<EventState, 'status' | 'error' | 'event' | 'typeSelector'>;
@@ -18,12 +21,15 @@ const reducersWithoutValidate: Reducers<EventStateWithoutValidate> = {
   status: eventStatusReducer,
   error: eventErrorReducer,
   event: eventReducer,
-  typeSelector: reduceWhen(
-    actionNameIs(EVENT_TYPE_SELECTOR_NAME),
-    composeReducers(
-      eventTypeSelectorReducer,
-      selectorSelectReducer,
-      selectorInputReducer,
+  typeSelector: composeReducers(
+    eventTypeSelectorReducerAllActions,
+    reduceWhen(
+      actionNameIs(EVENT_TYPE_SELECTOR_NAME),
+      composeReducers(
+        eventTypeSelectorReducerFilteredByName,
+        selectorSelectReducer,
+        selectorInputReducer,
+      )
     )
   ),
 };

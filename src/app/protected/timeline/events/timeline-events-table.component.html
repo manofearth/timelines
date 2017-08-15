@@ -7,7 +7,7 @@
   <tbody>
   <tr *ngFor="let event of event$ | async; trackBy: trackByEventRow">
     <td>
-      <button type="button" class="btn btn-link" (click)="open.emit(event.id)">{{ event.title }}</button>
+      <button type="button" class="btn btn-link" (click)="onEventLinkClick(event.id)">{{ event.title }}</button>
     </td>
     <td class="text-sm-right">
       <button type="button" class="btn btn-link btn-sm" (click)="detach.emit(event.id)">открепить</button>

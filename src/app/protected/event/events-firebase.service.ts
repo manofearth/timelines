@@ -37,6 +37,7 @@ export interface FirebaseEventUpdateObject {
   title: string;
   dateBegin: TimelineDate;
   dateEnd: TimelineDate;
+  typeId: string;
 }
 
 export interface FirebaseTimelineEvent {

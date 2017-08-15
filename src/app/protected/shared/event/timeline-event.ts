@@ -1,5 +1,5 @@
-import { TimelineDate } from './date/date';
-import { TimelineEventsTypeLight } from '../types/types-states';
+import { TimelineDate } from '../date/date';
+import { TimelineEventsTypeLight } from '../../types/types-states';
 
 export interface TimelineEvent {
   id: string;

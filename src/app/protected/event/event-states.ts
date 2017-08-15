@@ -1,4 +1,4 @@
-import { TimelineEvent } from '../shared/timeline-event';
+import { TimelineEvent } from '../shared/event/timeline-event';
 import { selectorInputInitialState, SelectorInputState } from '../shared/selector-input/selector-input-state';
 import { TimelineEventsTypeLight } from '../types/types-states';
 import { EventValidationState } from './reducers/event-validation.reducer';

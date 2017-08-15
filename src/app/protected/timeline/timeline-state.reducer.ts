@@ -6,7 +6,7 @@ import { selectorInputReducer } from '../shared/selector-input/selector-input-re
 import { TIMELINE_EVENTS_SELECTOR_NAME_PREFIX } from './events/timeline-events-table.component';
 import { SelectorInputState } from '../shared/selector-input/selector-input-state';
 import { EventsSearchErrorAction, EventsSearchSuccessAction } from '../events/effects/events-elastic-search.effect';
-import { TimelineEventLight } from '../shared/timeline-event';
+import { TimelineEventLight } from '../shared/event/timeline-event';
 import { reduceWhen } from '../../shared/reduce-when.fn';
 import { actionHasName } from '../../shared/action-has-name.fn';
 import { composeReducers } from '../../shared/compose-reducers.fn';
