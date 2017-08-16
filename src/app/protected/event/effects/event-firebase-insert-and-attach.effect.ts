@@ -1,10 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
-import {
-  EventInsertAndAttachToTimelineAction,
-  EventInsertErrorAction,
-  EventInsertSuccessAction
-} from '../event-actions';
+import { EventInsertAndAttachToTimelineAction } from '../event-actions';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/map';
@@ -14,6 +10,7 @@ import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service
 import { Actions, Effect } from '@ngrx/effects';
 import { EventsFirebaseService } from '../events-firebase.service';
 import { EventToTimelineAttachingFirebaseService } from '../event-to-timeline-attaching-firebase.service';
+import { EventInsertErrorAction, EventInsertSuccessAction } from './event-firebase-insert.effect';
 
 @Injectable()
 export class EventFirebaseInsertAndAttachEffect extends ProtectedFirebaseEffect<EventInsertAndAttachToTimelineAction,

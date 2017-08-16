@@ -4,10 +4,9 @@ import { Observable } from 'rxjs/Observable';
 import { Actions, Effect } from '@ngrx/effects';
 import { EventsFirebaseService } from '../events-firebase.service';
 import { toFirebaseEventUpdateObject } from './event-firebase-update.effect';
-import { Action, Store } from '@ngrx/store';
-import { AppState } from '../../../reducers';
+import { Action } from '@ngrx/store';
 import { isNew } from '../../shared/event/is-new.fn';
-import { TimelineEvent } from '../../shared/event/timeline-event';
+import { EventSaveButtonAction } from '../event.component';
 
 @Injectable()
 export class EventFirebaseInsertEffect {
@@ -15,10 +14,9 @@ export class EventFirebaseInsertEffect {
   @Effect()
   effect: Observable<EventInsertSuccessAction | EventInsertErrorAction> = this.actions
     .ofType('EVENT_SAVE_BUTTON')
-    .withLatestFrom(this.store.select<TimelineEvent>(state => state.event.event), (action, event) => event)
-    .filter(event => isNew(event))
-    .switchMap(event => this.fireEvents
-      .pushObject(toFirebaseEventUpdateObject(event))
+    .filter<EventSaveButtonAction>(action => isNew(action.payload))
+    .switchMap(action => this.fireEvents
+      .pushObject(toFirebaseEventUpdateObject(action.payload))
       .map((ref): EventInsertSuccessAction => ({
         type: 'EVENT_INSERT_SUCCESS',
         payload: ref.key,
@@ -31,7 +29,6 @@ export class EventFirebaseInsertEffect {
 
   constructor(
     private actions: Actions,
-    private store: Store<AppState>,
     private fireEvents: EventsFirebaseService,
   ) {
   }

@@ -1,12 +1,8 @@
 import { EventGetErrorAction, EventGetSuccessAction } from '../effects/event-firebase-get.effect';
 import { eventInitialState } from '../event-states';
-import {
-  EventEraseAction,
-  EventInsertErrorAction,
-  EventInsertSuccessAction,
-  EventUpdateErrorAction,
-  EventUpdateSuccessAction
-} from '../event-actions';
+import { EventEraseAction } from '../event-actions';
+import { EventUpdateErrorAction, EventUpdateSuccessAction } from '../effects/event-firebase-update.effect';
+import { EventInsertErrorAction, EventInsertSuccessAction } from '../effects/event-firebase-insert.effect';
 
 type EventErrorReducerAction =
   EventGetErrorAction

@@ -1,7 +1,4 @@
 import { TimelineEvent } from './timeline-event';
-export function isNew(event: TimelineEvent | null): boolean {
-    if (event === null) {
-      return false;
-    }
+export function isNew(event: TimelineEvent): boolean {
     return event.id === null;
 }
