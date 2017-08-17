@@ -94,7 +94,7 @@ function extractEventsIds(firebaseTimeline: FirebaseTimeline): string[] {
 
 function toTimeline(firebaseTimeline: FirebaseTimeline, firebaseEvents: FirebaseTimelineEvent[]): Timeline {
 
-  const eventsDictionary = firebaseEvents.reduce<{ [key: string]: FirebaseTimelineEvent }>(
+  const fireEventsDictionary = firebaseEvents.reduce<{ [key: string]: FirebaseTimelineEvent }>(
     (acc, event) => {
       acc[event.$key] = event;
       return acc;
@@ -108,13 +108,8 @@ function toTimeline(firebaseTimeline: FirebaseTimeline, firebaseEvents: Firebase
       let events: TimelineEventForTimeline[] = [];
       if (firebaseTimeline.groups[groupId].events) {
         events = Object.keys(firebaseTimeline.groups[groupId].events)
-          .map((eventId: string) => eventsDictionary[eventId])
-          .map((firebaseEvent: FirebaseTimelineEvent) => ({
-            id: firebaseEvent.$key,
-            title: firebaseEvent.title,
-            dateBegin: firebaseEvent.dateBegin,
-            dateEnd: firebaseEvent.dateEnd,
-          }));
+          .map((eventId: string) => fireEventsDictionary[eventId])
+          .map(toTimelineEventForTimeline);
       }
 
       acc.push({
@@ -133,4 +128,13 @@ function toTimeline(firebaseTimeline: FirebaseTimeline, firebaseEvents: Firebase
     title: firebaseTimeline.title,
     groups,
   };
+}
+
+function toTimelineEventForTimeline(fireEvent: FirebaseTimelineEvent): TimelineEventForTimeline {
+  return {
+    id: fireEvent.$key,
+    title: fireEvent.title,
+    dateBegin: fireEvent.dateBegin,
+    dateEnd: fireEvent.dateEnd,
+  }
 }

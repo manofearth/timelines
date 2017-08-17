@@ -9,6 +9,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
 import { SelectorInputState } from '../../shared/selector-input/selector-input-state';
 import { SelectorListItem } from '../../shared/selector-list/selector-list-item';
+import { notNullOrUndefined } from '../../../shared/not-null-or-undefined.fn';
 
 @Component({
   selector: 'tl-events-table',
@@ -38,7 +39,7 @@ export class TimelineEventTableComponent implements OnInit, OnDestroy {
 
     this.eventSelectedSub = this.store
       .select<SelectorListItem<TimelineEventLight>>(state => state.timeline.eventsSelector.selectedItem)
-      .filter(item => item !== null)
+      .filter(notNullOrUndefined)
       .map((selectedItem): TimelineEventSelectedAction => ({
         type: 'TIMELINE_EVENT_SELECTED',
         payload: { id: selectedItem.item.id },

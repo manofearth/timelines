@@ -18,7 +18,7 @@
         <div class="tab-content-container">
           <tl-events-table
             [groupIndex]="i"
-            (create)="createAndOpenTimelineEvent($event, group.id)"
+            (create)="openTimelineEvent()"
             (open)="openTimelineEvent()"
             (attach)="attachEvent($event, group.id)"
             (detach)="detachEvent($event, group.id)">

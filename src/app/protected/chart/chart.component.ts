@@ -16,6 +16,8 @@ import { WindowService } from '../shared/window.service';
 import { Selection } from 'd3-selection';
 import { Subscription } from 'rxjs/Subscription';
 import { TimelineEventForTimeline, TimelineEventsGroup } from '../timeline/timeline-states';
+import { AppState } from '../../reducers';
+import { Action, Store } from '@ngrx/store';
 
 @Component({
   selector: 'tl-chart',
@@ -44,10 +46,11 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
   constructor(
     private d3: D3Service,
     private window: WindowService,
+    private store: Store<AppState>,
   ) {
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
 
     this.redraw();
 
@@ -56,12 +59,23 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
     });
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     this.windowResizeSubscription.unsubscribe();
   }
 
-  ngAfterViewChecked(): void {
+  ngAfterViewChecked() {
     this.redraw();
+  }
+
+  onBarClick(event: TimelineEventForTimeline) {
+    const action: ChartBarClickAction = {
+      type: 'CHART_BAR_CLICK',
+      payload: {
+        eventId: event.id,
+      }
+    };
+    this.store.dispatch(action);
+    this.onSelect.emit(event);
   }
 
   get width(): number {
@@ -125,7 +139,7 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
       .attr('rx', 3)
       .attr('ry', 3)
       .on('click', (d: TimelineEventForTimeline) => {
-        this.onSelect.emit(d);
+        this.onBarClick(d);
       })
       .on('mouseover', () => {
         this.d3.selectEventTarget().classed('mouseover', true);
@@ -242,4 +256,11 @@ interface TimelineEventWithGroupData extends TimelineEventForTimeline {
 
 interface  TimelineEventForChart extends TimelineEventWithGroupData {
   yPos: number;
+}
+
+export interface ChartBarClickAction extends Action {
+  type: 'CHART_BAR_CLICK';
+  payload: {
+    eventId: string;
+  }
 }

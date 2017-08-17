@@ -17,7 +17,6 @@ import { NgbModal, NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { EventComponent } from '../event/event.component';
 import {
   EventAttachToTimelineAction,
-  EventCreateAction,
   EventDetachAction,
   EventEraseAction
 } from '../event/event-actions';
@@ -88,24 +87,6 @@ export class TimelineComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.timelineStateSubscription.unsubscribe();
-  }
-
-  createAndOpenTimelineEvent(title: string, groupId: string) {
-    this.store.dispatch(<EventCreateAction>{
-      type: 'EVENT_CREATE',
-      payload: title,
-    });
-
-    const modal = this.modalService.open(EventComponent, { size: 'lg' });
-    modal.result.then(
-      () => {
-        this.dispatchEventEraseAction();
-      },
-      () => {
-        this.dispatchEventEraseAction();
-      },
-    );
-    modal.componentInstance.attachTo = { timelineId: this.timeline.id, groupId: groupId };
   }
 
   openTimelineEvent() {

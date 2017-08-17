@@ -33,8 +33,6 @@ export class EventComponent implements OnInit, OnDestroy {
   isDateBeginNotValid$: Observable<boolean>;
   isDateEndNotValid$: Observable<boolean>;
 
-  attachTo: { timelineId: string, groupId: string } = null;
-
   private typeSub: Subscription;
 
   constructor(

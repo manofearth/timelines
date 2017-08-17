@@ -18,11 +18,6 @@ export interface EventActionBase extends Action {
   type: EventActionType;
 }
 
-export interface EventCreateAction extends EventActionBase {
-  type: 'EVENT_CREATE';
-  payload: string; // title
-}
-
 export interface EventInsertAndAttachToTimelineAction extends EventActionBase {
   type: 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE';
   payload: {
