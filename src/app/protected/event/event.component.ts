@@ -11,6 +11,7 @@ import { Observable } from 'rxjs/Observable';
 import { TimelineDate } from '../shared/date/date';
 import { TimelineEvent } from '../shared/event/timeline-event';
 import { getPropSafely } from '../shared/helpers';
+import { EventValidationState } from './reducers/event-validation.reducer';
 
 @Component({
   templateUrl: './event.component.html',
@@ -43,15 +44,17 @@ export class EventComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.status$ = this.store.select(state => state.event.status);
-    this.isTypeEmpty$ = this.store.select(state => state.event.validation.emptyType);
-    this.isTitleEmpty$ = this.store.select(state => state.event.validation.emptyTitle);
-    this.isDateBeginEmpty$ = this.store.select(state => state.event.validation.emptyDateBegin);
-    this.isDateEndEmpty$ = this.store.select(state => state.event.validation.emptyDateEnd);
-    this.isDateBeginGreaterEnd$ = this.store.select(state => state.event.validation.periodBeginGreaterEnd);
-    this.isDateBeginNotValid$ = this.store.select(state =>
-      state.event.validation.emptyDateBegin || state.event.validation.periodBeginGreaterEnd);
-    this.isDateEndNotValid$ = this.store.select(state =>
-      state.event.validation.emptyDateEnd || state.event.validation.periodBeginGreaterEnd);
+    this.isTypeEmpty$ = this.store.select(selectValidationKey('emptyType'));
+    this.isTitleEmpty$ = this.store.select(selectValidationKey('emptyTitle'));
+    this.isDateBeginEmpty$ = this.store.select(selectValidationKey('emptyDateBegin'));
+    this.isDateEndEmpty$ = this.store.select(selectValidationKey('emptyDateEnd'));
+    this.isDateBeginGreaterEnd$ = this.store.select(selectValidationKey('periodBeginGreaterEnd'));
+    this.isDateBeginNotValid$ = this.store.select(
+      some(selectValidationKey('emptyDateBegin'), selectValidationKey('periodBeginGreaterEnd'))
+    );
+    this.isDateEndNotValid$ = this.store.select(
+      some(selectValidationKey('emptyDateEnd'), selectValidationKey('periodBeginGreaterEnd'))
+    );
   }
 
   ngOnDestroy() {
@@ -100,4 +103,12 @@ export const EVENT_DATE_END_INPUT_NAME = 'event-date-end-input';
 export interface EventSaveButtonAction extends Action {
   type: 'EVENT_SAVE_BUTTON';
   payload: TimelineEvent;
+}
+
+function selectValidationKey(key: keyof EventValidationState) {
+  return (state: AppState) => getPropSafely<EventValidationState>(state.event.validation, key, false);
+}
+
+function some(predicate1: (state: AppState) => boolean, predicate2: (state: AppState) => boolean) {
+  return (state: AppState) => predicate1(state) || predicate2(state);
 }

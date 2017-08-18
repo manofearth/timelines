@@ -1,7 +1,7 @@
 //noinspection TypeScriptPreferShortImport
 import { Subscription } from '../../shared/rxjs';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Action, Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
 import {
   TimelineChangeCurrentGroupAction,
@@ -15,17 +15,16 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NgbModal, NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { EventComponent } from '../event/event.component';
-import {
-  EventAttachToTimelineAction,
-  EventDetachAction,
-  EventEraseAction
-} from '../event/event-actions';
+import { EventAttachToTimelineAction, EventDetachAction, EventEraseAction } from '../event/event-actions';
 import { toInt } from '../../shared/helpers';
 import { GroupComponent } from '../group/group.component';
+import { TIMELINE_EVENTS_SELECTOR_NAME_PREFIX } from './events/timeline-events-table.component';
+import { SelectorInputCreateAction } from '../shared/selector-input/selector-input.component';
+import { Actions } from '@ngrx/effects';
 
 @Component({
   templateUrl: './timeline.component.html',
-  styleUrls: ['./timeline.component.css'],
+  styleUrls: [ './timeline.component.css' ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimelineComponent implements OnInit, OnDestroy {
@@ -39,8 +38,9 @@ export class TimelineComponent implements OnInit, OnDestroy {
   form: TimelineForm;
   addNewGroupTabId: string = ADD_NEW_GROUP_TAB_ID;
 
-  private timelineStateSubscription: Subscription;
-  private formChangesSubscription: Subscription;
+  private timelineStateSub: Subscription;
+  private formChangesSub: Subscription;
+  private createSub: Subscription;
 
   //noinspection OverlyComplexFunctionJS
   constructor(
@@ -50,6 +50,7 @@ export class TimelineComponent implements OnInit, OnDestroy {
     private changeDetector: ChangeDetectorRef,
     private titleService: Title,
     private modalService: NgbModal,
+    private actions: Actions,
   ) {
   }
 
@@ -58,11 +59,11 @@ export class TimelineComponent implements OnInit, OnDestroy {
     this.route.params.subscribe((params: Params) => {
       this.store.dispatch(<TimelineGetAction>{
         type: 'TIMELINE_GET',
-        payload: params['id'],
+        payload: params[ 'id' ],
       });
     }); // no need to unsubscribe router observables - router takes care of it
 
-    this.timelineStateSubscription = this.store
+    this.timelineStateSub = this.store
       .select('timeline')
       .subscribe((timeline: TimelineState) => {
         this.isLoading = timeline.isLoading;
@@ -83,10 +84,21 @@ export class TimelineComponent implements OnInit, OnDestroy {
 
       });
 
+    this.createSub = this.actions
+      .ofType('SELECTOR_INPUT_CREATE')
+      .filter<SelectorInputCreateAction>(action => action.payload.name.startsWith(TIMELINE_EVENTS_SELECTOR_NAME_PREFIX))
+      .subscribe(action => {
+        this.dispatchEventFromTimelineCreateAction(action.payload.value);
+        this.openTimelineEvent();
+      });
   }
 
   ngOnDestroy() {
-    this.timelineStateSubscription.unsubscribe();
+    this.timelineStateSub.unsubscribe();
+    this.createSub.unsubscribe();
+    if (this.formChangesSub) {
+      this.formChangesSub.unsubscribe();
+    }
   }
 
   openTimelineEvent() {
@@ -164,7 +176,7 @@ export class TimelineComponent implements OnInit, OnDestroy {
   }
 
   extractTabIndex(tabId: string): number {
-    return toInt(EXTRACT_INDEX_FROM_GROUP_TAB_ID_REGEX.exec(tabId)[1]);
+    return toInt(EXTRACT_INDEX_FROM_GROUP_TAB_ID_REGEX.exec(tabId)[ 1 ]);
   }
 
   get currentTabId(): string {
@@ -188,12 +200,23 @@ export class TimelineComponent implements OnInit, OnDestroy {
     });
   }
 
+  private dispatchEventFromTimelineCreateAction(eventTitle: string) {
+    const action: EventFromTimelineCreateAction = {
+      type: 'EVENT_FROM_TIMELINE_CREATE',
+      payload: {
+        eventTitle: eventTitle,
+        timelineId: this.timeline.id,
+      }
+    };
+    this.store.dispatch(action);
+  }
+
   private initForm(timeline: Timeline) {
     this.form = <TimelineForm>this.fb.group({
       title: timeline.title,
     });
 
-    this.formChangesSubscription = this.form.valueChanges
+    this.formChangesSub = this.form.valueChanges
       .subscribe((value: TimelineFormValue) => {
         this.store.dispatch(<TimelineChangedAction>{
           type: 'TIMELINE_CHANGED',
@@ -228,3 +251,11 @@ function toTimeline(oldTimeline: Timeline, formValue: TimelineFormValue): Timeli
 const GROUP_TAB_ID_PREFIX = 'ngb-group-tab-';
 const ADD_NEW_GROUP_TAB_ID = 'add-new-group-tab';
 const EXTRACT_INDEX_FROM_GROUP_TAB_ID_REGEX = new RegExp('^' + GROUP_TAB_ID_PREFIX + '(\\d+)$');
+
+export interface EventFromTimelineCreateAction extends Action {
+  type: 'EVENT_FROM_TIMELINE_CREATE';
+  payload: {
+    eventTitle: string;
+    timelineId: string;
+  }
+}

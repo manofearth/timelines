@@ -61,12 +61,17 @@ export function selectorInputReducer(state: SelectorInputState<any>, action: Sel
       };
 
     case 'SEARCH_FIELD_ENTER_KEY':
-      return {
-        ...state,
-        selectedItem: state.results[state.highlightedIndex],
-        results: [],
-        query: '',
-      };
+
+      if (state.isSearching) {
+        return state;
+      } else {
+        return {
+          ...state,
+          selectedItem: state.results[state.highlightedIndex],
+          results: [],
+          query: '',
+        };
+      }
 
     default:
       return state;

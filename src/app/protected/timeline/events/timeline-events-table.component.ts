@@ -20,7 +20,6 @@ export class TimelineEventTableComponent implements OnInit, OnDestroy {
 
   @Input() groupIndex: number;
 
-  @Output() create: EventEmitter<string> = new EventEmitter();
   @Output() open: EventEmitter<string> = new EventEmitter();
   @Output() attach: EventEmitter<string> = new EventEmitter();
   @Output() detach: EventEmitter<string> = new EventEmitter();

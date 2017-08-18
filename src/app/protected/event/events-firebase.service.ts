@@ -46,4 +46,7 @@ export interface FirebaseTimelineEvent {
   dateBegin: TimelineDate;
   dateEnd: TimelineDate;
   typeId: string;
+  timelines?: {
+    [timelineId: string]: true;
+  }
 }

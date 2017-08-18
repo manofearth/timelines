@@ -6,6 +6,7 @@ import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/observable/combineLatest';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../../reducers';
@@ -54,6 +55,7 @@ export class SearchFieldComponent implements OnInit, OnDestroy, DoCheck {
 
     this.valueChangesSub = this.inputControl.valueChanges
       .debounceTime(USER_INPUT_DEBOUNCE_TIME)
+      .distinctUntilChanged()
       .map(value => ({
         type: 'SEARCH_FIELD_INPUT',
         payload: {

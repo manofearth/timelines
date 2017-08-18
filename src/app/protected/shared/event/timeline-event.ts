@@ -7,6 +7,7 @@ export interface TimelineEvent {
   title: string;
   dateBegin: TimelineDate;
   dateEnd: TimelineDate;
+  timelines: string[]; // timeline ids
 }
 
 export interface TimelineEventLight {

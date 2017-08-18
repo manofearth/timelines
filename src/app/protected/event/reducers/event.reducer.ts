@@ -1,6 +1,6 @@
 import { eventInitialState } from '../event-states';
 import { TimelineEvent } from '../../shared/event/timeline-event';
-import { EventEraseAction, EventInsertAndAttachToTimelineAction } from '../event-actions';
+import { EventEraseAction } from '../event-actions';
 import { EventGetErrorAction, EventGetSuccessAction } from '../effects/event-firebase-get.effect';
 import { FirebaseTimelineEvent } from '../events-firebase.service';
 import { InputChangedAction } from '../../shared/input/input.directive';
@@ -15,18 +15,16 @@ import { SelectorSelectSelectedAction } from '../../shared/selector-select/selec
 import { FirebaseType } from '../../types/types-firebase.service';
 import { EventInsertSuccessAction } from '../effects/event-firebase-insert.effect';
 import { toType } from '../../type/effects/type-get.effect';
-import { TIMELINE_EVENTS_SELECTOR_NAME_PREFIX } from '../../timeline/events/timeline-events-table.component';
-import { SelectorInputCreateAction } from '../../shared/selector-input/selector-input.component';
+import { EventFromTimelineCreateAction } from '../../timeline/timeline.component';
 
 type EventReducerAction = EventGetSuccessAction
   | EventGetErrorAction
   | EventEraseAction
-  | EventInsertAndAttachToTimelineAction
   | EventInsertSuccessAction
   | InputChangedAction
   | DateChangedAction
   | SelectorSelectSelectedAction
-  | SelectorInputCreateAction;
+  | EventFromTimelineCreateAction;
 
 export function eventReducer(state: TimelineEvent, action: EventReducerAction): TimelineEvent {
   switch (action.type) {
@@ -34,13 +32,8 @@ export function eventReducer(state: TimelineEvent, action: EventReducerAction): 
       return toTimelineEvent(action.payload.event, action.payload.type);
     case 'EVENT_ERASE':
       return eventInitialState.event;
-    case 'SELECTOR_INPUT_CREATE':
-      if (action.payload.name.startsWith(TIMELINE_EVENTS_SELECTOR_NAME_PREFIX)) {
-        return newEvent(action.payload.value);
-      }
-      return state;
-    case 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE':
-      return action.payload.event;
+    case 'EVENT_FROM_TIMELINE_CREATE':
+      return newEvent(action.payload.eventTitle, action.payload.timelineId);
     case 'EVENT_INSERT_SUCCESS':
       return { ...state, id: action.payload };
     case 'INPUT_CHANGED':
@@ -71,13 +64,14 @@ export function eventReducer(state: TimelineEvent, action: EventReducerAction): 
   }
 }
 
-function newEvent(title: string): TimelineEvent {
+function newEvent(title: string, timelineId: string): TimelineEvent {
   return {
     id: null,
     type: null,
     title: title,
     dateBegin: null,
     dateEnd: null,
+    timelines: [ timelineId ],
   }
 }
 
@@ -88,5 +82,6 @@ function toTimelineEvent(firebaseEvent: FirebaseTimelineEvent, firebaseType: Fir
     title: firebaseEvent.title,
     dateBegin: firebaseEvent.dateBegin,
     dateEnd: firebaseEvent.dateEnd,
+    timelines: firebaseEvent.timelines ? Object.keys(firebaseEvent.timelines) : [],
   };
 }

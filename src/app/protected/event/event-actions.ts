@@ -1,9 +1,7 @@
 import { Action } from '@ngrx/store';
-import { TimelineEvent } from '../shared/event/timeline-event';
 
 export type EventActionType = 'EVENT_CREATE'
   | 'EVENT_UPDATE'
-  | 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE'
   | 'EVENT_GET_SUCCESS'
   | 'EVENT_GET_ERROR'
   | 'EVENT_ERASE'
@@ -16,15 +14,6 @@ export type EventActionType = 'EVENT_CREATE'
 
 export interface EventActionBase extends Action {
   type: EventActionType;
-}
-
-export interface EventInsertAndAttachToTimelineAction extends EventActionBase {
-  type: 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE';
-  payload: {
-    timelineId: string;
-    groupId: string;
-    event: TimelineEvent;
-  };
 }
 
 export interface EventEraseAction extends EventActionBase {

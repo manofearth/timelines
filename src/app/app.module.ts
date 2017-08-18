@@ -18,7 +18,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Logger } from './shared/logger.service';
 import { EventFirebaseUpdateEffect } from './protected/event/effects/event-firebase-update.effect';
 import { EventFirebaseInsertEffect } from './protected/event/effects/event-firebase-insert.effect';
-import { EventFirebaseInsertAndAttachEffect } from './protected/event/effects/event-firebase-insert-and-attach.effect';
 import { EventFirebaseDetachEffect } from './protected/event/effects/event-firebase-detach.effect';
 import { EventFirebaseGetEffect } from './protected/event/effects/event-firebase-get.effect';
 import { TimelinesFirebaseGetEffect } from './protected/timelines/effects/timelines-firebase-get.effect';
@@ -96,7 +95,6 @@ const routes: Routes = [
     EffectsModule.run(TimelineFirebaseSaveEffect),
     EffectsModule.run(EventFirebaseGetEffect),
     EffectsModule.run(EventFirebaseInsertEffect),
-    EffectsModule.run(EventFirebaseInsertAndAttachEffect),
     EffectsModule.run(EventFirebaseUpdateEffect),
     EffectsModule.run(EventFirebaseDetachEffect),
     EffectsModule.run(EventFirebaseAttachEffect),

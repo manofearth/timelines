@@ -1,5 +1,5 @@
 import { eventInitialState, EventStatus } from '../event-states';
-import { EventEraseAction, EventInsertAndAttachToTimelineAction } from '../event-actions';
+import { EventEraseAction } from '../event-actions';
 import { EventGetErrorAction, EventGetSuccessAction } from '../effects/event-firebase-get.effect';
 import {
   TIMELINE_EVENTS_SELECTOR_NAME_PREFIX,
@@ -18,7 +18,6 @@ type EventStatusReducerAction =
   | EventGetErrorAction
   | EventUpdateErrorAction
   | EventInsertErrorAction
-  | EventInsertAndAttachToTimelineAction
   | EventUpdateSuccessAction
   | EventInsertSuccessAction
   | EventEraseAction
@@ -42,8 +41,6 @@ export function eventStatusReducer(state: EventStatus, action: EventStatusReduce
         return 'NEW';
       }
       return state;
-    case 'EVENT_INSERT_AND_ATTACH_TO_TIMELINE':
-      return 'INSERTING';
     case 'EVENT_UPDATE_SUCCESS':
       return 'UPDATED';
     case 'EVENT_INSERT_SUCCESS':
