@@ -10,7 +10,7 @@ import { EventInsertErrorAction, EventInsertSuccessAction } from '../effects/eve
 import { EventSaveButtonAction } from '../event.component';
 import { isNew } from '../../shared/event/is-new.fn';
 import { ChartBarClickAction } from '../../chart/chart.component';
-import { SearchFieldCreateButtonAction } from '../../shared/search-field/search-field-actions';
+import { SearchFieldCreateAction } from '../../shared/search-field/search-field-actions';
 
 type EventStatusReducerAction =
   | TimelineEventClickAction
@@ -23,7 +23,7 @@ type EventStatusReducerAction =
   | EventEraseAction
   | EventSaveButtonAction
   | ChartBarClickAction
-  | SearchFieldCreateButtonAction;
+  | SearchFieldCreateAction;
 
 export function eventStatusReducer(state: EventStatus, action: EventStatusReducerAction): EventStatus {
   switch (action.type) {
@@ -36,7 +36,7 @@ export function eventStatusReducer(state: EventStatus, action: EventStatusReduce
     case 'EVENT_UPDATE_ERROR':
     case 'EVENT_INSERT_ERROR':
       return 'ERROR';
-    case 'SEARCH_FIELD_CREATE_BUTTON':
+    case 'SEARCH_FIELD_CREATE':
       if (action.payload.name.startsWith(TIMELINE_EVENTS_SELECTOR_NAME_PREFIX)) {
         return 'NEW';
       }

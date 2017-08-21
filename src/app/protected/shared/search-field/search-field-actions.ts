@@ -31,8 +31,8 @@ export interface SearchFieldEnterKeyAction extends SearchFieldBaseAction {
   }
 }
 
-export interface SearchFieldCreateButtonAction extends SearchFieldBaseAction {
-  type: 'SEARCH_FIELD_CREATE_BUTTON';
+export interface SearchFieldCreateAction extends SearchFieldBaseAction {
+  type: 'SEARCH_FIELD_CREATE';
   payload: {
     name: string;
     value: string;

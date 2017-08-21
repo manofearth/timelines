@@ -19,8 +19,8 @@ import { EventAttachToTimelineAction, EventDetachAction, EventEraseAction } from
 import { toInt } from '../../shared/helpers';
 import { GroupComponent } from '../group/group.component';
 import { TIMELINE_EVENTS_SELECTOR_NAME_PREFIX } from './events/timeline-events-table.component';
-import { SelectorInputCreateAction } from '../shared/selector-input/selector-input.component';
 import { Actions } from '@ngrx/effects';
+import { SearchFieldCreateAction } from '../shared/search-field/search-field-actions';
 
 @Component({
   templateUrl: './timeline.component.html',
@@ -85,8 +85,8 @@ export class TimelineComponent implements OnInit, OnDestroy {
       });
 
     this.createSub = this.actions
-      .ofType('SELECTOR_INPUT_CREATE')
-      .filter<SelectorInputCreateAction>(action => action.payload.name.startsWith(TIMELINE_EVENTS_SELECTOR_NAME_PREFIX))
+      .ofType('SEARCH_FIELD_CREATE')
+      .filter<SearchFieldCreateAction>(action => action.payload.name.startsWith(TIMELINE_EVENTS_SELECTOR_NAME_PREFIX))
       .subscribe(action => {
         this.dispatchEventFromTimelineCreateAction(action.payload.value);
         this.openTimelineEvent();

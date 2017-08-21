@@ -1,20 +1,21 @@
 <div class="search-field-container">
-  <input #searchInput
+  <input
+    #searchInput
     title="{{placeholder}}"
     class="form-control"
     placeholder="{{placeholder}}"
-    [formControl]="inputControl"
-    (keydown.enter)="onEnterKey($event)"
-    (keydown.arrowdown)="onArrowDownKey($event)"
-    (keydown.arrowup)="onArrowUpKey($event)"
-    (keydown.esc)="onEscKey($event)"
+    [value]="searchQuery$ | async"
+    (keydown.enter)="onEnterKey()"
+    (keydown.arrowdown)="onArrowDownKey()"
+    (keydown.arrowup)="onArrowUpKey()"
+    (keydown.esc)="onEscKey()"
   >
   <span class="search-in-progress-marker" [hidden]="(isSearching$ | async) === false">поиск...</span>
   <button
     #btnCreate
     type="button"
     class="btn btn-link create-button"
-    (click)="emitCreateEvent()"
+    (click)="onCreateButtonClick()"
     [hidden]="isCreateButtonHidden$ | async">Создать
   </button>
 </div>
