@@ -15,7 +15,7 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NgbModal, NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { EventComponent } from '../event/event.component';
-import { EventAttachToTimelineAction, EventDetachAction, EventEraseAction } from '../event/event-actions';
+import { EventAttachToTimelineAction, EventDetachAction } from '../event/event-actions';
 import { toInt } from '../../shared/helpers';
 import { GroupComponent } from '../group/group.component';
 import { TIMELINE_EVENTS_SELECTOR_NAME_PREFIX } from './events/timeline-events-table.component';
@@ -102,14 +102,7 @@ export class TimelineComponent implements OnInit, OnDestroy {
   }
 
   openTimelineEvent() {
-    this.modalService.open(EventComponent, { size: 'lg' }).result.then(
-      () => {
-        this.dispatchEventEraseAction();
-      },
-      () => {
-        this.dispatchEventEraseAction();
-      },
-    );
+    this.modalService.open(EventComponent, { size: 'lg' });
   }
 
   attachEvent(eventId: string, groupId: string) {
@@ -194,18 +187,13 @@ export class TimelineComponent implements OnInit, OnDestroy {
     component.groupId = groupId;
   }
 
-  private dispatchEventEraseAction() {
-    this.store.dispatch(<EventEraseAction> {
-      type: 'EVENT_ERASE',
-    });
-  }
-
   private dispatchEventFromTimelineCreateAction(eventTitle: string) {
     const action: EventFromTimelineCreateAction = {
       type: 'EVENT_FROM_TIMELINE_CREATE',
       payload: {
         eventTitle: eventTitle,
         timelineId: this.timeline.id,
+        groupId: this.timeline.groups[ this.currentGroupIndex ].id,
       }
     };
     this.store.dispatch(action);
@@ -257,5 +245,6 @@ export interface EventFromTimelineCreateAction extends Action {
   payload: {
     eventTitle: string;
     timelineId: string;
+    groupId: string;
   }
 }

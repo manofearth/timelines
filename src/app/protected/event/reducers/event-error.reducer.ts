@@ -1,6 +1,4 @@
 import { EventGetErrorAction, EventGetSuccessAction } from '../effects/event-firebase-get.effect';
-import { eventInitialState } from '../event-states';
-import { EventEraseAction } from '../event-actions';
 import { EventUpdateErrorAction, EventUpdateSuccessAction } from '../effects/event-firebase-update.effect';
 import { EventInsertErrorAction, EventInsertSuccessAction } from '../effects/event-firebase-insert.effect';
 
@@ -10,8 +8,7 @@ type EventErrorReducerAction =
   | EventInsertErrorAction
   | EventGetSuccessAction
   | EventUpdateSuccessAction
-  | EventInsertSuccessAction
-  | EventEraseAction;
+  | EventInsertSuccessAction;
 
 export function eventErrorReducer(state: Error, action: EventErrorReducerAction): Error {
   switch (action.type) {
@@ -23,8 +20,6 @@ export function eventErrorReducer(state: Error, action: EventErrorReducerAction)
     case 'EVENT_UPDATE_SUCCESS':
     case 'EVENT_INSERT_SUCCESS':
       return null;
-    case 'EVENT_ERASE':
-      return eventInitialState.error;
     default:
       return state;
   }

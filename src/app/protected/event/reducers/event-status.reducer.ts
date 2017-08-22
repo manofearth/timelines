@@ -1,5 +1,4 @@
-import { eventInitialState, EventStatus } from '../event-states';
-import { EventEraseAction } from '../event-actions';
+import { EventStatus } from '../event-states';
 import { EventGetErrorAction, EventGetSuccessAction } from '../effects/event-firebase-get.effect';
 import {
   TIMELINE_EVENTS_SELECTOR_NAME_PREFIX,
@@ -20,7 +19,6 @@ type EventStatusReducerAction =
   | EventInsertErrorAction
   | EventUpdateSuccessAction
   | EventInsertSuccessAction
-  | EventEraseAction
   | EventSaveButtonAction
   | ChartBarClickAction
   | SearchFieldCreateAction;
@@ -45,8 +43,6 @@ export function eventStatusReducer(state: EventStatus, action: EventStatusReduce
       return 'UPDATED';
     case 'EVENT_INSERT_SUCCESS':
       return 'INSERTED';
-    case 'EVENT_ERASE':
-      return eventInitialState.status;
     case 'EVENT_SAVE_BUTTON':
       return isNew(action.payload) ? 'INSERTING' : 'UPDATING';
     default:

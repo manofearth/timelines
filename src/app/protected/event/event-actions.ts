@@ -16,10 +16,6 @@ export interface EventActionBase extends Action {
   type: EventActionType;
 }
 
-export interface EventEraseAction extends EventActionBase {
-  type: 'EVENT_ERASE';
-}
-
 export interface EventDetachAction extends EventActionBase {
   type: 'EVENT_DETACH';
   payload: {

@@ -1,6 +1,4 @@
-import { eventInitialState } from '../event-states';
 import { TimelineEvent } from '../../shared/event/timeline-event';
-import { EventEraseAction } from '../event-actions';
 import { EventGetErrorAction, EventGetSuccessAction } from '../effects/event-firebase-get.effect';
 import { FirebaseTimelineEvent } from '../events-firebase.service';
 import { InputChangedAction } from '../../shared/input/input.directive';
@@ -19,7 +17,6 @@ import { EventFromTimelineCreateAction } from '../../timeline/timeline.component
 
 type EventReducerAction = EventGetSuccessAction
   | EventGetErrorAction
-  | EventEraseAction
   | EventInsertSuccessAction
   | InputChangedAction
   | DateChangedAction
@@ -30,10 +27,8 @@ export function eventReducer(state: TimelineEvent, action: EventReducerAction): 
   switch (action.type) {
     case 'EVENT_GET_SUCCESS':
       return toTimelineEvent(action.payload.event, action.payload.type);
-    case 'EVENT_ERASE':
-      return eventInitialState.event;
     case 'EVENT_FROM_TIMELINE_CREATE':
-      return newEvent(action.payload.eventTitle, action.payload.timelineId);
+      return newEvent(action.payload.eventTitle, action.payload.groupId, action.payload.timelineId);
     case 'EVENT_INSERT_SUCCESS':
       return { ...state, id: action.payload };
     case 'INPUT_CHANGED':
@@ -64,14 +59,14 @@ export function eventReducer(state: TimelineEvent, action: EventReducerAction): 
   }
 }
 
-function newEvent(title: string, timelineId: string): TimelineEvent {
+function newEvent(title: string, groupId: string, timelineId: string): TimelineEvent {
   return {
     id: null,
     type: null,
     title: title,
     dateBegin: null,
     dateEnd: null,
-    timelines: [ timelineId ],
+    timelines: { [timelineId]: { [groupId]: true } },
   }
 }
 
@@ -82,6 +77,6 @@ function toTimelineEvent(firebaseEvent: FirebaseTimelineEvent, firebaseType: Fir
     title: firebaseEvent.title,
     dateBegin: firebaseEvent.dateBegin,
     dateEnd: firebaseEvent.dateEnd,
-    timelines: firebaseEvent.timelines ? Object.keys(firebaseEvent.timelines) : [],
+    timelines: firebaseEvent.timelines ? firebaseEvent.timelines : {},
   };
 }

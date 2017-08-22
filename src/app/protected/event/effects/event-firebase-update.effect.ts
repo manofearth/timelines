@@ -39,6 +39,7 @@ export function toFirebaseEventUpdateObject(event: TimelineEvent): FirebaseEvent
     dateBegin: event.dateBegin,
     dateEnd: event.dateEnd,
     typeId: event.type.id,
+    timelines: event.timelines,
   };
 }
 

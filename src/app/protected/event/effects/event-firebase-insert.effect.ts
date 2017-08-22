@@ -4,9 +4,12 @@ import { Observable } from 'rxjs/Observable';
 import { Actions, Effect } from '@ngrx/effects';
 import { EventsFirebaseService } from '../events-firebase.service';
 import { toFirebaseEventUpdateObject } from './event-firebase-update.effect';
-import { Action } from '@ngrx/store';
+import { Action, Store } from '@ngrx/store';
 import { isNew } from '../../shared/event/is-new.fn';
 import { EventSaveButtonAction } from '../event.component';
+import { AppState } from '../../../reducers';
+import { TimelineState } from '../../timeline/timeline-states';
+import { TimelinesFirebaseService } from '../../timelines/timelines-firebase.service';
 
 @Injectable()
 export class EventFirebaseInsertEffect {
@@ -15,12 +18,16 @@ export class EventFirebaseInsertEffect {
   effect: Observable<EventInsertSuccessAction | EventInsertErrorAction> = this.actions
     .ofType('EVENT_SAVE_BUTTON')
     .filter<EventSaveButtonAction>(action => isNew(action.payload))
-    .switchMap(action => this.fireEvents
+    .withLatestFrom(this.store.select<TimelineState>(state => state.timeline))
+    .switchMap(([ action, timelineState ]) => this.fireEvents
       .pushObject(toFirebaseEventUpdateObject(action.payload))
-      .map((ref): EventInsertSuccessAction => ({
-        type: 'EVENT_INSERT_SUCCESS',
-        payload: ref.key,
-      }))
+      .switchMap(ref => this.fireTimelines
+        .attachEvent(timelineState.timeline.id, timelineState.timeline.groups[ timelineState.currentGroupIndex ].id, ref.key)
+        .map((): EventInsertSuccessAction => ({
+          type: 'EVENT_INSERT_SUCCESS',
+          payload: ref.key,
+        }))
+      )
       .catch(err => Observable.of<EventInsertErrorAction>({
         type: 'EVENT_INSERT_ERROR',
         payload: toError(err),
@@ -30,6 +37,8 @@ export class EventFirebaseInsertEffect {
   constructor(
     private actions: Actions,
     private fireEvents: EventsFirebaseService,
+    private fireTimelines: TimelinesFirebaseService,
+    private store: Store<AppState>,
   ) {
   }
 }

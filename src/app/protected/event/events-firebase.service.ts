@@ -38,6 +38,11 @@ export interface FirebaseEventUpdateObject {
   dateBegin: TimelineDate;
   dateEnd: TimelineDate;
   typeId: string;
+  timelines: {
+    [timelineId: string]: {
+      [groupId: string]: true;
+    }
+  }
 }
 
 export interface FirebaseTimelineEvent {
@@ -47,6 +52,8 @@ export interface FirebaseTimelineEvent {
   dateEnd: TimelineDate;
   typeId: string;
   timelines?: {
-    [timelineId: string]: true;
+    [timelineId: string]: {
+      [groupId: string]: true;
+    }
   }
 }
