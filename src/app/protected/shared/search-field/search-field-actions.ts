@@ -42,3 +42,7 @@ export interface SearchFieldCreateAction extends SearchFieldBaseAction {
 export interface SearchFieldEscKeyAction extends SearchFieldBaseAction {
   type: 'SEARCH_FIELD_ESC_KEY';
 }
+
+export interface SearchFieldBlurAction extends SearchFieldBaseAction {
+  type: 'SEARCH_FIELD_BLUR';
+}

@@ -64,10 +64,14 @@ export class EventComponent implements OnInit, OnDestroy {
   }
 
   save() {
-    this.store.select(state => state.event.event).take(1).subscribe(event => {
+    this.store.select<AppState>(state => state).take(1).subscribe(state => {
       const action: EventSaveButtonAction = {
         type: 'EVENT_SAVE_BUTTON',
-        payload: event,
+        payload: {
+          timelineId: state.timeline.timeline.id,
+          groupId: state.timeline.timeline.groups[state.timeline.currentGroupIndex].id,
+          event: state.event.event,
+        },
       };
       this.store.dispatch(action);
       this.activeModal.close();
@@ -102,7 +106,11 @@ export const EVENT_DATE_END_INPUT_NAME = 'event-date-end-input';
 
 export interface EventSaveButtonAction extends Action {
   type: 'EVENT_SAVE_BUTTON';
-  payload: TimelineEvent;
+  payload: {
+    timelineId: string;
+    groupId: string;
+    event: TimelineEvent
+  };
 }
 
 function selectValidationKey(key: keyof EventValidationState) {

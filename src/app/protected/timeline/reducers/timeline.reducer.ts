@@ -17,16 +17,19 @@ export function timelineReducer(state: Timeline, action: TimelineReducerAction):
         ...action.payload,
       };
     case 'EVENT_SAVE_BUTTON':
-      if (isNew(action.payload)) {
+      if (action.payload.timelineId !== state.id) {
         return state;
+      }
+      if (isNew(action.payload.event)) {
+        return addEventToTimeline(state, action.payload.groupId, toTimelineEventForTimeline(action.payload.event));
       } else {
-        const searchResult = findEventInTimeline(state, action.payload.id);
+        const searchResult = findEventInTimeline(state, action.payload.event.id);
         if (isEqualDeep(searchResult.event, action.payload)) {
           return state;
         } else {
           const updateQuery = {
             ...searchResult,
-            event: toTimelineEventForTimeline(action.payload)
+            event: toTimelineEventForTimeline(action.payload.event)
           };
           return setEventToTimeline(state, updateQuery);
         }
@@ -52,23 +55,22 @@ function findEventInTimeline(timeline: Timeline, eventId: string): EventInTimeli
     if (eventIndex === -1) return null;
 
     return {
-      event: group.events[eventIndex],
+      event: group.events[ eventIndex ],
       indexInGroup: eventIndex,
       groupIndex: groupIndex,
     };
 
   }, null);
-
 }
 
-function setEventToTimeline(timeline: Timeline, query: EventInTimelineIndex) {
+function setEventToTimeline(timeline: Timeline, query: EventInTimelineIndex): Timeline {
 
-  const groupsClone = [...timeline.groups];
-  const eventsClone = [...groupsClone[query.groupIndex].events];
+  const groupsClone = [ ...timeline.groups ];
+  const eventsClone = [ ...groupsClone[ query.groupIndex ].events ];
 
-  eventsClone[query.indexInGroup] = query.event;
-  groupsClone[query.groupIndex] =  {
-    ...groupsClone[query.groupIndex],
+  eventsClone[ query.indexInGroup ] = query.event;
+  groupsClone[ query.groupIndex ] = {
+    ...groupsClone[ query.groupIndex ],
     events: eventsClone,
   };
 
@@ -76,6 +78,22 @@ function setEventToTimeline(timeline: Timeline, query: EventInTimelineIndex) {
     ...timeline,
     groups: groupsClone,
   };
+}
+
+function addEventToTimeline(timeline: Timeline, groupId: string, event: TimelineEventForTimeline): Timeline {
+
+  const groupsClone = [ ...timeline.groups ];
+  const groupClone  = { ...groupsClone.find(group => group.id === groupId) };
+  const eventsClone = [ ...groupClone.events ];
+
+  eventsClone.push(event);
+  groupClone.events = eventsClone;
+  groupsClone[groupsClone.findIndex(group => group.id === groupId)] = groupClone;
+
+  return {
+    ...timeline,
+    groups: groupsClone
+  }
 }
 
 function toTimelineEventForTimeline(event: TimelineEvent): TimelineEventForTimeline {

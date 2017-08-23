@@ -18,7 +18,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../../../reducers';
 import { Observable } from 'rxjs/Observable';
 import {
-  SearchFieldBaseAction,
+  SearchFieldBaseAction, SearchFieldBlurAction,
   SearchFieldCreateAction,
   SearchFieldDownKeyAction,
   SearchFieldEnterKeyAction,
@@ -112,6 +112,10 @@ export class SearchFieldComponent implements OnInit, OnDestroy, DoCheck {
 
   onEscKey() {
     this.dispatchAction<SearchFieldEscKeyAction>('SEARCH_FIELD_ESC_KEY');
+  }
+
+  onBlur() {
+    this.dispatchAction<SearchFieldBlurAction>('SEARCH_FIELD_BLUR');
   }
 
   private dispatchActionWithCurrentValue<TAction extends SearchFieldBaseAction>(type: TAction['type']) {

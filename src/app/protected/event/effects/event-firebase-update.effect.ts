@@ -14,9 +14,9 @@ export class EventFirebaseUpdateEffect {
   @Effect()
   effect: Observable<EventUpdateSuccessAction | EventUpdateErrorAction> = this.actions
     .ofType('EVENT_SAVE_BUTTON')
-    .filter<EventSaveButtonAction>(action => !isNew(action.payload))
+    .filter<EventSaveButtonAction>(action => !isNew(action.payload.event))
     .switchMap(action => this.fireEvents
-      .updateObject(action.payload.id, toFirebaseEventUpdateObject(action.payload))
+      .updateObject(action.payload.event.id, toFirebaseEventUpdateObject(action.payload.event))
       .map((): EventUpdateSuccessAction => ({
         type: 'EVENT_UPDATE_SUCCESS',
       }))

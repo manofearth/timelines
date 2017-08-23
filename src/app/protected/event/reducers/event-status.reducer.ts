@@ -44,7 +44,7 @@ export function eventStatusReducer(state: EventStatus, action: EventStatusReduce
     case 'EVENT_INSERT_SUCCESS':
       return 'INSERTED';
     case 'EVENT_SAVE_BUTTON':
-      return isNew(action.payload) ? 'INSERTING' : 'UPDATING';
+      return isNew(action.payload.event) ? 'INSERTING' : 'UPDATING';
     default:
       return state;
   }

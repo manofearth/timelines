@@ -5,6 +5,7 @@
     class="form-control"
     placeholder="{{placeholder}}"
     [value]="searchQuery$ | async"
+    (blur)="onBlur()"
     (keydown.enter)="onEnterKey()"
     (keydown.arrowdown)="onArrowDownKey()"
     (keydown.arrowup)="onArrowUpKey()"
