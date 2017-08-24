@@ -1,3 +1,4 @@
+import { isEqual } from './is-equal.fn';
 export function ifEmptyObject(obj: Object, ifEmpty: any): any {
   if (Object.keys(obj).length === 0) {
     return ifEmpty;
@@ -24,4 +25,8 @@ export function notEmpty(value: any): boolean {
 
 export function toInt(value: any): number {
     return parseInt(value, 10);
+}
+
+export function spliceOneValue(arr: any[], valueToDelete: any) {
+  arr.splice(this.registeredSelects.findIndex(isEqual(valueToDelete)), 1);
 }

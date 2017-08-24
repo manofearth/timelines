@@ -1,6 +1,5 @@
 import { selectorInputInitialState, SelectorInputState } from './selector-input-state';
 import {
-  SearchFieldBlurAction,
   SearchFieldDownKeyAction,
   SearchFieldEnterKeyAction,
   SearchFieldEscKeyAction,
@@ -10,6 +9,7 @@ import {
 import { SelectorInputInitAction } from './selector-input-actions';
 import { EventsSearchErrorAction, EventsSearchSuccessAction } from '../../events/effects/events-elastic-search.effect';
 import { SelectorListSelectAction } from '../selector-list/selector-list-actions';
+import { SelectorInputBlurAction } from './selector-input-blur.effect';
 
 type SelectorAction =
   SearchFieldInputAction
@@ -21,7 +21,7 @@ type SelectorAction =
   | SearchFieldEscKeyAction
   | SelectorListSelectAction
   | SearchFieldEnterKeyAction
-  | SearchFieldBlurAction;
+  | SelectorInputBlurAction;
 
 export function selectorInputReducer(state: SelectorInputState<any>, action: SelectorAction): SelectorInputState<any> {
 
@@ -47,7 +47,7 @@ export function selectorInputReducer(state: SelectorInputState<any>, action: Sel
       return setIndexWith(state, prevIndex);
 
     case 'SEARCH_FIELD_ESC_KEY':
-    case 'SEARCH_FIELD_BLUR':
+    case 'SELECTOR_INPUT_BLUR':
       return {
         ...state,
         results: [],
@@ -70,7 +70,7 @@ export function selectorInputReducer(state: SelectorInputState<any>, action: Sel
       } else {
         return {
           ...state,
-          selectedItem: state.results[state.highlightedIndex],
+          selectedItem: state.results[ state.highlightedIndex ],
           results: [],
           query: '',
         };

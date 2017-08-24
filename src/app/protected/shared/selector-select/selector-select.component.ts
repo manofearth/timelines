@@ -6,6 +6,7 @@ import { SelectorListItem } from '../selector-list/selector-list-item';
 import { SelectorSelectState } from './selector-select-state';
 import { SelectorSelectButtonAction, SelectorSelectInitAction } from './selector-select-actions';
 import { Subscription } from 'rxjs/Subscription';
+import { SelectorInputBlurEffect } from '../selector-input/selector-input-blur.effect';
 
 @Component({
   selector: 'tl-selector-select',
@@ -28,7 +29,9 @@ export class SelectorSelectComponent implements OnInit, OnDestroy {
 
   private selectedItemSub: Subscription;
 
-  constructor(private store: Store<AppState>) {
+  constructor(
+    private store: Store<AppState>,
+    private blurEffect: SelectorInputBlurEffect) {
   }
 
   ngOnInit() {
@@ -53,6 +56,8 @@ export class SelectorSelectComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.blurEffect.registerSelect(this.name);
+
     this.selectedItemSub = this.store
       .select<SelectorListItem<any>>(state => this.stateSelector(state).selectedItem)
       .filter(item => item !== null)
@@ -67,6 +72,7 @@ export class SelectorSelectComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.blurEffect.unregisterSelect(this.name);
     this.selectedItemSub.unsubscribe();
   }
 
@@ -98,3 +104,4 @@ export interface SelectorSelectSelectedAction extends Action {
     value: any;
   }
 }
+

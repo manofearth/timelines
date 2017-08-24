@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/delay';
+import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/observable/merge';
 import { Observable } from 'rxjs/Observable';
 import { AppState } from '../../../reducers';
@@ -7,6 +9,7 @@ import { Store } from '@ngrx/store';
 import { SelectorListItem } from '../selector-list/selector-list-item';
 import { SelectorInputState } from './selector-input-state';
 import { SelectorInputInitAction } from './selector-input-actions';
+import { SelectorInputBlurEffect } from './selector-input-blur.effect';
 
 @Component({
   selector: 'tl-selector-input',
@@ -28,7 +31,8 @@ export class SelectorInputComponent implements OnInit, OnDestroy {
   createByEnterKey$: Observable<boolean>;
 
   constructor(
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private blurEffect: SelectorInputBlurEffect,
   ) {
   }
 
@@ -45,9 +49,12 @@ export class SelectorInputComponent implements OnInit, OnDestroy {
       const selectorState = this.stateSelector(state);
       return !selectorState.isSearching && selectorState.results.length === 0
     });
+
+    this.blurEffect.registerSelect(this.name);
   }
 
   ngOnDestroy() {
+    this.blurEffect.unregisterSelect(this.name);
   }
 
   private dispatchInitAction() {

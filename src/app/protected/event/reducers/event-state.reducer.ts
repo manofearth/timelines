@@ -1,9 +1,8 @@
 import { EventState } from '../event-states';
 import { Reducers } from '../../../reducers';
-import { Action, ActionReducer, combineReducers } from '@ngrx/store';
+import { ActionReducer, combineReducers } from '@ngrx/store';
 import { EVENT_TYPE_SELECTOR_NAME } from '../event.component';
 import { reduceWhen } from '../../../shared/reduce-when.fn';
-import { actionHasName } from '../../../shared/action-has-name.fn';
 import { selectorSelectReducer } from '../../shared/selector-select/selector-select-reducer';
 import { selectorInputReducer } from '../../shared/selector-input/selector-input-reducer';
 import { composeReducers } from '../../../shared/compose-reducers.fn';
@@ -15,6 +14,7 @@ import {
   eventTypeSelectorReducerFilteredByName
 } from './event-type-selector.reducer';
 import { eventValidationReducer } from './event-validation.reducer';
+import { actionNameIs } from '../../../shared/action-name-is.fn';
 
 export type EventStateWithoutValidate = Pick<EventState, 'status' | 'error' | 'event' | 'typeSelector'>;
 const reducersWithoutValidate: Reducers<EventStateWithoutValidate> = {
@@ -35,10 +35,6 @@ const reducersWithoutValidate: Reducers<EventStateWithoutValidate> = {
 };
 
 const reduceWithoutValidation: ActionReducer<EventStateWithoutValidate> = combineReducers(reducersWithoutValidate);
-
-function actionNameIs(name: string) {
-  return (action: Action) => actionHasName(action) && action.payload.name === name;
-}
 
 export const eventStateReducer: ActionReducer<EventState> = (state, action) => {
   const interState = reduceWithoutValidation(state, action);
