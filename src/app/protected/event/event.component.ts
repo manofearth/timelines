@@ -10,8 +10,9 @@ import { TimelineEventsTypeLight } from '../types/types-states';
 import { Observable } from 'rxjs/Observable';
 import { TimelineDate } from '../shared/date/date';
 import { TimelineEvent } from '../shared/event/timeline-event';
-import { getPropSafely } from '../shared/helpers';
+import { getProp, getPropDeep } from '../shared/helpers';
 import { EventValidationState } from './reducers/event-validation.reducer';
+import { TypeKind } from '../type/type-states';
 
 @Component({
   templateUrl: './event.component.html',
@@ -33,6 +34,7 @@ export class EventComponent implements OnInit, OnDestroy {
   isDateBeginGreaterEnd$: Observable<boolean>;
   isDateBeginNotValid$: Observable<boolean>;
   isDateEndNotValid$: Observable<boolean>;
+  kind$: Observable<TypeKind>;
 
   private typeSub: Subscription;
 
@@ -44,6 +46,7 @@ export class EventComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.status$ = this.store.select(state => state.event.status);
+    this.kind$ = this.store.select(state => getPropDeep(state.event, 'typeSelector.selectedItem.item.kind', 'period'));
     this.isTypeEmpty$ = this.store.select(selectValidationKey('emptyType'));
     this.isTitleEmpty$ = this.store.select(selectValidationKey('emptyTitle'));
     this.isDateBeginEmpty$ = this.store.select(selectValidationKey('emptyDateBegin'));
@@ -87,15 +90,15 @@ export class EventComponent implements OnInit, OnDestroy {
   }
 
   selectTitle(appState: AppState): string {
-    return getPropSafely<TimelineEvent>(appState.event.event, 'title', '');
+    return getProp(appState.event.event, 'title', '');
   }
 
   selectDateBegin(appState: AppState): TimelineDate {
-    return getPropSafely<TimelineEvent>(appState.event.event, 'dateBegin', null);
+    return getProp(appState.event.event, 'dateBegin', null);
   }
 
   selectDateEnd(appState: AppState): TimelineDate {
-    return getPropSafely<TimelineEvent>(appState.event.event, 'dateEnd', null);
+    return getProp(appState.event.event, 'dateEnd', null);
   }
 }
 
@@ -114,7 +117,7 @@ export interface EventSaveButtonAction extends Action {
 }
 
 function selectValidationKey(key: keyof EventValidationState) {
-  return (state: AppState) => getPropSafely<EventValidationState>(state.event.validation, key, false);
+  return (state: AppState) => getProp(state.event.validation, key, false);
 }
 
 function some(predicate1: (state: AppState) => boolean, predicate2: (state: AppState) => boolean) {

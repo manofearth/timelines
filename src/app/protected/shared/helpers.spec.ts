@@ -1,6 +1,6 @@
-import { getPropSafely } from './helpers';
+import { getPropDeep } from './helpers';
 
-describe('getPropSafely()', () => {
+describe('getPropDeep()', () => {
 
   it('should return object property or default value if property doesn\'t exist', () => {
 
@@ -13,19 +13,19 @@ describe('getPropSafely()', () => {
       },
     };
 
-    expect(getPropSafely(object, 'id')).toEqual(3);
-    expect(getPropSafely(object, 'unknown')).toBeUndefined();
-    expect(getPropSafely(object, 'unknown', 'value')).toEqual('value');
-    expect(getPropSafely(object, 'unknown.unknown')).toBeUndefined();
-    expect(getPropSafely(object, 'id.unknown')).toBeUndefined();
-    expect(getPropSafely(object, 'sub')).toEqual({ message: 'msg', title: undefined, p: {} });
-    expect(getPropSafely(object, 'sub.message')).toEqual('msg');
-    expect(getPropSafely(object, 'sub.message.unknown')).toBeUndefined();
-    expect(getPropSafely(object, 'sub.title')).toBeUndefined();
-    expect(getPropSafely(object, 'sub.title.unknown')).toBeUndefined();
-    expect(getPropSafely(object, 'sub.title.unknown', 'val')).toEqual('val');
-    expect(getPropSafely(object, 'sub.p')).toEqual({});
-    expect(getPropSafely(object, 'sub.p.unknown')).toBeUndefined();
-    expect(getPropSafely(object, 'sub.p.unknown', 'def')).toEqual('def');
+    expect(getPropDeep(object, 'id')).toEqual(3);
+    expect(getPropDeep(object, 'unknown')).toBeUndefined();
+    expect(getPropDeep(object, 'unknown', 'value')).toEqual('value');
+    expect(getPropDeep(object, 'unknown.unknown')).toBeUndefined();
+    expect(getPropDeep(object, 'id.unknown')).toBeUndefined();
+    expect(getPropDeep(object, 'sub')).toEqual({ message: 'msg', title: undefined, p: {} });
+    expect(getPropDeep(object, 'sub.message')).toEqual('msg');
+    expect(getPropDeep(object, 'sub.message.unknown')).toBeUndefined();
+    expect(getPropDeep(object, 'sub.title')).toBeUndefined();
+    expect(getPropDeep(object, 'sub.title.unknown')).toBeUndefined();
+    expect(getPropDeep(object, 'sub.title.unknown', 'val')).toEqual('val');
+    expect(getPropDeep(object, 'sub.p')).toEqual({});
+    expect(getPropDeep(object, 'sub.p.unknown')).toBeUndefined();
+    expect(getPropDeep(object, 'sub.p.unknown', 'def')).toEqual('def');
   });
 });

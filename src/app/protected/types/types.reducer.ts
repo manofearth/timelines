@@ -86,6 +86,7 @@ function extractTypeForList(type: TimelineEventsType): TimelineEventsTypeLight {
   return {
     id: type.id,
     title: type.title,
+    kind: type.kind,
   }
 }
 
@@ -94,5 +95,6 @@ function toTimelineEventsType(hit: TypesElasticSearchHit): TimelineEventsTypeLig
   return {
     id: hit._id,
     title: hit.highlight ? hit.highlight.title[0] : hit._source.title,
+    kind: hit._source.kind,
   }
 }

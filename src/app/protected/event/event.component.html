@@ -37,7 +37,7 @@
         <small *ngIf="isDateBeginEmpty$ | async" class="form-control-feedback">Неверный формат даты</small>
       </div>
 
-      <div class="col-md-3 form-group" [class.has-danger]="isDateEndNotValid$ | async">
+      <div class="col-md-3 form-group" [class.has-danger]="isDateEndNotValid$ | async" [class.show]="(kind$ | async) === 'period'">
         <input
           class="form-control"
           title="Конец периода"

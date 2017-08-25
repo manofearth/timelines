@@ -1,3 +1,5 @@
+import { TypeKind } from '../type/type-states';
+
 export interface TypesState {
   isLoading: boolean;
   isSearching: boolean;
@@ -9,6 +11,7 @@ export interface TypesState {
 export interface TimelineEventsTypeLight {
   id: string;
   title: string;
+  kind: TypeKind;
 }
 
 export const typesInitialState: TypesState = {

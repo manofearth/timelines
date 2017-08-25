@@ -26,6 +26,7 @@ export class SelectorSelectComponent implements OnInit, OnDestroy {
   highlightedIndex$: Observable<number>;
   selectedItem$: Observable<SelectorListItem<any>>;
   isDropdownVisible$: Observable<boolean>;
+  createByEnterKey$: Observable<boolean>;
 
   private selectedItemSub: Subscription;
 
@@ -43,6 +44,10 @@ export class SelectorSelectComponent implements OnInit, OnDestroy {
     this.results$ = this.store.select(state => this.stateSelector(state).results);
     this.highlightedIndex$ = this.store.select(state => this.stateSelector(state).highlightedIndex);
     this.isDropdownVisible$ = this.store.select(state => this.stateSelector(state).isDropdownVisible);
+    this.createByEnterKey$ = this.store.select<boolean>(state => {
+      const selectorState = this.stateSelector(state);
+      return !selectorState.isSearching && selectorState.results.length === 0
+    });
     this.selectedItem$ = this.store.select(state => this.stateSelector(state).selectedItem).map(val => {
       if (val) {
         return val;

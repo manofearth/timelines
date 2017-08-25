@@ -28,5 +28,5 @@ export function toInt(value: any): number {
 }
 
 export function spliceOneValue(arr: any[], valueToDelete: any) {
-  arr.splice(this.registeredSelects.findIndex(isEqual(valueToDelete)), 1);
+  arr.splice(arr.findIndex(isEqual(valueToDelete)), 1);
 }

@@ -18,7 +18,8 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../../../reducers';
 import { Observable } from 'rxjs/Observable';
 import {
-  SearchFieldBaseAction, SearchFieldBlurAction,
+  SearchFieldBaseAction,
+  SearchFieldBlurAction,
   SearchFieldCreateAction,
   SearchFieldDownKeyAction,
   SearchFieldEnterKeyAction,
@@ -26,6 +27,7 @@ import {
   SearchFieldInputAction,
   SearchFieldUpKeyAction
 } from './search-field-actions';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   selector: 'tl-search-field',
@@ -47,12 +49,15 @@ export class SearchFieldComponent implements OnInit, OnDestroy, DoCheck {
   isCreateButtonHidden$: Observable<boolean>;
 
   private valueChangesSub: Subscription;
-  private inputBecomeVisible: boolean = false;
+  private isVisibleSubject: Subject<boolean>;
+  private focusSub: Subscription;
 
   constructor(private store: Store<AppState>) {
   }
 
   ngOnInit() {
+
+    this.isVisibleSubject = new Subject();
 
     this.valueChangesSub = Observable
       .fromEvent<Event>(this.searchInput.nativeElement, 'input')
@@ -71,21 +76,23 @@ export class SearchFieldComponent implements OnInit, OnDestroy, DoCheck {
     this.isCreateButtonHidden$ = Observable
       .combineLatest<boolean, boolean>(this.isSearching$, this.searchQuery$.map(query => query.length !== 0))
       .map(([ isSearching, hasQuery ]) => !hasQuery || isSearching);
+
+    this.focusSub = this.isVisibleSubject
+      .distinctUntilChanged()
+      .subscribe(isVisible => {
+        if (isVisible && this.focusOnShown) {
+          this.searchInput.nativeElement.focus();
+        }
+      });
   }
 
   ngOnDestroy() {
     this.valueChangesSub.unsubscribe();
+    this.focusSub.unsubscribe();
   }
 
   ngDoCheck() {
-    if (!this.inputBecomeVisible) {
-      if (this.searchInput.nativeElement.offsetParent !== null) {
-        this.inputBecomeVisible = true;
-        if (this.focusOnShown) {
-          this.searchInput.nativeElement.focus();
-        }
-      }
-    }
+    this.isVisibleSubject.next(this.searchInput.nativeElement.offsetParent !== null);
   }
 
   onCreateButtonClick() {

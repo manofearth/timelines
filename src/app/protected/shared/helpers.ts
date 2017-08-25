@@ -1,5 +1,9 @@
-export function getPropSafely<T>(object: T, property: keyof T, defaultValue: any): any
-export function getPropSafely(object: Object, propertyPath: string, defaultValue?: any): any {
+export function getProp<T>(object: T, property: keyof T, defaultValue: any): any {
+  return object ? (object[property] ? object[property] : defaultValue) : defaultValue;
+}
+
+
+export function getPropDeep(object: Object, propertyPath: string, defaultValue?: any): any {
   if (object === null || object === undefined) {
     return defaultValue;
   }
@@ -10,7 +14,5 @@ export function getPropSafely(object: Object, propertyPath: string, defaultValue
 
   const propertyPathArray: string[] = propertyPath.split('.');
 
-  // Рекурсия намеренная.
-  // noinspection TailRecursionJS
-  return getPropSafely(object[propertyPathArray[0]], propertyPathArray.slice(1).join('.'), defaultValue);
+  return getPropDeep(object[propertyPathArray[0]], propertyPathArray.slice(1).join('.'), defaultValue);
 }

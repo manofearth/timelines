@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { ElasticSearchService, SearchHit, SearchResponseData } from '../shared/elastic-search.service';
+import { ElasticSearchService, SearchHit } from '../shared/elastic-search.service';
 import { Http } from '@angular/http';
 import { AngularFireAuth } from 'angularfire2/auth';
+import { TypeKind } from '../type/type-states';
 
 @Injectable()
 export class TypesElasticSearchService extends ElasticSearchService<TypeHitSource, TypeHitHighlight> {
@@ -16,12 +17,12 @@ export class TypesElasticSearchService extends ElasticSearchService<TypeHitSourc
 
 }
 
-export type TypesElasticSearchResponse = SearchResponseData<TypeHitSource, TypeHitHighlight>;
 export type TypesElasticSearchHit = SearchHit<TypeHitSource, TypeHitHighlight>;
 
 export interface TypeHitSource {
   title: string;
   ownerId: string;
+  kind: TypeKind;
 }
 
 export interface TypeHitHighlight {

@@ -2,9 +2,10 @@ import { selectorSelectInitialState, SelectorSelectState } from './selector-sele
 import { SearchFieldEnterKeyAction, SearchFieldEscKeyAction } from '../search-field/search-field-actions';
 import { SelectorListSelectAction } from '../selector-list/selector-list-actions';
 import { SelectorSelectButtonAction, SelectorSelectInitAction } from './selector-select-actions';
+import { SelectorInputBlurAction } from '../selector-input/selector-input-blur.effect';
 
 type SelectorSelectAction = SelectorSelectInitAction | SelectorSelectButtonAction | SearchFieldEnterKeyAction
-  | SearchFieldEscKeyAction | SelectorListSelectAction;
+  | SearchFieldEscKeyAction | SelectorListSelectAction | SelectorInputBlurAction;
 
 export function selectorSelectReducer(
   state: SelectorSelectState<any>,
@@ -22,9 +23,11 @@ export function selectorSelectReducer(
     case 'SEARCH_FIELD_ESC_KEY':
     case 'SELECTOR_LIST_SELECT':
     case 'SEARCH_FIELD_ENTER_KEY':
+    case 'SELECTOR_INPUT_BLUR':
       return {
         ...state,
         isDropdownVisible: false,
+        query: '',
       };
     default:
       return state;

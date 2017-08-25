@@ -5,7 +5,7 @@ import { Logger } from '../../../shared/logger.service';
 import { AppState } from '../../../reducers';
 import { Action, Store } from '@ngrx/store';
 import { Subscription } from 'rxjs/Subscription';
-import { getPropSafely } from '../helpers';
+import { getProp } from '../helpers';
 
 @Directive({
   selector: 'input[tlDate]',
@@ -29,7 +29,7 @@ export class DateDirective implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.stateSub = this.store.select<TimelineDate>(this.stateSelector).subscribe(state => {
-      this.renderer.setProperty(this.el.nativeElement, 'value', getPropSafely<TimelineDate>(state, 'title', ''));
+      this.renderer.setProperty(this.el.nativeElement, 'value', getProp(state, 'title', ''));
     });
   }
 
