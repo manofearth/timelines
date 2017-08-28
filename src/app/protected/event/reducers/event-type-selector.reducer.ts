@@ -59,6 +59,7 @@ export function eventTypeSelectorReducerFilteredByName(
             item: {
               id: hit._id,
               title: hit._source.title,
+              kind: hit._source.kind,
             },
           })
         ),

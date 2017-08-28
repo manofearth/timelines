@@ -14,6 +14,8 @@ import { FirebaseType } from '../../types/types-firebase.service';
 import { EventInsertSuccessAction } from '../effects/event-firebase-insert.effect';
 import { toType } from '../../type/effects/type-get.effect';
 import { EventFromTimelineCreateAction } from '../../timeline/timeline.component';
+import { TypeKind } from '../../type/type-states';
+import { TimelineDate } from '../../shared/date/date';
 
 type EventReducerAction = EventGetSuccessAction
   | EventGetErrorAction
@@ -41,7 +43,11 @@ export function eventReducer(state: TimelineEvent, action: EventReducerAction): 
     case 'DATE_CHANGED':
       switch (action.payload.name) {
         case EVENT_DATE_BEGIN_INPUT_NAME:
-          return { ...state, dateBegin: action.payload.value };
+          return {
+            ...state,
+            dateBegin: action.payload.value,
+            dateEnd: getDateEnd(state.type.kind, action.payload.value, state.dateEnd),
+          };
         case EVENT_DATE_END_INPUT_NAME:
           return { ...state, dateEnd: action.payload.value };
         default:
@@ -50,7 +56,11 @@ export function eventReducer(state: TimelineEvent, action: EventReducerAction): 
     case 'SELECTOR_SELECT_SELECTED':
       switch (action.payload.name) {
         case EVENT_TYPE_SELECTOR_NAME:
-          return { ...state, type: action.payload.value };
+          return {
+            ...state,
+            type: action.payload.value,
+            dateEnd: getDateEnd(action.payload.value.kind, state.dateBegin, state.dateEnd),
+          };
         default:
           return state;
       }
@@ -79,4 +89,8 @@ function toTimelineEvent(firebaseEvent: FirebaseTimelineEvent, firebaseType: Fir
     dateEnd: firebaseEvent.dateEnd,
     timelines: firebaseEvent.timelines ? firebaseEvent.timelines : {},
   };
+}
+
+function getDateEnd(typeKind: TypeKind, dateBegin: TimelineDate, dateEnd: TimelineDate): TimelineDate {
+  return typeKind === 'date' ? dateBegin : dateEnd;
 }

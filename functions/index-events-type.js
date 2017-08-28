@@ -4,7 +4,8 @@ function toElasticSearchEventType(eventType, ownerId) {
   }
   return {
     title: eventType.title,
-    ownerId: ownerId
+    ownerId: ownerId,
+    kind: eventType.kind,
   };
 }
 
