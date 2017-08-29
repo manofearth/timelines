@@ -134,6 +134,7 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     bars
       .enter()
+      .filter((d: TimelineEventForTimeline) => d.type.kind !== 'date')
       .append('rect')
       .classed('bar', true)
       .attr('rx', 3)
@@ -157,6 +158,22 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
       .attr('height', (d: TimelineEventForChart) =>
         yScale(d.yPos + 1) - yScale(d.yPos) - 2
       );
+
+    const circles = this
+      .selectSvg()
+      .selectAll('circle')
+      .data(data);
+
+    circles.exit().remove();
+
+    circles
+      .enter()
+      .filter((d: TimelineEventForTimeline) => d.type.kind === 'date')
+      .append('circle')
+      .merge(circles)
+      .attr('cx', d => xScale(d.dateBegin.days))
+      .attr('cy', d => yScale(d.yPos))
+      .attr('r', 3);
 
     const texts = this
       .selectSvg()

@@ -10,6 +10,8 @@ import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 import { Subscription, TeardownLogic } from 'rxjs/Subscription';
 import 'rxjs/add/operator/first';
+import { FirebaseType, TypesFirebaseService } from '../../types/types-firebase.service';
+import { toType } from '../../type/effects/type-get.effect';
 
 @Injectable()
 export class TimelineFirebaseGetEffect extends ProtectedFirebaseEffect<TimelineGetAction,
@@ -36,8 +38,21 @@ export class TimelineFirebaseGetEffect extends ProtectedFirebaseEffect<TimelineG
 
             const subscription: Subscription = Observable
               .forkJoin(...eventsObservables)
-              .subscribe((firebaseEvents: FirebaseTimelineEvent[]) => {
-                observer.next(toTimeline(firebaseTimeline, firebaseEvents));
+              .switchMap((fireEvents: FirebaseTimelineEvent[]) => {
+                const typesObservables: Observable<FirebaseType>[] = extractTypesIds(fireEvents)
+                  .map(
+                    typeId => this.fireTypes.getObject(typeId).first()
+                  );
+
+                return Observable
+                  .forkJoin(...typesObservables)
+                  .map((fireTypes: FirebaseType[]) => ({
+                    fireEventsDict: toDictionary(fireEvents, '$key'),
+                    fireTypesDict: toDictionary(fireTypes, '$key')
+                  }));
+              })
+              .subscribe(({ fireEventsDict, fireTypesDict }) => {
+                observer.next(toTimeline(firebaseTimeline, fireEventsDict, fireTypesDict));
                 observer.complete();
               });
 
@@ -45,7 +60,7 @@ export class TimelineFirebaseGetEffect extends ProtectedFirebaseEffect<TimelineG
               subscription.unsubscribe();
             };
           } else {
-            observer.next(toTimeline(firebaseTimeline, []));
+            observer.next(toTimeline(firebaseTimeline, {}, {}));
             observer.complete();
           }
 
@@ -73,6 +88,7 @@ export class TimelineFirebaseGetEffect extends ProtectedFirebaseEffect<TimelineG
     auth: AuthFirebaseService,
     private fireTimelines: TimelinesFirebaseService,
     private fireEvents: EventsFirebaseService,
+    private fireTypes: TypesFirebaseService,
   ) {
     super(actions, auth);
   }
@@ -82,8 +98,8 @@ function extractEventsIds(firebaseTimeline: FirebaseTimeline): string[] {
   return Object.keys(firebaseTimeline.groups)
     .reduce<string[]>(
       (acc, groupId) => {
-        if (firebaseTimeline.groups[groupId].events) {
-          return acc.concat(Object.keys(firebaseTimeline.groups[groupId].events));
+        if (firebaseTimeline.groups[ groupId ].events) {
+          return acc.concat(Object.keys(firebaseTimeline.groups[ groupId ].events));
         } else {
           return acc;
         }
@@ -92,30 +108,48 @@ function extractEventsIds(firebaseTimeline: FirebaseTimeline): string[] {
     );
 }
 
-function toTimeline(firebaseTimeline: FirebaseTimeline, firebaseEvents: FirebaseTimelineEvent[]): Timeline {
+function onlyUnique<T>(value: T, index: number, arr: T[]) {
+  return arr.indexOf(value) === index;
+}
 
-  const fireEventsDictionary = firebaseEvents.reduce<{ [key: string]: FirebaseTimelineEvent }>(
-    (acc, event) => {
-      acc[event.$key] = event;
-      return acc;
-    },
-    {}
-  );
+function extractTypesIds(fireEvents: FirebaseTimelineEvent[]): string[] {
+  return fireEvents.map(fireEvent => fireEvent.typeId).filter(onlyUnique);
+}
+
+interface Dictionary<T> {
+  [key: string]: T
+}
+
+function toDictionary<T>(arr: T[], keyProp: keyof T): Dictionary<T> {
+  return arr.reduce<Dictionary<T>>((acc, obj) => {
+    acc[ obj[ keyProp ].toString() ] = obj;
+    return acc;
+  }, {});
+}
+
+function toTimeline(
+  firebaseTimeline: FirebaseTimeline,
+  fireEventsDict: Dictionary<FirebaseTimelineEvent>,
+  fireTypesDict: Dictionary<FirebaseType>,
+): Timeline {
 
   const groups = Object.keys(firebaseTimeline.groups).reduce<TimelineEventsGroup[]>(
     (acc, groupId) => {
 
       let events: TimelineEventForTimeline[] = [];
-      if (firebaseTimeline.groups[groupId].events) {
-        events = Object.keys(firebaseTimeline.groups[groupId].events)
-          .map((eventId: string) => fireEventsDictionary[eventId])
+      if (firebaseTimeline.groups[ groupId ].events) {
+        events = Object.keys(firebaseTimeline.groups[ groupId ].events)
+          .map((eventId: string) => ({
+            fireEvent: fireEventsDict[ eventId ],
+            fireType: fireTypesDict[ fireEventsDict[ eventId ].typeId ],
+          }))
           .map(toTimelineEventForTimeline);
       }
 
       acc.push({
         id: groupId,
-        title: firebaseTimeline.groups[groupId].title,
-        color: firebaseTimeline.groups[groupId].color,
+        title: firebaseTimeline.groups[ groupId ].title,
+        color: firebaseTimeline.groups[ groupId ].color,
         events: events,
       });
       return acc;
@@ -130,10 +164,13 @@ function toTimeline(firebaseTimeline: FirebaseTimeline, firebaseEvents: Firebase
   };
 }
 
-function toTimelineEventForTimeline(fireEvent: FirebaseTimelineEvent): TimelineEventForTimeline {
+function toTimelineEventForTimeline(
+  { fireEvent, fireType }: { fireEvent: FirebaseTimelineEvent, fireType: FirebaseType }
+): TimelineEventForTimeline {
   return {
     id: fireEvent.$key,
     title: fireEvent.title,
+    type: toType(fireType),
     dateBegin: fireEvent.dateBegin,
     dateEnd: fireEvent.dateEnd,
   }
