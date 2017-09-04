@@ -31,7 +31,7 @@
 - [x] Events types list. Search before creating
 - [x] Events types list. Create new
 - [x] Events types list. Edit
-- [ ] Edit event. Select type
+- [x] Edit event. Select type
 - [ ] Events types list. Delete
 - [ ] Events list
 - [ ] Events list. Search before creating

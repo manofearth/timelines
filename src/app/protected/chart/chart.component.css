@@ -1,6 +1,6 @@
 svg rect.bar {
 }
 
-svg rect.bar.mouseover {
+svg .mouseover {
   fill: coral !important;
 }

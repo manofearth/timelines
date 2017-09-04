@@ -100,6 +100,7 @@ function toTimelineEventForTimeline(event: TimelineEvent): TimelineEventForTimel
   return {
     id: event.id,
     title: event.title,
+    type: event.type,
     dateBegin: event.dateBegin,
     dateEnd: event.dateEnd,
   };

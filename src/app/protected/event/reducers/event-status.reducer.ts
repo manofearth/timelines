@@ -8,7 +8,7 @@ import { EventUpdateErrorAction, EventUpdateSuccessAction } from '../effects/eve
 import { EventInsertErrorAction, EventInsertSuccessAction } from '../effects/event-firebase-insert.effect';
 import { EventSaveButtonAction } from '../event.component';
 import { isNew } from '../../shared/event/is-new.fn';
-import { ChartBarClickAction } from '../../chart/chart.component';
+import { ChartEventClickAction } from '../../chart/chart.component';
 import { SearchFieldCreateAction } from '../../shared/search-field/search-field-actions';
 
 type EventStatusReducerAction =
@@ -20,13 +20,13 @@ type EventStatusReducerAction =
   | EventUpdateSuccessAction
   | EventInsertSuccessAction
   | EventSaveButtonAction
-  | ChartBarClickAction
+  | ChartEventClickAction
   | SearchFieldCreateAction;
 
 export function eventStatusReducer(state: EventStatus, action: EventStatusReducerAction): EventStatus {
   switch (action.type) {
     case 'TIMELINE_EVENT_CLICK':
-    case 'CHART_BAR_CLICK':
+    case 'CHART_EVENT_CLICK':
       return 'LOADING';
     case 'EVENT_GET_SUCCESS':
       return 'LOADED';

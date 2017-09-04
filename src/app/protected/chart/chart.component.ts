@@ -67,9 +67,9 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.redraw();
   }
 
-  onBarClick(event: TimelineEventForTimeline) {
-    const action: ChartBarClickAction = {
-      type: 'CHART_BAR_CLICK',
+  onEventClick(event: TimelineEventForTimeline) {
+    const action: ChartEventClickAction = {
+      type: 'CHART_EVENT_CLICK',
       payload: {
         eventId: event.id,
       }
@@ -128,19 +128,18 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
     const bars = this
       .selectSvg()
       .selectAll('rect')
-      .data(data);
+      .data(data.filter((d: TimelineEventForTimeline) => d.type.kind !== 'date'));
 
     bars.exit().remove();
 
     bars
       .enter()
-      .filter((d: TimelineEventForTimeline) => d.type.kind !== 'date')
       .append('rect')
       .classed('bar', true)
       .attr('rx', 3)
       .attr('ry', 3)
       .on('click', (d: TimelineEventForTimeline) => {
-        this.onBarClick(d);
+        this.onEventClick(d);
       })
       .on('mouseover', () => {
         this.d3.selectEventTarget().classed('mouseover', true);
@@ -162,18 +161,28 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewChecked {
     const circles = this
       .selectSvg()
       .selectAll('circle')
-      .data(data);
+      .data(data.filter((d: TimelineEventForTimeline) => d.type.kind === 'date'));
 
     circles.exit().remove();
 
     circles
       .enter()
-      .filter((d: TimelineEventForTimeline) => d.type.kind === 'date')
       .append('circle')
+      .style('stroke', 'white')
+      .on('mouseover', () => {
+        this.d3.selectEventTarget().classed('mouseover', true);
+      })
+      .on('mouseout', () => {
+        this.d3.selectEventTarget().classed('mouseover', false);
+      })
+      .on('click', (d: TimelineEventForTimeline) => {
+        this.onEventClick(d);
+      })
       .merge(circles)
+      .style('fill', d => d.color)
       .attr('cx', d => xScale(d.dateBegin.days))
-      .attr('cy', d => yScale(d.yPos))
-      .attr('r', 3);
+      .attr('cy', d => yScale(d.yPos) + (yScale(d.yPos + 1) - yScale(d.yPos))/2)
+      .attr('r', 5);
 
     const texts = this
       .selectSvg()
@@ -275,8 +284,8 @@ interface  TimelineEventForChart extends TimelineEventWithGroupData {
   yPos: number;
 }
 
-export interface ChartBarClickAction extends Action {
-  type: 'CHART_BAR_CLICK';
+export interface ChartEventClickAction extends Action {
+  type: 'CHART_EVENT_CLICK';
   payload: {
     eventId: string;
   }
