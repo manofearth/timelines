@@ -75,6 +75,7 @@ export class SearchFieldComponent implements OnInit, OnDestroy, DoCheck {
 
     this.isCreateButtonHidden$ = Observable
       .combineLatest<boolean, boolean>(this.isSearching$, this.searchQuery$.map(query => query.length !== 0))
+      .do(([ isSearching, hasQuery ]) => console.log(isSearching, hasQuery))
       .map(([ isSearching, hasQuery ]) => !hasQuery || isSearching);
 
     this.focusSub = this.isVisibleSubject

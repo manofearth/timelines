@@ -24,6 +24,7 @@ export function typesReducer(state: TypesState, action: TypesAction): TypesState
         return {
           ...state,
           isSearching: true,
+          query: action.payload.value,
         }
       }
       return state;

@@ -21,6 +21,10 @@
   </form>
 </div>
 <div class="tl-type-modal-footer d-flex justify-content-end">
+  <button type="button" class="mr-auto btn btn-danger"
+          [title]="generateDeleteButtonTitle()"
+          [disabled]="state.type?.eventsCount !== 0"
+          (click)="onDeleteButtonClick()">Удалить</button>
   <button type="button" class="btn btn-primary mr-1" (click)="save()">Сохранить</button>
   <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Отмена</button>
 </div>

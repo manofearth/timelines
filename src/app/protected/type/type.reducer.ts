@@ -2,9 +2,10 @@ import { TypeGetAction, TypeGetErrorAction, TypeGetSuccessAction } from './type-
 import { initialTypeState, TypeState } from './type-states';
 import { TypeUpdateAction, TypeUpdateErrorAction, TypeUpdateSuccessAction } from './type-update-actions';
 import { TypeEraseAction } from './type-erase-action';
+import { TypeDeleteButtonAction } from './type.component';
 
 type TypeAction = TypeGetAction | TypeGetSuccessAction | TypeGetErrorAction | TypeUpdateAction
-  | TypeUpdateSuccessAction | TypeUpdateErrorAction | TypeEraseAction;
+  | TypeUpdateSuccessAction | TypeUpdateErrorAction | TypeEraseAction | TypeDeleteButtonAction;
 
 export function typeReducer(state: TypeState, action: TypeAction): TypeState {
   switch (action.type) {
@@ -40,6 +41,11 @@ export function typeReducer(state: TypeState, action: TypeAction): TypeState {
         ...state,
         status: 'error',
         error: action.payload,
+      };
+    case 'TYPE_DELETE_BUTTON':
+      return {
+        ...state,
+        status: 'deleting',
       };
     case 'TYPE_ERASE':
       return initialTypeState;

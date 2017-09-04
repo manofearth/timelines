@@ -15,6 +15,9 @@ export interface FirebaseType {
   $key: string;
   title: string;
   kind: TypeKind;
+  events?: {
+    [eventId: string]: true;
+  }
 }
 
 export interface FirebaseTypeUpdateObject {

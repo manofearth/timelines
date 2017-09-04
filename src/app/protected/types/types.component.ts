@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers';
-import { TypeCreateAction } from './type-create-actions';
 import { TypesState } from './types-states';
 import { Subscription } from 'rxjs/Subscription';
 import { TypeGetAction } from '../type/type-get-actions';
@@ -23,6 +22,7 @@ export class TypesComponent implements OnInit, OnDestroy {
 
   isSearching$: Observable<boolean>;
   searchQuery$: Observable<string>;
+  createByEnterKey$: Observable<boolean>;
 
   searchFieldName: string = TYPES_SEARCH_FIELD_NAME;
 
@@ -44,6 +44,7 @@ export class TypesComponent implements OnInit, OnDestroy {
 
     this.isSearching$ = this.store.select<boolean>(state => state.types.isSearching);
     this.searchQuery$ = this.store.select<string>(state => state.types.query);
+    this.createByEnterKey$ = this.store.select<boolean>(state => !state.types.isSearching);
 
     this.fetchTypes();
   }
@@ -61,20 +62,6 @@ export class TypesComponent implements OnInit, OnDestroy {
     };
 
     this.store.dispatch(action);
-  }
-
-  create(title: string) {
-    const action: TypeCreateAction = {
-      type: 'TYPE_CREATE',
-      payload: {
-        title: title,
-        kind: 'period',
-      },
-    };
-
-    this.store.dispatch(action);
-
-
   }
 
   openType(e: Event, typeId: string) {

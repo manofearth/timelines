@@ -1,51 +1,40 @@
 import { Injectable } from '@angular/core';
-import { ProtectedFirebaseEffect } from '../../shared/firebase/protected-firebase.effect';
-import { TypeCreateAction, TypeCreateErrorAction, TypeCreateSuccessAction } from '../type-create-actions';
+import { TypeCreateErrorAction, TypeCreateSuccessAction } from '../type-create-actions';
 import { Observable } from 'rxjs/Observable';
 import { Actions, Effect } from '@ngrx/effects';
-import { AuthFirebaseService } from '../../shared/firebase/auth-firebase.service';
 import { FirebaseType, TypesFirebaseService } from '../types-firebase.service';
+import { SearchFieldCreateAction } from '../../shared/search-field/search-field-actions';
+import { TYPES_SEARCH_FIELD_NAME } from '../types.component';
+import { actionNameIs } from '../../../shared/action-name-is.fn';
 import { toType } from '../../type/effects/type-get.effect';
+import { toError } from '../../shared/firebase/protected-firebase.effect';
 
 @Injectable()
-export class FirebaseTypeCreateEffect extends ProtectedFirebaseEffect<TypeCreateAction,
-  TypeCreateSuccessAction,
-  TypeCreateErrorAction,
-  FirebaseType> {
+export class FirebaseTypeCreateEffect {
 
+  @Effect() effect = this.actions
+    .ofType('SEARCH_FIELD_CREATE')
+    .filter<SearchFieldCreateAction>(actionNameIs(TYPES_SEARCH_FIELD_NAME))
+    .switchMap((action: SearchFieldCreateAction): Observable<TypeCreateSuccessAction | TypeCreateErrorAction> =>
+      this.fireTypes
+        .pushObject({
+          title: action.payload.value,
+          kind: 'period',
+        })
+        .switchMap(ref => this.fireTypes.getObject(ref.key).first<FirebaseType>())
+        .map((fireType: FirebaseType): TypeCreateSuccessAction => ({
+          type: 'TYPE_CREATE_SUCCESS',
+          payload: toType(fireType)
+        }))
+        .catch(err => Observable.of<TypeCreateErrorAction>({
+          type: 'TYPE_CREATE_ERROR',
+          payload: toError(err),
+        }))
+    );
 
   constructor(
-    actions: Actions,
-    auth: AuthFirebaseService,
+    private actions: Actions,
     private fireTypes: TypesFirebaseService,
   ) {
-    super(actions, auth);
   }
-
-  @Effect()
-  effect(): Observable<TypeCreateSuccessAction | TypeCreateErrorAction> {
-    return super.createEffect();
-  }
-
-  protected runEffect(action: TypeCreateAction): Observable<FirebaseType> {
-    return this.fireTypes
-      .pushObject(action.payload)
-      .switchMap(ref => this.fireTypes.getObject(ref.key).first<FirebaseType>());
-  }
-
-  protected mapToSuccessAction(type: FirebaseType): TypeCreateSuccessAction {
-    return {
-      type: 'TYPE_CREATE_SUCCESS',
-      payload: toType(type)
-    }
-  }
-
-  protected getInterestedActionType(): 'TYPE_CREATE' {
-    return 'TYPE_CREATE';
-  }
-
-  protected getErrorActionType(): 'TYPE_CREATE_ERROR' {
-    return 'TYPE_CREATE_ERROR';
-  }
-
 }

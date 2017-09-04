@@ -4,12 +4,13 @@ export interface TypeState {
   type: TimelineEventsType;
 }
 
-export type TypeStateStatus = 'idle' | 'updating' | 'error' | 'loading';
+export type TypeStateStatus = 'idle' | 'updating' | 'error' | 'loading' | 'deleting';
 
 export interface TimelineEventsType {
   id: string;
   title: string;
   kind: TypeKind;
+  eventsCount: number;
 }
 
 export type TypeKind = 'period' | 'date';

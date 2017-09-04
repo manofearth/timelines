@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppState } from '../../reducers';
-import { Store } from '@ngrx/store';
+import { Action, Store } from '@ngrx/store';
 import { TimelineEventsType, TypeKind, TypeState, TypeStateStatus } from './type-states';
 import { Subscription } from 'rxjs/Subscription';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
@@ -65,6 +65,22 @@ export class TypeComponent implements OnInit, OnDestroy {
       });
   }
 
+  generateDeleteButtonTitle(): string {
+    if (this.state.type && this.state.type.eventsCount !== 0) {
+      return `Невозможно удалить, тип используется в ${this.state.type.eventsCount} событиях`;
+    } else {
+      return 'Удалить тип события';
+    }
+  }
+
+  onDeleteButtonClick() {
+    const action: TypeDeleteButtonAction = {
+      type: 'TYPE_DELETE_BUTTON',
+      payload: { id: this.state.type.id },
+    };
+    this.store.dispatch(action);
+  }
+
   private dispatchUpdate() {
     const action: TypeUpdateAction = {
       type: 'TYPE_UPDATE',
@@ -96,4 +112,11 @@ interface TypeForm extends FormGroup {
 interface TypeFormValue {
   title: string;
   kind: TypeKind;
+}
+
+export interface TypeDeleteButtonAction extends Action {
+  type: 'TYPE_DELETE_BUTTON';
+  payload: {
+    id: string;
+  }
 }

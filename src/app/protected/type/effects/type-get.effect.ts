@@ -51,5 +51,6 @@ export function toType(fireType: FirebaseType): TimelineEventsType {
     id: fireType.$key,
     title: fireType.title,
     kind: fireType.kind as TypeKind,
+    eventsCount: fireType.events ? Object.keys(fireType.events).length : 0,
   }
 }

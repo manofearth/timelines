@@ -5,6 +5,8 @@
     [name]="searchFieldName"
     [isSearching$]="isSearching$"
     [searchQuery$]="searchQuery$"
+    [createByEnterKey$]="createByEnterKey$"
+    [focusOnShown]="true"
   ></tl-search-field>
   <div *ngIf="state.error" class="alert alert-danger">{{ state.error.message }}</div>
   <div *ngIf="state.isLoading" class="alert alert-info">Загружаются...</div>
