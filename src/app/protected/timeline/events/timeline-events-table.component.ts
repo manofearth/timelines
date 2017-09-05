@@ -10,6 +10,7 @@ import 'rxjs/add/operator/filter';
 import { SelectorInputState } from '../../shared/selector-input/selector-input-state';
 import { SelectorListItem } from '../../shared/selector-list/selector-list-item';
 import { notNullOrUndefined } from '../../../shared/not-null-or-undefined.fn';
+import { TimelineEventForTimeline } from '../timeline-states';
 
 @Component({
   selector: 'tl-events-table',
@@ -24,7 +25,7 @@ export class TimelineEventTableComponent implements OnInit, OnDestroy {
   @Output() attach: EventEmitter<string> = new EventEmitter();
   @Output() detach: EventEmitter<string> = new EventEmitter();
 
-  event$: Observable<TimelineEvent[]>;
+  event$: Observable<TimelineEventForTimeline[]>;
 
   private eventSelectedSub: Subscription;
 

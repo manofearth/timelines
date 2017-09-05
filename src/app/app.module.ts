@@ -44,6 +44,7 @@ import { TypeUpdateEffect } from './protected/type/effects/type-update.effect';
 import { EventsElasticSearchEffect } from './protected/events/effects/events-elastic-search.effect';
 import { TimelineEventsElasticSearchService } from './protected/timeline/timeline-events-elastic-search.service';
 import { SelectorInputBlurEffect } from './protected/shared/selector-input/selector-input-blur.effect';
+import { TypeDeleteEffect } from './protected/type/effects/type-delete.effect';
 
 const routes: Routes = [
   {
@@ -108,6 +109,7 @@ const routes: Routes = [
     EffectsModule.run(TypeUpdateEffect),
     EffectsModule.run(EventsElasticSearchEffect),
     EffectsModule.run(SelectorInputBlurEffect),
+    EffectsModule.run(TypeDeleteEffect),
   ],
   providers: [
     AuthGuard,

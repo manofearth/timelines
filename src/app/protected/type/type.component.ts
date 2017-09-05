@@ -12,7 +12,7 @@ import 'rxjs/add/operator/take';
 @Component({
   selector: 'tl-type',
   templateUrl: './type.component.html',
-  styleUrls: ['./type.component.css'],
+  styleUrls: [ './type.component.css' ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TypeComponent implements OnInit, OnDestroy {
@@ -52,17 +52,13 @@ export class TypeComponent implements OnInit, OnDestroy {
   }
 
   save() {
-
     this.dispatchUpdate();
+    this.closeOnSave();
+  }
 
-    this.store.select<TypeStateStatus>('type', 'status')
-      .filter(status => status === 'idle' || status === 'error')
-      .take(1)
-      .subscribe(status => {
-        if (status === 'idle') {
-          this.activeModal.close();
-        }
-      });
+  onDeleteButtonClick() {
+    this.dispatchDeleteButton();
+    this.closeOnSave();
   }
 
   generateDeleteButtonTitle(): string {
@@ -73,7 +69,7 @@ export class TypeComponent implements OnInit, OnDestroy {
     }
   }
 
-  onDeleteButtonClick() {
+  private dispatchDeleteButton() {
     const action: TypeDeleteButtonAction = {
       type: 'TYPE_DELETE_BUTTON',
       payload: { id: this.state.type.id },
@@ -91,6 +87,17 @@ export class TypeComponent implements OnInit, OnDestroy {
     };
 
     this.store.dispatch(action);
+  }
+
+  private closeOnSave() {
+    this.store.select<TypeStateStatus>('type', 'status')
+      .filter(status => status === 'idle' || status === 'error')
+      .take(1)
+      .subscribe(status => {
+        if (status === 'idle') {
+          this.activeModal.close();
+        }
+      });
   }
 
   private initForm(type: TimelineEventsType) {

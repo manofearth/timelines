@@ -7,9 +7,11 @@ import { TYPES_COMPONENT_NAME, TYPES_SEARCH_FIELD_NAME } from './types.component
 import { SearchFieldInputAction } from '../shared/search-field/search-field-actions';
 import { TypesElasticSearchHit } from './types-elastic-search.service';
 import { ComponentInitAction } from '../../shared/component-init-action';
+import { TypeDeleteSuccessAction } from '../type/effects/type-delete.effect';
+import { TypeUpdateAction } from '../type/type-update-actions';
 
 type TypesAction = ComponentInitAction | TypesSearchSuccessAction | TypesSearchErrorAction | TypeGetSuccessAction
-  | TypeCreateSuccessAction | SearchFieldInputAction;
+  | TypeCreateSuccessAction | SearchFieldInputAction | TypeDeleteSuccessAction | TypeUpdateAction;
 
 export function typesReducer(state: TypesState, action: TypesAction): TypesState {
   switch (action.type) {
@@ -50,36 +52,56 @@ export function typesReducer(state: TypesState, action: TypesAction): TypesState
         error: action.payload.error,
       };
     case 'TYPE_GET_SUCCESS':
-
-      let haveTypeFound = false;
-      const newTypes = state.types.map(type => {
-        if (type.id === action.payload.id) {
-          haveTypeFound = true;
-          return extractTypeForList(action.payload);
-        } else {
-          return type;
-        }
+      return replaceType(state, action.payload.id, extractTypeForList(action.payload));
+    case 'TYPE_UPDATE':
+      return replaceType(state, action.payload.id, {
+        id: action.payload.id,
+        title: action.payload.data.title,
+        kind: action.payload.data.kind,
       });
-
-      if (haveTypeFound) {
-        return {
-          ...state,
-          types: newTypes,
-        }
-      } else {
-        return state;
-      }
     case 'TYPE_CREATE_SUCCESS':
       return {
         ...state,
-        query: '',
         types: [
           ...state.types,
           extractTypeForList(action.payload)
         ],
       };
+    case 'TYPE_DELETE_SUCCESS':
+
+      const typeToDelete = state.types.find(type => type.id === action.payload.id);
+
+      if (typeToDelete === undefined) {
+        return state;
+      } else {
+        return {
+          ...state,
+          types: state.types.filter(type => type !== typeToDelete),
+        }
+      }
     default:
       return state;
+  }
+}
+
+function replaceType(state: TypesState, typeId: string, newType: TimelineEventsTypeLight): TypesState {
+  let haveTypeFound = false;
+  const newTypes = state.types.map(type => {
+    if (type.id === typeId) {
+      haveTypeFound = true;
+      return newType;
+    } else {
+      return type;
+    }
+  });
+
+  if (haveTypeFound) {
+    return {
+      ...state,
+      types: newTypes,
+    };
+  } else {
+    return state;
   }
 }
 
@@ -91,11 +113,10 @@ function extractTypeForList(type: TimelineEventsType): TimelineEventsTypeLight {
   }
 }
 
-
 function toTimelineEventsType(hit: TypesElasticSearchHit): TimelineEventsTypeLight {
   return {
     id: hit._id,
-    title: hit.highlight ? hit.highlight.title[0] : hit._source.title,
+    title: hit.highlight ? hit.highlight.title[ 0 ] : hit._source.title,
     kind: hit._source.kind,
   }
 }

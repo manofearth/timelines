@@ -9,11 +9,14 @@ import { TypeComponent } from '../type/type.component';
 import { TypeEraseAction } from '../type/type-erase-action';
 import { Observable } from 'rxjs/Observable';
 import { ComponentInitAction } from '../../shared/component-init-action';
+import { Actions } from '@ngrx/effects';
+import { SearchFieldCreateAction } from '../shared/search-field/search-field-actions';
+import { actionNameIs } from '../../shared/action-name-is.fn';
 
 @Component({
   selector: 'tl-types',
   templateUrl: './types.component.html',
-  styleUrls: ['./types.component.css'],
+  styleUrls: [ './types.component.css' ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TypesComponent implements OnInit, OnDestroy {
@@ -27,11 +30,13 @@ export class TypesComponent implements OnInit, OnDestroy {
   searchFieldName: string = TYPES_SEARCH_FIELD_NAME;
 
   private stateSub: Subscription;
+  private createSub: Subscription;
 
   constructor(
     private store: Store<AppState>,
     private changeDetector: ChangeDetectorRef,
     private modalService: NgbModal,
+    private actions: Actions,
   ) {
   }
 
@@ -42,6 +47,13 @@ export class TypesComponent implements OnInit, OnDestroy {
       this.changeDetector.markForCheck();
     });
 
+    this.createSub = this.actions
+      .ofType('SEARCH_FIELD_CREATE')
+      .filter<SearchFieldCreateAction>(actionNameIs(TYPES_SEARCH_FIELD_NAME))
+      .subscribe(() => {
+        this.openTypeModal();
+      });
+
     this.isSearching$ = this.store.select<boolean>(state => state.types.isSearching);
     this.searchQuery$ = this.store.select<string>(state => state.types.query);
     this.createByEnterKey$ = this.store.select<boolean>(state => !state.types.isSearching);
@@ -51,6 +63,7 @@ export class TypesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.stateSub.unsubscribe();
+    this.createSub.unsubscribe();
   }
 
   fetchTypes() {
@@ -74,6 +87,10 @@ export class TypesComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(action);
 
+    this.openTypeModal();
+  }
+
+  private openTypeModal() {
     this.modalService.open(TypeComponent, { size: 'lg' }).result.then(
       () => {
         this.dispatchTypeErase()

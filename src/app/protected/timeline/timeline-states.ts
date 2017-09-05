@@ -1,7 +1,7 @@
 import { TimelineDate } from '../shared/date/date';
 import { selectorInputInitialState, SelectorInputState } from '../shared/selector-input/selector-input-state';
 import { TimelineEventLight } from '../shared/event/timeline-event';
-import { TimelineEventsType } from '../type/type-states';
+import { TimelineEventsTypeLight } from '../types/types-states';
 
 export interface Timeline {
   id: string;
@@ -19,7 +19,7 @@ export interface TimelineEventsGroup {
 export interface TimelineEventForTimeline {
   id: string;
   title: string;
-  type: TimelineEventsType;
+  type: TimelineEventsTypeLight;
   dateBegin: TimelineDate;
   dateEnd: TimelineDate;
 }

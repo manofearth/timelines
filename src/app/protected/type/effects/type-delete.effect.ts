@@ -14,7 +14,10 @@ export class TypeDeleteEffect {
     .switchMap((action: TypeDeleteButtonAction): Observable<TypeDeleteEffectAction> => this.fireTypes
       .removeObject(action.payload.id)
       .map((): TypeDeleteSuccessAction => ({
-        type: 'TYPE_DELETE_SUCCESS'
+        type: 'TYPE_DELETE_SUCCESS',
+        payload: {
+          id: action.payload.id,
+        }
       }))
       .catch(err => Observable.of<TypeDeleteErrorAction>({
         type: 'TYPE_DELETE_ERROR',
@@ -31,6 +34,9 @@ export class TypeDeleteEffect {
 
 export interface TypeDeleteSuccessAction extends Action {
   type: 'TYPE_DELETE_SUCCESS';
+  payload: {
+    id: string;
+  }
 }
 
 export interface TypeDeleteErrorAction extends Action {
