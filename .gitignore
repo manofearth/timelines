@@ -37,6 +37,7 @@ testem.log
 # Environment
 /.firebaserc
 /src/environments/firebase.config.ts
+/src/environments/algolia.config.ts
 /functions/.runtimeconfig.json
 /proxy.conf.json
 

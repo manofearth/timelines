@@ -45,6 +45,8 @@ import { EventsElasticSearchEffect } from './protected/events/effects/events-ela
 import { TimelineEventsElasticSearchService } from './protected/timeline/timeline-events-elastic-search.service';
 import { SelectorInputBlurEffect } from './protected/shared/selector-input/selector-input-blur.effect';
 import { TypeDeleteEffect } from './protected/type/effects/type-delete.effect';
+import { AlgoliaSearchService } from './protected/shared/algolia/algolia-search.service';
+import { EventsAlgoliaSearchEffect } from './protected/events/effects/events-algolia-search.effect';
 
 const routes: Routes = [
   {
@@ -110,6 +112,7 @@ const routes: Routes = [
     EffectsModule.run(EventsElasticSearchEffect),
     EffectsModule.run(SelectorInputBlurEffect),
     EffectsModule.run(TypeDeleteEffect),
+    EffectsModule.run(EventsAlgoliaSearchEffect),
   ],
   providers: [
     AuthGuard,
@@ -122,6 +125,7 @@ const routes: Routes = [
     TypesFirebaseService,
     TypesElasticSearchService,
     TimelineEventsElasticSearchService,
+    AlgoliaSearchService,
   ],
   bootstrap: [AppComponent]
 })

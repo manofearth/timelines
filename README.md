@@ -33,8 +33,8 @@
 - [x] Events types list. Edit
 - [x] Edit event. Select type
 - [x] Events types list. Delete
-- [ ] Events list
-- [ ] Events list. Search before creating
+- [x] Events list
+- [x] Events list. Search before creating
 - [ ] Events list. Create new
 - [ ] Events list. Edit
 - [ ] Events list. Delete

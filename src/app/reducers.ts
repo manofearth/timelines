@@ -12,12 +12,14 @@ import { typesInitialState, TypesState } from './protected/types/types-states';
 import { typesReducer } from './protected/types/types.reducer';
 import { initialTypeState, TypeState } from './protected/type/type-states';
 import { typeReducer } from './protected/type/type.reducer';
+import { eventsListInitialState, eventsListReducer, EventsListState } from './protected/events/events-list.reducer';
 
 export interface AppState {
   auth: AuthState;
   timelines: TimelinesState;
   timeline: TimelineState;
   event: EventState;
+  eventsList: EventsListState,
   types: TypesState;
   type: TypeState;
 }
@@ -36,6 +38,7 @@ export const initialState: AppState = {
   },
   timeline: timelineInitialState,
   event: eventInitialState,
+  eventsList: eventsListInitialState,
   types: typesInitialState,
   type: initialTypeState,
 };
@@ -49,6 +52,7 @@ const reducers: Reducers<AppState> = {
   timelines: timelinesReducer,
   timeline: timelineStateReducer,
   event: eventStateReducer,
+  eventsList: eventsListReducer,
   types: typesReducer,
   type: typeReducer,
 };

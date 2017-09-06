@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProtectedComponent } from './protected.component';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { TimelinesComponent } from './timelines/timelines.component';
 import { LogoutComponent } from './logout/logout.component';
 import { TimelineComponent } from './timeline/timeline.component';
 import { NgbModalModule, NgbTabsetModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule } from '@angular/forms';
-import {TimelineCanDeactivate} from './timeline/timeline-can-deactivate.service';
+import { TimelineCanDeactivate } from './timeline/timeline-can-deactivate.service';
 import { EventComponent } from './event/event.component';
 import { DateParser } from './shared/date-parser/date-parser.service';
 import { DateDirective } from './shared/date/date.directive';
@@ -24,6 +24,7 @@ import { SelectorListComponent } from './shared/selector-list/selector-list.comp
 import { SelectorInputComponent } from './shared/selector-input/selector-input.component';
 import { SelectorSelectComponent } from './shared/selector-select/selector-select.component';
 import { InputDirective } from './shared/input/input.directive';
+import { EventsListComponent } from './events/events-list.component';
 
 const routes: Routes = [
   {
@@ -37,11 +38,15 @@ const routes: Routes = [
       {
         path: 'timeline/:id',
         component: TimelineComponent,
-        canDeactivate: [TimelineCanDeactivate],
+        canDeactivate: [ TimelineCanDeactivate ],
       },
       {
         path: 'types',
         component: TypesComponent,
+      },
+      {
+        path: 'events',
+        component: EventsListComponent,
       }
     ],
   },
@@ -74,6 +79,7 @@ const routes: Routes = [
     SelectorListComponent,
     SelectorSelectComponent,
     InputDirective,
+    EventsListComponent,
   ],
   providers: [
     TimelineCanDeactivate,
@@ -89,3 +95,4 @@ const routes: Routes = [
 })
 export class ProtectedModule {
 }
+

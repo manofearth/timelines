@@ -28,6 +28,7 @@ import {
   SearchFieldUpKeyAction
 } from './search-field-actions';
 import { Subject } from 'rxjs/Subject';
+import { getProp } from '../helpers';
 
 @Component({
   selector: 'tl-search-field',
@@ -41,7 +42,7 @@ export class SearchFieldComponent implements OnInit, OnDestroy, DoCheck {
   @Input() placeholder: string;
   @Input() isSearching$: Observable<boolean> = Observable.of(false);
   @Input() searchQuery$: Observable<string> = Observable.of('');
-  @Input() createByEnterKey$: Observable<boolean>;
+  @Input() createByEnterKey$: Observable<boolean> = Observable.of(true);
   @Input() focusOnShown: boolean = false;
 
   @ViewChild('searchInput') searchInput: ElementRef;
@@ -74,7 +75,10 @@ export class SearchFieldComponent implements OnInit, OnDestroy, DoCheck {
       .subscribe(this.store);
 
     this.isCreateButtonHidden$ = Observable
-      .combineLatest<boolean, boolean>(this.isSearching$, this.searchQuery$.map(query => query.length !== 0))
+      .combineLatest<boolean, boolean>(
+        this.isSearching$,
+        this.searchQuery$.map(query => getProp(query, 'length', 0) !== 0)
+      )
       .map(([ isSearching, hasQuery ]) => !hasQuery || isSearching);
 
     this.focusSub = this.isVisibleSubject
@@ -103,7 +107,7 @@ export class SearchFieldComponent implements OnInit, OnDestroy, DoCheck {
     this.createByEnterKey$
       .withLatestFrom(this.isCreateButtonHidden$)
       .take(1)
-      .subscribe(([createByEnter, isCreateButtonHidden]) => {
+      .subscribe(([ createByEnter, isCreateButtonHidden ]) => {
         if (createByEnter && !isCreateButtonHidden) {
           this.dispatchActionWithCurrentValue<SearchFieldCreateAction>('SEARCH_FIELD_CREATE');
         } else {

@@ -25,7 +25,6 @@ export class TypesComponent implements OnInit, OnDestroy {
 
   isSearching$: Observable<boolean>;
   searchQuery$: Observable<string>;
-  createByEnterKey$: Observable<boolean>;
 
   searchFieldName: string = TYPES_SEARCH_FIELD_NAME;
 
@@ -56,7 +55,6 @@ export class TypesComponent implements OnInit, OnDestroy {
 
     this.isSearching$ = this.store.select<boolean>(state => state.types.isSearching);
     this.searchQuery$ = this.store.select<string>(state => state.types.query);
-    this.createByEnterKey$ = this.store.select<boolean>(state => !state.types.isSearching);
 
     this.fetchTypes();
   }
