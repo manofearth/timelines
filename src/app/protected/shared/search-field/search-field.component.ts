@@ -100,13 +100,16 @@ export class SearchFieldComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   onEnterKey() {
-    this.createByEnterKey$.take(1).subscribe(createByEnter => {
-      if (createByEnter) {
-        this.dispatchActionWithCurrentValue<SearchFieldCreateAction>('SEARCH_FIELD_CREATE');
-      } else {
-        this.dispatchActionWithCurrentValue<SearchFieldEnterKeyAction>('SEARCH_FIELD_ENTER_KEY');
-      }
-    });
+    this.createByEnterKey$
+      .withLatestFrom(this.isCreateButtonHidden$)
+      .take(1)
+      .subscribe(([createByEnter, isCreateButtonHidden]) => {
+        if (createByEnter && !isCreateButtonHidden) {
+          this.dispatchActionWithCurrentValue<SearchFieldCreateAction>('SEARCH_FIELD_CREATE');
+        } else {
+          this.dispatchActionWithCurrentValue<SearchFieldEnterKeyAction>('SEARCH_FIELD_ENTER_KEY');
+        }
+      });
   }
 
   onArrowDownKey() {

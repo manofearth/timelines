@@ -32,7 +32,7 @@
 - [x] Events types list. Create new
 - [x] Events types list. Edit
 - [x] Edit event. Select type
-- [ ] Events types list. Delete
+- [x] Events types list. Delete
 - [ ] Events list
 - [ ] Events list. Search before creating
 - [ ] Events list. Create new
