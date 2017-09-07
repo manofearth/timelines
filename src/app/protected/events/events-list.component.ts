@@ -1,10 +1,15 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { AppState } from '../../reducers';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { getProp } from '../shared/helpers';
 import { TimelineEventForList } from './events-list.reducer';
 import { ComponentInitAction } from '../../shared/component-init-action';
+import { Actions } from '@ngrx/effects';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SearchFieldCreateAction } from '../shared/search-field/search-field-actions';
+import { actionNameIs } from '../../shared/action-name-is.fn';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'tl-events',
@@ -12,7 +17,7 @@ import { ComponentInitAction } from '../../shared/component-init-action';
   styleUrls: [ './events-list.component.css' ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EventsListComponent implements OnInit {
+export class EventsListComponent implements OnInit, OnDestroy {
 
   isSearching$: Observable<boolean>;
   searchQuery$: Observable<string>;
@@ -23,8 +28,14 @@ export class EventsListComponent implements OnInit {
 
   searchFieldName: string = EVENTS_LIST_SEARCH_FIELD_NAME;
 
+  private navigateToNewSub: Subscription;
+  private routeParamsSub: Subscription;
+
   constructor(
     private store: Store<AppState>,
+    private actions: Actions,
+    private router: Router,
+    private route: ActivatedRoute,
   ) {
   }
 
@@ -36,7 +47,22 @@ export class EventsListComponent implements OnInit {
     this.isLoading$ = this.store.select<boolean>(state => state.eventsList.isLoading);
     this.list$ = this.store.select<TimelineEventForList[]>(state => state.eventsList.list);
 
+    this.navigateToNewSub = this.actions
+      .ofType('SEARCH_FIELD_CREATE')
+      .filter<SearchFieldCreateAction>(actionNameIs(EVENTS_LIST_SEARCH_FIELD_NAME))
+      .subscribe(() => {
+        // noinspection JSIgnoredPromiseFromCall
+        this.router.navigate([ 'events', 'new' ]);
+      });
+
+    this.routeParamsSub = this.route.params.subscribe(params => console.log(params));
+
     this.dispatchInit();
+  }
+
+  ngOnDestroy() {
+    this.navigateToNewSub.unsubscribe();
+    this.routeParamsSub.unsubscribe();
   }
 
   private dispatchInit() {

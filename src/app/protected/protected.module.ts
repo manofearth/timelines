@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProtectedComponent } from './protected.component';
-import { RouterModule, Routes } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { TimelinesComponent } from './timelines/timelines.component';
 import { LogoutComponent } from './logout/logout.component';
 import { TimelineComponent } from './timeline/timeline.component';
@@ -25,32 +25,7 @@ import { SelectorInputComponent } from './shared/selector-input/selector-input.c
 import { SelectorSelectComponent } from './shared/selector-select/selector-select.component';
 import { InputDirective } from './shared/input/input.directive';
 import { EventsListComponent } from './events/events-list.component';
-
-const routes: Routes = [
-  {
-    path: '',
-    component: ProtectedComponent,
-    children: [
-      {
-        path: 'timelines',
-        component: TimelinesComponent,
-      },
-      {
-        path: 'timeline/:id',
-        component: TimelineComponent,
-        canDeactivate: [ TimelineCanDeactivate ],
-      },
-      {
-        path: 'types',
-        component: TypesComponent,
-      },
-      {
-        path: 'events',
-        component: EventsListComponent,
-      }
-    ],
-  },
-];
+import { routes } from './protected.routes';
 
 // noinspection JSUnusedGlobalSymbols
 @NgModule({

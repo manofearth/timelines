@@ -42,14 +42,7 @@ export interface AlgoliaEvent {
   typeId: string;
   objectId: string;
   _highlightResult: {
-    dateBegin: {
-      title: AlgoliaHighlightedFieldValue;
-    }
-    dateEnd: {
-      title: AlgoliaHighlightedFieldValue;
-    }
     title: AlgoliaHighlightedFieldValue;
-    typeId: AlgoliaHighlightedFieldValue;
   }
 }
 
