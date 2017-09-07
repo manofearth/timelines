@@ -7,6 +7,7 @@ import { Action, Store } from '@ngrx/store';
 import { toError } from '../../shared/firebase/protected-firebase.effect';
 import { Injectable } from '@angular/core';
 import { AppState } from '../../../reducers';
+import { AngularFireAuth } from 'angularfire2/auth';
 
 @Injectable()
 export class EventsAlgoliaSearchEffect {
@@ -16,6 +17,7 @@ export class EventsAlgoliaSearchEffect {
 
   @Effect() effect: Observable<EventsAlgoliaSearchSuccessAction | EventsAlgoliaSearchErrorAction> = this
     .eventsListSearchQuery$
+    .filter(() => this.auth.auth.currentUser !== null)
     .switchMap(query => this.algolia
       .searchEvents(query)
       .map((result): EventsAlgoliaSearchSuccessAction => ({
@@ -31,6 +33,7 @@ export class EventsAlgoliaSearchEffect {
   constructor(
     private store: Store<AppState>,
     private algolia: AlgoliaSearchService,
+    private auth: AngularFireAuth,
   ) {
   }
 }

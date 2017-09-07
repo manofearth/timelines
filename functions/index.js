@@ -13,6 +13,7 @@ const moveEventToAnotherType = require('./move-event-to-another-type')(admin);
 
 // Full text search
 exports.indexTimelineEvent = functions.database.ref('/private/{userId}/events/{eventId}').onWrite(indexTimelineEvent);
+exports.indexTimelineEventInAlgolia = functions.database.ref('/private/{userId}/events/{eventId}').onWrite(indexTimelineEventInAlgolia);
 exports.indexEventsType = functions.database.ref('/private/{userId}/types/{typeId}').onWrite(indexEventsType);
 exports.searchTimelineEvents = functions.https.onRequest(searchTimelineEvents);
 exports.searchEventsTypes = functions.https.onRequest(searchEventsTypes);

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
 import * as algolia from 'algoliasearch';
 import { TimelineDate } from '../date/date';
+import { AngularFireAuth } from 'angularfire2/auth';
 
 @Injectable()
 export class AlgoliaSearchService {
@@ -11,7 +12,9 @@ export class AlgoliaSearchService {
   private client: algolia.AlgoliaClient;
   private eventsIndex: algolia.AlgoliaIndex;
 
-  constructor() {
+  constructor(
+    private auth: AngularFireAuth,
+  ) {
     this.client = algolia(algoliaConfig.applicationId, algoliaConfig.apiKeySearchOnly);
     this.eventsIndex = this.client.initIndex('events');
   }
@@ -20,6 +23,7 @@ export class AlgoliaSearchService {
     return Observable.fromPromise(
       this.eventsIndex.search({
         query: query,
+        filters: `ownerId:${this.auth.auth.currentUser.uid}`,
         hitsPerPage: 20,
         page: 0,
       })
