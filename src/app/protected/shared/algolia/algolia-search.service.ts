@@ -12,7 +12,7 @@ export class AlgoliaSearchService {
   private eventsIndex: algolia.AlgoliaIndex;
 
   constructor() {
-    this.client = algolia(algoliaConfig.applicationId, algoliaConfig.apiKeyReadonly);
+    this.client = algolia(algoliaConfig.applicationId, algoliaConfig.apiKeySearchOnly);
     this.eventsIndex = this.client.initIndex('events');
   }
 
