@@ -26,6 +26,35 @@ import { SelectorSelectComponent } from './shared/selector-select/selector-selec
 import { InputDirective } from './shared/input/input.directive';
 import { EventsListComponent } from './events/events-list.component';
 import { routes } from './protected.routes';
+import { EventsAlgoliaSearchEffect } from './events/effects/events-algolia-search.effect';
+import { EffectsModule } from '@ngrx/effects';
+import { TypeDeleteEffect } from './type/effects/type-delete.effect';
+import { SelectorInputBlurEffect } from './shared/selector-input/selector-input-blur.effect';
+import { EventsElasticSearchEffect } from './events/effects/events-elastic-search.effect';
+import { TypeUpdateEffect } from './type/effects/type-update.effect';
+import { TypeGetEffect } from './type/effects/type-get.effect';
+import { TimelineFirebaseCreateEffect } from './timeline/effects/timeline-firebase-create.effect';
+import { TimelineFirebaseDeleteEffect } from './timeline/effects/timeline-firebase-delete.effect';
+import { TimelineFirebaseGetEffect } from './timeline/effects/timeline-firebase-get.effect';
+import { TimelineFirebaseSaveEffect } from './timeline/effects/timeline-firebase-save.effect';
+import { EventFirebaseGetEffect } from './event/effects/event-firebase-get.effect';
+import { EventFirebaseInsertEffect } from './event/effects/event-firebase-insert.effect';
+import { EventFirebaseUpdateEffect } from './event/effects/event-firebase-update.effect';
+import { EventFirebaseDetachEffect } from './event/effects/event-firebase-detach.effect';
+import { EventFirebaseAttachEffect } from './event/effects/event-firebase-attach.effect';
+import { TimelineFirebaseCreateGroupEffect } from './group/effects/timeline-firebase-create-group.effect';
+import { TimelineFirebaseSaveGroupEffect } from './group/effects/timeline-firebase-save-group.effect';
+import { TimelineFirebaseDeleteGroupEffect } from './group/effects/timeline-firebase-delete-group.effect';
+import { FirebaseTypeCreateEffect } from './types/effects/firebase-type-create.effect';
+import { ElasticTypesSearchEffect } from './types/effects/elastic-types-search.effect';
+import { AlgoliaSearchService } from './shared/algolia/algolia-search.service';
+import { TimelineEventsElasticSearchService } from './timeline/timeline-events-elastic-search.service';
+import { TypesElasticSearchService } from './types/types-elastic-search.service';
+import { TypesFirebaseService } from './types/types-firebase.service';
+import { EventToTimelineAttachingFirebaseService } from './event/event-to-timeline-attaching-firebase.service';
+import { EventsFirebaseService } from './event/events-firebase.service';
+import { TimelinesFirebaseService } from './timelines/timelines-firebase.service';
+import { TimelinesFirebaseGetEffect } from './timelines/effects/timelines-firebase-get.effect';
 
 // noinspection JSUnusedGlobalSymbols
 @NgModule({
@@ -35,6 +64,27 @@ import { routes } from './protected.routes';
     NgbModalModule,
     NgbTabsetModule,
     RouterModule.forChild(routes),
+    EffectsModule.run(TimelinesFirebaseGetEffect),
+    EffectsModule.run(TimelineFirebaseCreateEffect),
+    EffectsModule.run(TimelineFirebaseDeleteEffect),
+    EffectsModule.run(TimelineFirebaseGetEffect),
+    EffectsModule.run(TimelineFirebaseSaveEffect),
+    EffectsModule.run(EventFirebaseGetEffect),
+    EffectsModule.run(EventFirebaseInsertEffect),
+    EffectsModule.run(EventFirebaseUpdateEffect),
+    EffectsModule.run(EventFirebaseDetachEffect),
+    EffectsModule.run(EventFirebaseAttachEffect),
+    EffectsModule.run(TimelineFirebaseCreateGroupEffect),
+    EffectsModule.run(TimelineFirebaseSaveGroupEffect),
+    EffectsModule.run(TimelineFirebaseDeleteGroupEffect),
+    EffectsModule.run(FirebaseTypeCreateEffect),
+    EffectsModule.run(ElasticTypesSearchEffect),
+    EffectsModule.run(TypeGetEffect),
+    EffectsModule.run(TypeUpdateEffect),
+    EffectsModule.run(EventsElasticSearchEffect),
+    EffectsModule.run(SelectorInputBlurEffect),
+    EffectsModule.run(TypeDeleteEffect),
+    EffectsModule.run(EventsAlgoliaSearchEffect),
   ],
   declarations: [
     TimelinesComponent,
@@ -61,6 +111,13 @@ import { routes } from './protected.routes';
     DateParser,
     D3Service,
     WindowService,
+    TimelinesFirebaseService,
+    EventsFirebaseService,
+    EventToTimelineAttachingFirebaseService,
+    TypesFirebaseService,
+    TypesElasticSearchService,
+    TimelineEventsElasticSearchService,
+    AlgoliaSearchService,
   ],
   entryComponents: [
     EventComponent,
