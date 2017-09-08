@@ -17,17 +17,18 @@
           [hasDanger]="isTypeEmpty$ | async"
         ></tl-selector-select>
       </div>
-      <div class="col-md-9 form-group" [class.has-danger]="isTitleEmpty$ | async">
+      <div class="col-md-9 form-group">
         <input [tlInput]="titleInputName" [stateSelector]="selectTitle" class="form-control" title="Имя события"
-               placeholder="Имя события">
+               placeholder="Имя события" [class.is-invalid]="isTitleEmpty$ | async">
       </div>
     </div>
 
     <div class="row">
 
-      <div class="col-md-3 form-group" [class.has-danger]="isDateBeginNotValid$ | async">
+      <div class="col-md-3 form-group">
         <input
           class="form-control"
+          [class.is-invalid]="isDateBeginNotValid$ | async"
           title="Начало периода"
           placeholder="Начало периода"
           [tlDate]="dateBeginInputName"
@@ -37,12 +38,11 @@
         <small *ngIf="isDateBeginEmpty$ | async" class="form-control-feedback">Неверный формат даты</small>
       </div>
 
-      <div class="col-md-3 form-group"
-           [class.has-danger]="isDateEndNotValid$ | async"
-           [hidden]="(kind$ | async) !== 'period'"
+      <div class="col-md-3 form-group" [hidden]="(kind$ | async) !== 'period'"
       >
         <input
           class="form-control"
+          [class.is-invalid]="isDateEndNotValid$ | async"
           title="Конец периода"
           placeholder="Конец периода"
           [tlDate]="dateEndInputName"

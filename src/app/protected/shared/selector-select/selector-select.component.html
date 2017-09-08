@@ -1,4 +1,4 @@
-<div class="dropdown" [ngClass]="{ show: (isDropdownVisible$ | async) }">
+<div class="dropdown">
 
   <button
       type="button"
@@ -9,7 +9,7 @@
     {{(selectedItem$ | async).title}}
   </button>
 
-  <div class="dropdown-menu">
+  <div class="dropdown-menu" [class.show]="isDropdownVisible$ | async">
 
     <tl-search-field
         [name]="name"

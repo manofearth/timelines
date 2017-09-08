@@ -10,7 +10,6 @@ import { Router } from '@angular/router';
 import { SearchFieldCreateAction } from '../shared/search-field/search-field-actions';
 import { actionNameIs } from '../../shared/action-name-is.fn';
 import { Subscription } from 'rxjs/Subscription';
-import 'rxjs/add/operator/delay';
 
 @Component({
   selector: 'tl-events',
