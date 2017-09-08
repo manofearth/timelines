@@ -10,6 +10,7 @@ import { EventSaveButtonAction } from '../event.component';
 import { isNew } from '../../shared/event/is-new.fn';
 import { ChartEventClickAction } from '../../chart/chart.component';
 import { SearchFieldCreateAction } from '../../shared/search-field/search-field-actions';
+import { EventsListNavigatedToEventAction } from '../../events/events-list.component';
 
 type EventStatusReducerAction =
   | TimelineEventClickAction
@@ -21,7 +22,8 @@ type EventStatusReducerAction =
   | EventInsertSuccessAction
   | EventSaveButtonAction
   | ChartEventClickAction
-  | SearchFieldCreateAction;
+  | SearchFieldCreateAction
+  | EventsListNavigatedToEventAction;
 
 export function eventStatusReducer(state: EventStatus, action: EventStatusReducerAction): EventStatus {
   switch (action.type) {
@@ -36,6 +38,11 @@ export function eventStatusReducer(state: EventStatus, action: EventStatusReduce
       return 'ERROR';
     case 'SEARCH_FIELD_CREATE':
       if (action.payload.name.startsWith(TIMELINE_EVENTS_SELECTOR_NAME_PREFIX)) {
+        return 'NEW';
+      }
+      return state;
+    case 'EVENTS_LIST_NAVIGATED_TO_EVENT':
+      if (action.payload.eventId === 'new') {
         return 'NEW';
       }
       return state;

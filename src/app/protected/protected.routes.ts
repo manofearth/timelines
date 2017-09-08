@@ -29,7 +29,7 @@ export const routes: Routes = [
         component: EventsListComponent,
         children: [
           {
-            path: ':id',
+            path: ':id'
           }
         ]
       }
