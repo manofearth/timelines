@@ -55,6 +55,7 @@ import { EventToTimelineAttachingFirebaseService } from './event/event-to-timeli
 import { EventsFirebaseService } from './event/events-firebase.service';
 import { TimelinesFirebaseService } from './timelines/timelines-firebase.service';
 import { TimelinesFirebaseGetEffect } from './timelines/effects/timelines-firebase-get.effect';
+import { EventModalEffect } from './event/effects/event-modal.effect';
 
 // noinspection JSUnusedGlobalSymbols
 @NgModule({
@@ -85,6 +86,7 @@ import { TimelinesFirebaseGetEffect } from './timelines/effects/timelines-fireba
     EffectsModule.run(SelectorInputBlurEffect),
     EffectsModule.run(TypeDeleteEffect),
     EffectsModule.run(EventsAlgoliaSearchEffect),
+    EffectsModule.run(EventModalEffect),
   ],
   declarations: [
     TimelinesComponent,

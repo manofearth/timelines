@@ -14,9 +14,20 @@ export interface EventState {
 export type EventStatus = 'NEW' | 'INSERTING' | 'INSERTED' | 'UPDATING' | 'UPDATED' | 'ERROR' | 'LOADING' | 'LOADED';
 
 export const eventInitialState: EventState = {
-  status: null,
+  status: 'NEW',
   error: null,
-  event: null,
+  event: newEvent(''),
   typeSelector: selectorInputInitialState,
   validation: null,
 };
+
+export function newEvent(title: string): TimelineEvent {
+  return {
+    id: null,
+    type: null,
+    title: title,
+    dateBegin: null,
+    dateEnd: null,
+    timelines: {}
+  }
+}

@@ -1,17 +1,15 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { AppState } from '../../reducers';
-import { Action, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { getProp } from '../shared/helpers';
 import { TimelineEventForList } from './events-list.reducer';
 import { ComponentInitAction } from '../../shared/component-init-action';
 import { Actions } from '@ngrx/effects';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { SearchFieldCreateAction } from '../shared/search-field/search-field-actions';
 import { actionNameIs } from '../../shared/action-name-is.fn';
 import { Subscription } from 'rxjs/Subscription';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { EventComponent } from '../event/event.component';
 import 'rxjs/add/operator/delay';
 
 @Component({
@@ -32,20 +30,16 @@ export class EventsListComponent implements OnInit, OnDestroy {
   searchFieldName: string = EVENTS_LIST_SEARCH_FIELD_NAME;
 
   private navigateToNewSub: Subscription;
-  private routeParamsSub: Subscription;
+  private navigateToSelfSub: Subscription;
 
   constructor(
     private store: Store<AppState>,
     private actions: Actions,
     private router: Router,
-    private route: ActivatedRoute,
-    private modalService: NgbModal,
   ) {
-    console.log('construct');
   }
 
   ngOnInit() {
-    console.log('init');
     this.isSearching$ = this.store.select<boolean>(state => state.eventsList.isSearching);
     this.searchQuery$ = this.store.select<string>(state => state.eventsList.query);
     this.hasError$ = this.store.select<boolean>(state => state.eventsList.error !== null);
@@ -61,15 +55,11 @@ export class EventsListComponent implements OnInit, OnDestroy {
         this.router.navigate([ 'events', 'new' ]);
       });
 
-    this.routeParamsSub = this.route.children[0].params
-    // have to delay to next tick, because in case of user navigation with direct link,
-    // got ExpressionChangedAfterItHasBeenCheckedError after attempt to open modal
-      .delay(0)
-      .subscribe(params => {
-        if (params[ 'id' ]) {
-          this.dispatchNavigatedToEvent(params[ 'id' ]);
-          this.openEventModal();
-        }
+    this.navigateToSelfSub = this.actions
+      .ofType('EVENT_MODAL_CLOSED')
+      .subscribe(() => {
+        // noinspection JSIgnoredPromiseFromCall
+        this.router.navigate([ 'events' ]);
       });
 
     this.dispatchInit();
@@ -77,8 +67,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.navigateToNewSub.unsubscribe();
-    this.routeParamsSub.unsubscribe();
-    console.log('destruct');
+    this.navigateToSelfSub.unsubscribe();
   }
 
   private dispatchInit() {
@@ -89,31 +78,6 @@ export class EventsListComponent implements OnInit, OnDestroy {
       }
     };
     this.store.dispatch(action);
-  }
-
-  private openEventModal() {
-    const changeUrl = () => {
-      // noinspection JSIgnoredPromiseFromCall
-      this.router.navigate(['events'])
-    };
-    this.modalService.open(EventComponent, { size: 'lg' }).result.then(changeUrl, changeUrl);
-  }
-
-  private dispatchNavigatedToEvent(eventId: string) {
-    const action: EventsListNavigatedToEventAction = {
-      type: 'EVENTS_LIST_NAVIGATED_TO_EVENT',
-      payload: {
-        eventId: eventId,
-      }
-    };
-    this.store.dispatch(action);
-  }
-}
-
-export interface EventsListNavigatedToEventAction extends Action {
-  type: 'EVENTS_LIST_NAVIGATED_TO_EVENT';
-  payload: {
-    eventId: string;
   }
 }
 
