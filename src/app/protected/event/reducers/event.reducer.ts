@@ -18,6 +18,7 @@ import { TypeKind } from '../../type/type-states';
 import { TimelineDate } from '../../shared/date/date';
 import { newEvent } from '../event-states';
 import { SearchFieldCreateAction } from '../../shared/search-field/search-field-actions';
+import { NavigatedToEventAction, NavigatedToNewEventAction } from '../../events/effects/events-router.effect';
 import { actionNameIs } from '../../../shared/action-name-is.fn';
 import { EVENTS_LIST_SEARCH_FIELD_NAME } from '../../events/events-list.component';
 
@@ -28,7 +29,9 @@ type EventReducerAction = EventGetSuccessAction
   | DateChangedAction
   | SelectorSelectSelectedAction
   | EventFromTimelineCreateAction
-  | SearchFieldCreateAction;
+  | SearchFieldCreateAction
+  | NavigatedToNewEventAction
+  | NavigatedToEventAction;
 
 export function eventReducer(state: TimelineEvent, action: EventReducerAction): TimelineEvent {
   switch (action.type) {
@@ -41,8 +44,15 @@ export function eventReducer(state: TimelineEvent, action: EventReducerAction): 
         return newEvent(action.payload.value);
       }
       return state;
+    case 'NAVIGATED_TO_NEW_EVENT':
+      if (state.id !== null) {
+        return newEvent('');
+      }
+      return state;
+    case 'NAVIGATED_TO_EVENT':
+      return newEvent('');
     case 'EVENT_INSERT_SUCCESS':
-      return { ...state, id: action.payload };
+      return { ...state, id: action.payload.eventId };
     case 'INPUT_CHANGED':
       switch (action.payload.name) {
         case EVENT_TITLE_INPUT_NAME:
@@ -81,7 +91,7 @@ export function eventReducer(state: TimelineEvent, action: EventReducerAction): 
 
 function newEventAttachedToTimeline(title: string, groupId: string, timelineId: string): TimelineEvent {
   const newObj = newEvent(title);
-  newObj.timelines[timelineId] = { [groupId]: true };
+  newObj.timelines[ timelineId ] = { [groupId]: true };
   return newObj;
 }
 

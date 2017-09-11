@@ -1,4 +1,4 @@
-export function getProp<T>(object: T, property: keyof T, defaultValue: any): any {
+export function getProp<T, K extends keyof T>(object: T, property: K, defaultValue: T[K]): T[K] {
   return object ? (object[property] ? object[property] : defaultValue) : defaultValue;
 }
 

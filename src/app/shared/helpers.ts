@@ -30,3 +30,19 @@ export function toInt(value: any): number {
 export function spliceOneValue(arr: any[], valueToDelete: any) {
   arr.splice(arr.findIndex(isEqual(valueToDelete)), 1);
 }
+
+export function push<T>(arr: T[], value: T): T[] {
+  const arrClone = [...arr];
+  arrClone.push(value);
+  return arrClone;
+}
+
+export function setToArr<T>(arr: T[], index: number, value: T): T[] {
+  const arrClone = [...arr];
+  arrClone[index] = value;
+  return arrClone;
+}
+
+export function setToObj<T extends Object, K extends keyof T>(obj: T, prop: K, value: T[K]): T {
+  return Object.assign({}, obj, { [prop as string]: value });
+}

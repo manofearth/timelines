@@ -40,7 +40,7 @@ export interface AlgoliaEvent {
   dateEnd: TimelineDate;
   title: string;
   typeId: string;
-  objectId: string;
+  objectID: string;
   _highlightResult: {
     title: AlgoliaHighlightedFieldValue;
   }

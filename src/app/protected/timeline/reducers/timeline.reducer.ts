@@ -17,7 +17,7 @@ export function timelineReducer(state: Timeline, action: TimelineReducerAction):
         ...action.payload,
       };
     case 'EVENT_SAVE_BUTTON':
-      if (action.payload.timelineId !== state.id) {
+      if (state === null || action.payload.timelineId !== state.id) {
         return state;
       }
       if (isNew(action.payload.event)) {

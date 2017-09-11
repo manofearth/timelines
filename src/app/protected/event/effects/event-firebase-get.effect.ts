@@ -7,15 +7,18 @@ import { TimelineEventClickAction } from '../../timeline/events/timeline-events-
 import { toError } from '../../shared/firebase/protected-firebase.effect';
 import { FirebaseType, TypesFirebaseService } from '../../types/types-firebase.service';
 import { ChartEventClickAction } from '../../chart/chart.component';
+import 'rxjs/add/observable/merge';
+import { NavigatedToEventAction } from '../../events/effects/events-router.effect';
 
 @Injectable()
 export class EventFirebaseGetEffect {
 
   @Effect()
   effect: Observable<EventGetSuccessAction | EventGetErrorAction> = this.actions
-    .ofType('TIMELINE_EVENT_CLICK', 'CHART_EVENT_CLICK')
-    .switchMap((action: TimelineEventClickAction | ChartEventClickAction) => this.fireEvents
-      .getObject(action.payload.eventId)
+    .ofType('TIMELINE_EVENT_CLICK', 'CHART_EVENT_CLICK', 'NAVIGATED_TO_EVENT')
+    .map((action: ChartEventClickAction | TimelineEventClickAction | NavigatedToEventAction) => action.payload.eventId)
+    .switchMap(eventId => this.fireEvents
+      .getObject(eventId)
       .switchMap((fireEvent: FirebaseTimelineEvent) => this.fireTypes
         .getObject(fireEvent.typeId)
         .map((type: FirebaseType) => ({

@@ -5,11 +5,6 @@ import { Observable } from 'rxjs/Observable';
 import { getProp } from '../shared/helpers';
 import { TimelineEventForList } from './events-list.reducer';
 import { ComponentInitAction } from '../../shared/component-init-action';
-import { Actions } from '@ngrx/effects';
-import { Router } from '@angular/router';
-import { SearchFieldCreateAction } from '../shared/search-field/search-field-actions';
-import { actionNameIs } from '../../shared/action-name-is.fn';
-import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'tl-events',
@@ -28,13 +23,8 @@ export class EventsListComponent implements OnInit, OnDestroy {
 
   searchFieldName: string = EVENTS_LIST_SEARCH_FIELD_NAME;
 
-  private navigateToNewSub: Subscription;
-  private navigateToSelfSub: Subscription;
-
   constructor(
     private store: Store<AppState>,
-    private actions: Actions,
-    private router: Router,
   ) {
   }
 
@@ -46,27 +36,10 @@ export class EventsListComponent implements OnInit, OnDestroy {
     this.isLoading$ = this.store.select<boolean>(state => state.eventsList.isLoading);
     this.list$ = this.store.select<TimelineEventForList[]>(state => state.eventsList.list);
 
-    this.navigateToNewSub = this.actions
-      .ofType('SEARCH_FIELD_CREATE')
-      .filter<SearchFieldCreateAction>(actionNameIs(EVENTS_LIST_SEARCH_FIELD_NAME))
-      .subscribe(() => {
-        // noinspection JSIgnoredPromiseFromCall
-        this.router.navigate([ 'events', 'new' ]);
-      });
-
-    this.navigateToSelfSub = this.actions
-      .ofType('EVENT_MODAL_CLOSED')
-      .subscribe(() => {
-        // noinspection JSIgnoredPromiseFromCall
-        this.router.navigate([ 'events' ]);
-      });
-
     this.dispatchInit();
   }
 
   ngOnDestroy() {
-    this.navigateToNewSub.unsubscribe();
-    this.navigateToSelfSub.unsubscribe();
   }
 
   private dispatchInit() {

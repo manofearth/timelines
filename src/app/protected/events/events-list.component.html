@@ -13,7 +13,7 @@
     <table class="table table-hover">
       <tbody>
       <tr *ngFor="let event of (list$ | async)">
-        <td><a href class="event-title" [innerHtml]="event.title"></a></td>
+        <td><a [routerLink]="'/events/' + event.id" class="event-title" [innerHtml]="event.title"></a></td>
       </tr>
       </tbody>
     </table>

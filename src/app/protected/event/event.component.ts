@@ -71,11 +71,13 @@ export class EventComponent implements OnInit, OnDestroy {
       const action: EventSaveButtonAction = {
         type: 'EVENT_SAVE_BUTTON',
         payload: {
-          timelineId: state.timeline.timeline.id,
-          groupId: state.timeline.timeline.groups[state.timeline.currentGroupIndex].id,
           event: state.event.event,
         },
       };
+      if (state.timeline.timeline) {
+        action.payload.timelineId = state.timeline.timeline.id;
+        action.payload.groupId = state.timeline.timeline.groups[state.timeline.currentGroupIndex].id;
+      }
       this.store.dispatch(action);
       this.activeModal.close();
     });
@@ -110,8 +112,8 @@ export const EVENT_DATE_END_INPUT_NAME = 'event-date-end-input';
 export interface EventSaveButtonAction extends Action {
   type: 'EVENT_SAVE_BUTTON';
   payload: {
-    timelineId: string;
-    groupId: string;
+    timelineId?: string;
+    groupId?: string;
     event: TimelineEvent
   };
 }
