@@ -1,25 +1,21 @@
 import { Injectable } from '@angular/core';
+import { AlgoliaSearchResult, AlgoliaSearchService, AlgoliaType } from '../../shared/algolia/algolia-search.service';
 import { Actions, Effect } from '@ngrx/effects';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/observable/merge';
-import { TypesElasticSearchHit, TypesElasticSearchService } from '../types-elastic-search.service';
-import { Action, Store } from '@ngrx/store';
-import { TYPES_COMPONENT_NAME, TYPES_SEARCH_FIELD_NAME } from '../types.component';
-import { toError } from '../../shared/firebase/protected-firebase.effect';
-import { EVENT_TYPE_SELECTOR_NAME } from '../../event/event.component';
 import { AppState } from '../../../reducers';
+import { Action, Store } from '@ngrx/store';
 import { AngularFireAuth } from 'angularfire2/auth';
+import { Observable } from 'rxjs/Observable';
 import { actionNameIs } from '../../../shared/action-name-is.fn';
+import { TYPES_COMPONENT_NAME, TYPES_SEARCH_FIELD_NAME } from '../types.component';
+import { EVENT_TYPE_SELECTOR_NAME } from '../../event/event.component';
+import { toError } from '../../shared/firebase/protected-firebase.effect';
 
 @Injectable()
-export class ElasticTypesSearchEffect {
-
+export class TypesAlgoliaSearchEffect {
   constructor(
     private store: Store<AppState>,
     private actions: Actions,
-    private elasticSearchTypes: TypesElasticSearchService,
+    private algolia: AlgoliaSearchService,
     private fireAuth: AngularFireAuth,
   ) {
   }
@@ -27,12 +23,12 @@ export class ElasticTypesSearchEffect {
   private typesListInit$: Observable<NamedQuery> = this.actions
     .ofType('COMPONENT_INIT')
     .filter(actionNameIs(TYPES_COMPONENT_NAME))
-    .map(() => ({ name: TYPES_COMPONENT_NAME, query: null }));
+    .map(() => ({ name: TYPES_COMPONENT_NAME, query: '' }));
 
   private eventTypeSelectorButton$: Observable<NamedQuery> = this.actions
     .ofType('SELECTOR_SELECT_BUTTON')
     .filter(actionNameIs(EVENT_TYPE_SELECTOR_NAME))
-    .map(() => ({ name: EVENT_TYPE_SELECTOR_NAME, query: null }));
+    .map(() => ({ name: EVENT_TYPE_SELECTOR_NAME, query: '' }));
 
   private typesListQuery$: Observable<NamedQuery> = this.store
     .select<string>(state => state.types.query)
@@ -51,13 +47,13 @@ export class ElasticTypesSearchEffect {
     )
     .filter(() => this.fireAuth.auth.currentUser !== null)
     .switchMap(({ name, query }) =>
-      this.elasticSearchTypes
-        .search(query)
-        .map((searchResult): TypesSearchSuccessAction => ({
+      this.algolia
+        .searchTypes(query)
+        .map((result): TypesSearchSuccessAction => ({
           type: 'TYPES_SEARCH_SUCCESS',
           payload: {
             name: name,
-            hits: searchResult.hits.hits
+            result: result
           }
         }))
         .catch(err => Observable.of<TypesSearchErrorAction>({
@@ -79,7 +75,7 @@ export interface TypesSearchSuccessAction extends Action {
   type: 'TYPES_SEARCH_SUCCESS';
   payload: {
     name: string;
-    hits: TypesElasticSearchHit[];
+    result: AlgoliaSearchResult<AlgoliaType>;
   }
 }
 

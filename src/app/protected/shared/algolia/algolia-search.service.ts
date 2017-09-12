@@ -5,18 +5,19 @@ import 'rxjs/add/observable/fromPromise';
 import * as algolia from 'algoliasearch';
 import { TimelineDate } from '../date/date';
 import { AngularFireAuth } from 'angularfire2/auth';
+import { TypeKind } from '../../type/type-states';
 
 @Injectable()
 export class AlgoliaSearchService {
 
   private client: algolia.AlgoliaClient;
-  private eventsIndex: algolia.AlgoliaIndex;
+  private _eventsIndex: algolia.AlgoliaIndex;
+  private _typesIndex: algolia.AlgoliaIndex;
 
   constructor(
     private auth: AngularFireAuth,
   ) {
     this.client = algolia(algoliaConfig.applicationId, algoliaConfig.apiKeySearchOnly);
-    this.eventsIndex = this.client.initIndex('events');
   }
 
   searchEvents(query: string): Observable<AlgoliaSearchResult<AlgoliaEvent>> {
@@ -29,18 +30,55 @@ export class AlgoliaSearchService {
       })
     );
   }
+
+  searchTypes(query: string): Observable<AlgoliaSearchResult<AlgoliaType>> {
+    return Observable.fromPromise(
+      this.typesIndex.search({
+        query: query,
+        filters: `ownerId:${this.auth.auth.currentUser.uid}`,
+        hitsPerPage: 20,
+        page: 0,
+      })
+    );
+  }
+
+  private get eventsIndex(): algolia.AlgoliaIndex {
+    if (!this._eventsIndex) {
+      this._eventsIndex = this.client.initIndex('events');
+    }
+    return this._eventsIndex;
+  }
+
+  private get typesIndex(): algolia.AlgoliaIndex {
+    if (!this._typesIndex) {
+      this._typesIndex = this.client.initIndex('types');
+    }
+    return this._typesIndex;
+  }
 }
 
 export interface AlgoliaSearchResult<T> {
   hits: T[];
 }
 
-export interface AlgoliaEvent {
+export interface AlgoliaObject {
+  objectID: string;
+}
+
+export interface AlgoliaEvent extends AlgoliaObject {
   dateBegin: TimelineDate;
   dateEnd: TimelineDate;
   title: string;
   typeId: string;
-  objectID: string;
+  _highlightResult: {
+    title: AlgoliaHighlightedFieldValue;
+  }
+}
+
+export interface AlgoliaType extends AlgoliaObject {
+  ownerId: string;
+  kind: TypeKind;
+  title: string;
   _highlightResult: {
     title: AlgoliaHighlightedFieldValue;
   }

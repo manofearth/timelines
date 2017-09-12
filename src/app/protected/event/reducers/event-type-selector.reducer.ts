@@ -3,7 +3,7 @@ import {
   SelectorSelectInitAction
 } from '../../shared/selector-select/selector-select-actions';
 import { SearchFieldInputAction } from '../../shared/search-field/search-field-actions';
-import { TypesSearchErrorAction, TypesSearchSuccessAction } from '../../types/effects/elastic-types-search.effect';
+import { TypesSearchErrorAction, TypesSearchSuccessAction } from '../../types/effects/types-algolia-search.effect';
 import { selectorSelectInitialState, SelectorSelectState } from '../../shared/selector-select/selector-select-state';
 import { TimelineEventsTypeLight } from '../../types/types-states';
 import { SelectorListItem } from '../../shared/selector-list/selector-list-item';
@@ -52,14 +52,14 @@ export function eventTypeSelectorReducerFilteredByName(
       return {
         ...state,
         isSearching: false,
-        results: action.payload.hits.map(
+        results: action.payload.result.hits.map(
           (hit): SelectorListItem<TimelineEventsTypeLight> => ({
-            title: hit._source.title,
-            titleHighlighted: hit.highlight ? hit.highlight.title[0] : hit._source.title,
+            title: hit.title,
+            titleHighlighted: hit._highlightResult.title.value,
             item: {
-              id: hit._id,
-              title: hit._source.title,
-              kind: hit._source.kind,
+              id: hit.objectID,
+              title: hit.title,
+              kind: hit.kind,
             },
           })
         ),

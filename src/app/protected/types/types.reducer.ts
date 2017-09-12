@@ -1,14 +1,14 @@
 import { TimelineEventsTypeLight, typesInitialState, TypesState } from './types-states';
-import { TypesSearchErrorAction, TypesSearchSuccessAction } from './effects/elastic-types-search.effect';
+import { TypesSearchErrorAction, TypesSearchSuccessAction } from './effects/types-algolia-search.effect';
 import { TypeGetSuccessAction } from '../type/type-get-actions';
 import { TimelineEventsType } from '../type/type-states';
 import { TypeCreateSuccessAction } from './type-create-actions';
 import { TYPES_COMPONENT_NAME, TYPES_SEARCH_FIELD_NAME } from './types.component';
 import { SearchFieldInputAction } from '../shared/search-field/search-field-actions';
-import { TypesElasticSearchHit } from './types-elastic-search.service';
 import { ComponentInitAction } from '../../shared/component-init-action';
 import { TypeDeleteSuccessAction } from '../type/effects/type-delete.effect';
 import { TypeUpdateAction } from '../type/type-update-actions';
+import { AlgoliaType } from '../shared/algolia/algolia-search.service';
 
 type TypesAction = ComponentInitAction | TypesSearchSuccessAction | TypesSearchErrorAction | TypeGetSuccessAction
   | TypeCreateSuccessAction | SearchFieldInputAction | TypeDeleteSuccessAction | TypeUpdateAction;
@@ -39,7 +39,7 @@ export function typesReducer(state: TypesState, action: TypesAction): TypesState
         isLoading: false,
         isSearching: false,
         error: null,
-        types: action.payload.hits.map(toTimelineEventsType),
+        types: action.payload.result.hits.map(toTimelineEventsType),
       };
     case 'TYPES_SEARCH_ERROR':
       if (action.payload.name !== TYPES_COMPONENT_NAME && action.payload.name !== TYPES_SEARCH_FIELD_NAME) {
@@ -113,10 +113,10 @@ function extractTypeForList(type: TimelineEventsType): TimelineEventsTypeLight {
   }
 }
 
-function toTimelineEventsType(hit: TypesElasticSearchHit): TimelineEventsTypeLight {
+function toTimelineEventsType(hit: AlgoliaType): TimelineEventsTypeLight {
   return {
-    id: hit._id,
-    title: hit.highlight ? hit.highlight.title[ 0 ] : hit._source.title,
-    kind: hit._source.kind,
+    id: hit.objectID,
+    title: hit._highlightResult.title.value,
+    kind: hit.kind,
   }
 }

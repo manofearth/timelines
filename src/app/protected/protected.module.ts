@@ -46,7 +46,6 @@ import { TimelineFirebaseCreateGroupEffect } from './group/effects/timeline-fire
 import { TimelineFirebaseSaveGroupEffect } from './group/effects/timeline-firebase-save-group.effect';
 import { TimelineFirebaseDeleteGroupEffect } from './group/effects/timeline-firebase-delete-group.effect';
 import { FirebaseTypeCreateEffect } from './types/effects/firebase-type-create.effect';
-import { ElasticTypesSearchEffect } from './types/effects/elastic-types-search.effect';
 import { AlgoliaSearchService } from './shared/algolia/algolia-search.service';
 import { TimelineEventsElasticSearchService } from './timeline/timeline-events-elastic-search.service';
 import { TypesElasticSearchService } from './types/types-elastic-search.service';
@@ -57,6 +56,7 @@ import { TimelinesFirebaseService } from './timelines/timelines-firebase.service
 import { TimelinesFirebaseGetEffect } from './timelines/effects/timelines-firebase-get.effect';
 import { EventModalEffect } from './event/effects/event-modal.effect';
 import { EventsRouterEffect } from './events/effects/events-router.effect';
+import { TypesAlgoliaSearchEffect } from './types/effects/types-algolia-search.effect';
 
 // noinspection JSUnusedGlobalSymbols
 @NgModule({
@@ -80,7 +80,7 @@ import { EventsRouterEffect } from './events/effects/events-router.effect';
     EffectsModule.run(TimelineFirebaseSaveGroupEffect),
     EffectsModule.run(TimelineFirebaseDeleteGroupEffect),
     EffectsModule.run(FirebaseTypeCreateEffect),
-    EffectsModule.run(ElasticTypesSearchEffect),
+    EffectsModule.run(TypesAlgoliaSearchEffect),
     EffectsModule.run(TypeGetEffect),
     EffectsModule.run(TypeUpdateEffect),
     EffectsModule.run(EventsElasticSearchEffect),
