@@ -1,10 +1,14 @@
-function toAlgiliaTimelineEvent(id, ownerId, data) {
+const saveObjectInAlgoliaIndex = require('./save-object-in-algolia-index.fn');
+const deleteObjectFromAlgoliaIndex = require('./save-object-in-algolia-index.fn');
+
+function toAlgoliaTimelineEvent(dbEvent) {
+  const data = dbEvent.data.val();
   return {
-    objectID: id,
+    objectID: dbEvent.params.eventId,
+    ownerId: dbEvent.params.userId,
     title: data.title,
     dateBegin: data.dateBegin,
     dateEnd: data.dateEnd,
-    ownerId: ownerId,
   };
 }
 
@@ -16,26 +20,9 @@ function indexTimelineEventToAlgoliaFabric(algoliaClient) {
     const eventsIndex = algoliaClient.initIndex('events');
 
     if (dbEvent.data.exists()) {
-      return eventsIndex
-        .saveObject(toAlgiliaTimelineEvent(dbEvent.params.eventId, dbEvent.params.userId, dbEvent.data.val()))
-        .then(
-          () => {
-            console.log('Indexed successfully');
-          },
-          error => {
-            console.error('Indexing error:', error.message);
-          }
-        );
+      return saveObjectInAlgoliaIndex(toAlgoliaTimelineEvent(dbEvent), eventsIndex);
     } else {
-      return eventsIndex.deleteObjects(dbEvent.params.eventId)
-        .then(
-          () => {
-            console.log('Deleted from index successfully');
-          },
-          error => {
-            console.error('Deleting from index error:', error.message);
-          }
-        );
+      return deleteObjectFromAlgoliaIndex(dbEvent.params.eventId, eventsIndex);
     }
   }
 }
