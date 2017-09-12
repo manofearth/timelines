@@ -1,5 +1,5 @@
 const saveObjectInAlgoliaIndex = require('./save-object-in-algolia-index.fn');
-const deleteObjectFromAlgoliaIndex = require('./save-object-in-algolia-index.fn');
+const deleteObjectFromAlgoliaIndex = require('./delete-object-from-algolia-index.fn');
 
 function toAlgoliaTimelineEvent(dbEvent) {
   const data = dbEvent.data.val();

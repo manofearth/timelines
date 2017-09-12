@@ -47,6 +47,7 @@ export interface FirebaseEventUpdateObject {
 
 export interface FirebaseTimelineEvent {
   $key: string;
+  $exists: () => boolean;
   title: string;
   dateBegin: TimelineDate;
   dateEnd: TimelineDate;

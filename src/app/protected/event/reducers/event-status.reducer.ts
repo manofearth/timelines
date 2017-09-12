@@ -3,7 +3,7 @@ import { EventGetErrorAction, EventGetSuccessAction } from '../effects/event-fir
 import { TimelineEventClickAction } from '../../timeline/events/timeline-events-table.component';
 import { EventUpdateErrorAction, EventUpdateSuccessAction } from '../effects/event-firebase-update.effect';
 import { EventInsertErrorAction, EventInsertSuccessAction } from '../effects/event-firebase-insert.effect';
-import { EventSaveButtonAction } from '../event.component';
+import { EventDeleteButtonAction, EventSaveButtonAction } from '../event.component';
 import { isNew } from '../../shared/event/is-new.fn';
 import { ChartEventClickAction } from '../../chart/chart.component';
 import { NavigatedToEventAction, NavigatedToNewEventAction } from '../../events/effects/events-router.effect';
@@ -19,7 +19,8 @@ type EventStatusReducerAction =
   | EventSaveButtonAction
   | ChartEventClickAction
   | NavigatedToNewEventAction
-  | NavigatedToEventAction;
+  | NavigatedToEventAction
+  | EventDeleteButtonAction;
 
 export function eventStatusReducer(state: EventStatus, action: EventStatusReducerAction): EventStatus {
   switch (action.type) {
@@ -39,6 +40,8 @@ export function eventStatusReducer(state: EventStatus, action: EventStatusReduce
       return 'UPDATED';
     case 'EVENT_INSERT_SUCCESS':
       return 'INSERTED';
+    case 'EVENT_DELETE_BUTTON':
+      return 'DELETING';
     case 'EVENT_SAVE_BUTTON':
       return isNew(action.payload.event) ? 'INSERTING' : 'UPDATING';
     default:

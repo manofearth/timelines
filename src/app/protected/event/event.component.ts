@@ -35,6 +35,9 @@ export class EventComponent implements OnInit, OnDestroy {
   isDateBeginNotValid$: Observable<boolean>;
   isDateEndNotValid$: Observable<boolean>;
   kind$: Observable<TypeKind>;
+  attachedToTimelinesCount$: Observable<number>;
+
+  isDeleteConfirmationVisible: boolean = false;
 
   private typeSub: Subscription;
 
@@ -58,6 +61,7 @@ export class EventComponent implements OnInit, OnDestroy {
     this.isDateEndNotValid$ = this.store.select(
       some(selectValidationKey('emptyDateEnd'), selectValidationKey('periodBeginGreaterEnd'))
     );
+    this.attachedToTimelinesCount$ = this.store.select(state => Object.keys(state.event.event.timelines).length);
   }
 
   ngOnDestroy() {
@@ -81,6 +85,22 @@ export class EventComponent implements OnInit, OnDestroy {
       this.store.dispatch(action);
       this.activeModal.close();
     });
+  }
+
+  onDeleteButtonClick() {
+    this.isDeleteConfirmationVisible = true;
+  }
+
+  onDeleteConfirmNoClick() {
+    this.isDeleteConfirmationVisible = false;
+  }
+
+  onDeleteConfirmYesClick() {
+    const action: EventDeleteButtonAction = {
+      type: 'EVENT_DELETE_BUTTON'
+    };
+    this.store.dispatch(action);
+    this.activeModal.close();
   }
 
   dismiss() {
@@ -116,6 +136,10 @@ export interface EventSaveButtonAction extends Action {
     groupId?: string;
     event: TimelineEvent
   };
+}
+
+export interface EventDeleteButtonAction extends Action {
+  type: 'EVENT_DELETE_BUTTON';
 }
 
 function selectValidationKey(key: keyof EventValidationState) {

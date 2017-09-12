@@ -11,10 +11,10 @@
     <div class="row">
       <div class="col-md-3">
         <tl-selector-select
-          [name]="typeSelectorName"
-          [stateSelector]="selectTypeSelectorState"
-          [placeholder]="'Выберите тип'"
-          [hasDanger]="isTypeEmpty$ | async"
+            [name]="typeSelectorName"
+            [stateSelector]="selectTypeSelectorState"
+            [placeholder]="'Выберите тип'"
+            [hasDanger]="isTypeEmpty$ | async"
         ></tl-selector-select>
       </div>
       <div class="col-md-9 form-group">
@@ -27,13 +27,13 @@
 
       <div class="col-md-3 form-group">
         <input
-          class="form-control"
-          [class.is-invalid]="isDateBeginNotValid$ | async"
-          title="Начало периода"
-          placeholder="Начало периода"
-          [tlDate]="dateBeginInputName"
-          [stateSelector]="selectDateBegin"
-          [context]="'beginning'"
+            class="form-control"
+            [class.is-invalid]="isDateBeginNotValid$ | async"
+            title="Начало периода"
+            placeholder="Начало периода"
+            [tlDate]="dateBeginInputName"
+            [stateSelector]="selectDateBegin"
+            [context]="'beginning'"
         >
         <small *ngIf="isDateBeginEmpty$ | async" class="form-control-feedback">Неверный формат даты</small>
       </div>
@@ -41,13 +41,13 @@
       <div class="col-md-3 form-group" [hidden]="(kind$ | async) !== 'period'"
       >
         <input
-          class="form-control"
-          [class.is-invalid]="isDateEndNotValid$ | async"
-          title="Конец периода"
-          placeholder="Конец периода"
-          [tlDate]="dateEndInputName"
-          [stateSelector]="selectDateEnd"
-          [context]="'ending'"
+            class="form-control"
+            [class.is-invalid]="isDateEndNotValid$ | async"
+            title="Конец периода"
+            placeholder="Конец периода"
+            [tlDate]="dateEndInputName"
+            [stateSelector]="selectDateEnd"
+            [context]="'ending'"
         >
         <small *ngIf="isDateEndEmpty$ | async" class="form-control-feedback">Неверный формат даты</small>
         <small *ngIf="isDateBeginGreaterEnd$ | async" class="form-control-feedback">
@@ -59,7 +59,15 @@
 
   </div>
 </div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-primary" (click)="save()">Сохранить</button>
+<div class="tl-event-modal-footer d-flex justify-content-end">
+  <button type="button" class="mr-auto btn btn-danger" (click)="onDeleteButtonClick()"
+          [hidden]="isDeleteConfirmationVisible || (status$ | async) === 'NEW'">Удалить</button>
+  <div class="mr-auto" *ngIf="isDeleteConfirmationVisible">
+    <span class="text-warning small" *ngIf="(attachedToTimelinesCount$ | async) !== 0">Событие используется в {{(attachedToTimelinesCount$ | async)}} лентах!</span>
+    <span class="text-warning small">Действительно удалить?</span>
+    <button type="button" class="btn btn-secondary" (click)="onDeleteConfirmNoClick()">Нет</button>
+    <button type="button" class="btn btn-danger" (click)="onDeleteConfirmYesClick()">Да</button>
+  </div>
+  <button type="button" class="btn btn-primary mr-1" (click)="save()">Сохранить</button>
   <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Отмена</button>
 </div>

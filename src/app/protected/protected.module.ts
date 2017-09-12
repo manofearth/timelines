@@ -57,6 +57,7 @@ import { TimelinesFirebaseGetEffect } from './timelines/effects/timelines-fireba
 import { EventModalEffect } from './event/effects/event-modal.effect';
 import { EventsRouterEffect } from './events/effects/events-router.effect';
 import { TypesAlgoliaSearchEffect } from './types/effects/types-algolia-search.effect';
+import { EventFirebaseDeleteEffect } from './event/effects/event-firebase-delete.effect';
 
 // noinspection JSUnusedGlobalSymbols
 @NgModule({
@@ -76,6 +77,7 @@ import { TypesAlgoliaSearchEffect } from './types/effects/types-algolia-search.e
     EffectsModule.run(EventFirebaseUpdateEffect),
     EffectsModule.run(EventFirebaseDetachEffect),
     EffectsModule.run(EventFirebaseAttachEffect),
+    EffectsModule.run(EventFirebaseDeleteEffect),
     EffectsModule.run(TimelineFirebaseCreateGroupEffect),
     EffectsModule.run(TimelineFirebaseSaveGroupEffect),
     EffectsModule.run(TimelineFirebaseDeleteGroupEffect),

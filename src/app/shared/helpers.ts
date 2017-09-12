@@ -37,6 +37,10 @@ export function push<T>(arr: T[], value: T): T[] {
   return arrClone;
 }
 
+export function flatten<T>(arr: T[][]): T[] {
+  return Array.prototype.concat(...arr);
+}
+
 export function setToArr<T>(arr: T[], index: number, value: T): T[] {
   const arrClone = [...arr];
   arrClone[index] = value;

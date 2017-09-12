@@ -96,6 +96,9 @@ function newEventAttachedToTimeline(title: string, groupId: string, timelineId: 
 }
 
 function toTimelineEvent(firebaseEvent: FirebaseTimelineEvent, firebaseType: FirebaseType): TimelineEvent {
+  if (!firebaseEvent.$exists()) {
+    return null;
+  }
   return {
     id: firebaseEvent.$key,
     type: toType(firebaseType),

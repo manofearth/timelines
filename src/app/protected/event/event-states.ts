@@ -11,7 +11,16 @@ export interface EventState {
   validation: EventValidationState;
 }
 
-export type EventStatus = 'NEW' | 'INSERTING' | 'INSERTED' | 'UPDATING' | 'UPDATED' | 'ERROR' | 'LOADING' | 'LOADED';
+export type EventStatus =
+  'NEW'
+  | 'INSERTING'
+  | 'INSERTED'
+  | 'UPDATING'
+  | 'UPDATED'
+  | 'ERROR'
+  | 'LOADING'
+  | 'LOADED'
+  | 'DELETING';
 
 export const eventInitialState: EventState = {
   status: 'NEW',
