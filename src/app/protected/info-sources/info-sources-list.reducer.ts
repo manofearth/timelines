@@ -6,6 +6,9 @@ import {
   InfoSourcesAlgoliaSearchSuccessAction
 } from './effects/info-sources-algolia-search.effect';
 import { AlgoliaInfoSource } from '../shared/algolia/algolia-search.service';
+import { InfoSourceModalSaveButtonAction } from '../info-source/info-source-modal.component';
+import { isNew } from '../shared/info-source/is-new.fn';
+import { push, setToArr } from '../../shared/helpers';
 
 export interface InfoSourcesListState {
   query: string;
@@ -32,6 +35,7 @@ type InfoSourcesListReducerAction = ComponentInitAction
   | SearchFieldInputAction
   | InfoSourcesAlgoliaSearchSuccessAction
   | InfoSourcesAlgoliaSearchErrorAction
+  | InfoSourceModalSaveButtonAction
   ;
 
 export function infoSourcesListReducer(
@@ -71,6 +75,22 @@ export function infoSourcesListReducer(
         isSearching: false,
         isLoading: false,
       };
+    case 'INFO_SOURCE_MODAL_SAVE_BUTTON':
+      if (isNew(action.payload.infoSource)) {
+        return {
+          ...state,
+          list: push(state.list, action.payload.infoSource),
+        }
+      } else {
+        const eventIndexToUpdate = state.list.findIndex(infoSource => infoSource.id === action.payload.infoSource.id);
+        if (eventIndexToUpdate === -1) {
+          return state;
+        }
+        return {
+          ...state,
+          list: setToArr(state.list, eventIndexToUpdate, action.payload.infoSource)
+        }
+      }
     default:
       return state;
   }

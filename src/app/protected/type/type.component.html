@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <button type="button" class="close" (click)="activeModal.dismiss()">
+  <button type="button" class="close" (click)="modal.dismiss()">
     <span>&times;</span>
   </button>
   <h4 class="modal-title">Тип событий</h4>
@@ -26,5 +26,5 @@
           [disabled]="state.type?.eventsCount !== 0"
           (click)="onDeleteButtonClick()">Удалить</button>
   <button type="button" class="btn btn-primary mr-1" (click)="save()">Сохранить</button>
-  <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Отмена</button>
+  <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Отмена</button>
 </div>

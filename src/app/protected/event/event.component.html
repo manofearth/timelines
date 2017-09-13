@@ -63,11 +63,13 @@
   <button type="button" class="mr-auto btn btn-danger" (click)="onDeleteButtonClick()"
           [hidden]="isDeleteConfirmationVisible || (status$ | async) === 'NEW'">Удалить</button>
   <div class="mr-auto" *ngIf="isDeleteConfirmationVisible">
-    <span class="text-warning small" *ngIf="(attachedToTimelinesCount$ | async) !== 0">Событие используется в {{(attachedToTimelinesCount$ | async)}} лентах!</span>
+    <span class="text-warning small" *ngIf="(attachedToTimelinesCount$ | async) !== 0">
+      Событие используется в {{(attachedToTimelinesCount$ | async)}} лентах!
+    </span>
     <span class="text-warning small">Действительно удалить?</span>
     <button type="button" class="btn btn-secondary" (click)="onDeleteConfirmNoClick()">Нет</button>
     <button type="button" class="btn btn-danger" (click)="onDeleteConfirmYesClick()">Да</button>
   </div>
-  <button type="button" class="btn btn-primary mr-1" (click)="save()">Сохранить</button>
-  <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Отмена</button>
+  <button type="button" class="btn btn-primary mr-1" (click)="onSaveButtonClick()">Сохранить</button>
+  <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Отмена</button>
 </div>

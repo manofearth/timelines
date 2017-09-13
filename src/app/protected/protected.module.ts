@@ -59,8 +59,11 @@ import { TypesAlgoliaSearchEffect } from './types/effects/types-algolia-search.e
 import { EventFirebaseDeleteEffect } from './event/effects/event-firebase-delete.effect';
 import { EventsAlgoliaClearCacheEffect } from './events/effects/events-algolia-clear-cache.effect';
 import { TypesAlgoliaClearCacheEffect } from './types/effects/types-algolia-clear-cache.effect';
-import { InfoSourcesListComponent } from './info-sources-list/info-sources-list.component';
-import { InfoSourcesAlgoliaSearchEffect } from './info-sources-list/effects/info-sources-algolia-search.effect';
+import { InfoSourcesListComponent } from './info-sources/info-sources-list.component';
+import { InfoSourcesAlgoliaSearchEffect } from './info-sources/effects/info-sources-algolia-search.effect';
+import { InfoSourceModalComponent } from './info-source/info-source-modal.component';
+import { InfoSourcesRouterEffect } from './info-sources/effects/info-sources-router.effect';
+import { InfoSourceModalEffect } from './info-source/effects/info-source-modal.effect';
 
 // noinspection JSUnusedGlobalSymbols
 @NgModule({
@@ -96,6 +99,8 @@ import { InfoSourcesAlgoliaSearchEffect } from './info-sources-list/effects/info
     EffectsModule.run(EventsAlgoliaClearCacheEffect),
     EffectsModule.run(TypesAlgoliaClearCacheEffect),
     EffectsModule.run(InfoSourcesAlgoliaSearchEffect),
+    EffectsModule.run(InfoSourcesRouterEffect),
+    EffectsModule.run(InfoSourceModalEffect),
   ],
   declarations: [
     TimelinesComponent,
@@ -117,6 +122,7 @@ import { InfoSourcesAlgoliaSearchEffect } from './info-sources-list/effects/info
     InputDirective,
     EventsListComponent,
     InfoSourcesListComponent,
+    InfoSourceModalComponent,
   ],
   providers: [
     TimelineCanDeactivate,
@@ -135,8 +141,8 @@ import { InfoSourcesAlgoliaSearchEffect } from './info-sources-list/effects/info
     EventComponent,
     GroupComponent,
     TypeComponent,
+    InfoSourceModalComponent,
   ]
 })
 export class ProtectedModule {
 }
-

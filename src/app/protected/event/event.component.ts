@@ -42,7 +42,7 @@ export class EventComponent implements OnInit, OnDestroy {
   private typeSub: Subscription;
 
   constructor(
-    public activeModal: NgbActiveModal,
+    public modal: NgbActiveModal,
     private store: Store<AppState>,
   ) {
   }
@@ -70,7 +70,7 @@ export class EventComponent implements OnInit, OnDestroy {
     }
   }
 
-  save() {
+  onSaveButtonClick() {
     this.store.select<AppState>(state => state).take(1).subscribe(state => {
       const action: EventSaveButtonAction = {
         type: 'EVENT_SAVE_BUTTON',
@@ -83,7 +83,7 @@ export class EventComponent implements OnInit, OnDestroy {
         action.payload.groupId = state.timeline.timeline.groups[ state.timeline.currentGroupIndex ].id;
       }
       this.store.dispatch(action);
-      this.activeModal.close();
+      this.modal.close();
     });
   }
 
@@ -104,12 +104,8 @@ export class EventComponent implements OnInit, OnDestroy {
         }
       };
       this.store.dispatch(action);
-      this.activeModal.close();
+      this.modal.close();
     });
-  }
-
-  dismiss() {
-    this.activeModal.dismiss();
   }
 
   selectTypeSelectorState(appState: AppState): SelectorInputState<TimelineEventsTypeLight> {

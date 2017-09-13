@@ -14,9 +14,14 @@ import { initialTypeState, TypeState } from './protected/type/type-states';
 import { typeReducer } from './protected/type/type.reducer';
 import { eventsListInitialState, eventsListReducer, EventsListState } from './protected/events/events-list.reducer';
 import {
-  infoSourcesListInitialState, infoSourcesListReducer,
+  infoSourcesListInitialState,
+  infoSourcesListReducer,
   InfoSourcesListState
-} from './protected/info-sources-list/info-sources-list.reducer';
+} from './protected/info-sources/info-sources-list.reducer';
+import {
+  infoSourceModalInitialState, infoSourceModalReducer,
+  InfoSourceModalState
+} from './protected/info-source/info-source-modal.reducer';
 
 export interface AppState {
   auth: AuthState;
@@ -27,6 +32,7 @@ export interface AppState {
   types: TypesState;
   type: TypeState;
   infoSourcesList: InfoSourcesListState;
+  infoSourceModal: InfoSourceModalState;
 }
 
 export const initialState: AppState = {
@@ -47,11 +53,12 @@ export const initialState: AppState = {
   types: typesInitialState,
   type: initialTypeState,
   infoSourcesList: infoSourcesListInitialState,
+  infoSourceModal: infoSourceModalInitialState,
 };
 
 export type Reducers<TState> = {
   [K in keyof TState]: ActionReducer<TState[K]>
-}
+  }
 
 const reducers: Reducers<AppState> = {
   auth: authReducer,
@@ -62,6 +69,7 @@ const reducers: Reducers<AppState> = {
   types: typesReducer,
   type: typeReducer,
   infoSourcesList: infoSourcesListReducer,
+  infoSourceModal: infoSourceModalReducer,
 };
 
 const developmentReducer: ActionReducer<AppState> = compose(storeFreeze, combineReducers)(reducers);

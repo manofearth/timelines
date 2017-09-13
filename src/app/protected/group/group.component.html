@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <button type="button" class="close" (click)="activeModal.dismiss()">
+  <button type="button" class="close" (click)="modal.dismiss()">
     <span>&times;</span>
   </button>
   <h5 class="modal-title">Группа событий</h5>
@@ -8,7 +8,7 @@
   <form class="form-inline" *ngIf="form" [formGroup]="form">
     <tl-color-picker
       class="mr-1 align-middle"
-      formControlName="color"
+      [formControlName]="'color'"
       title="Цвет"
       [colors]="availableColors">
     </tl-color-picker>
@@ -18,5 +18,5 @@
 <div class="tl-group-modal-footer d-flex justify-content-end">
   <button type="button" class="btn btn-danger mr-auto" title="Удалить группу" (click)="deleteGroup()">X</button>
   <button type="button" class="btn btn-primary mr-1" (click)="save()">Сохранить</button>
-  <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Отмена</button>
+  <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Отмена</button>
 </div>

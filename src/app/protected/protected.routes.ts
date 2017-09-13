@@ -5,7 +5,7 @@ import { TimelineComponent } from './timeline/timeline.component';
 import { TimelineCanDeactivate } from './timeline/timeline-can-deactivate.service';
 import { TypesComponent } from './types/types.component';
 import { EventsListComponent } from './events/events-list.component';
-import { InfoSourcesListComponent } from './info-sources-list/info-sources-list.component';
+import { InfoSourcesListComponent } from './info-sources/info-sources-list.component';
 
 export const routes: Routes = [
   {
@@ -37,6 +37,11 @@ export const routes: Routes = [
       {
         path: 'info-sources',
         component: InfoSourcesListComponent,
+        children: [
+          {
+            path: ':id'
+          }
+        ]
       }
     ],
   },
