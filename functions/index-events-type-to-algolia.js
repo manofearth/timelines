@@ -14,7 +14,7 @@ function toAlgoliaEventType(dbEvent) {
 function indexEventTypeToAlgoliaFabric(algoliaClient) {
   return function (dbEvent) {
 
-    console.log('Indexing type', dbEvent.params.typeId, 'in algolia');
+    console.log('Indexing type', dbEvent.params.typeId, 'to algolia');
 
     const typesIndex = algoliaClient.initIndex('types');
 

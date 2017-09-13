@@ -15,7 +15,7 @@ function toAlgoliaTimelineEvent(dbEvent) {
 function indexTimelineEventToAlgoliaFabric(algoliaClient) {
   return function (dbEvent) {
 
-    console.log('Indexing event', dbEvent.params.eventId, 'in algolia');
+    console.log('Indexing event', dbEvent.params.eventId, 'to algolia');
 
     const eventsIndex = algoliaClient.initIndex('events');
 

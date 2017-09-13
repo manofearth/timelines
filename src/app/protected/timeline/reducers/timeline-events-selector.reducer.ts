@@ -1,4 +1,3 @@
-import { EventsSearchErrorAction, EventsSearchSuccessAction } from '../../events/effects/events-elastic-search.effect';
 import { SelectorInputState } from '../../shared/selector-input/selector-input-state';
 import { TimelineEventLight } from '../../shared/event/timeline-event';
 import { reduceWhen } from '../../../shared/reduce-when.fn';
@@ -7,6 +6,10 @@ import { composeReducers } from '../../../shared/compose-reducers.fn';
 import { selectorInputReducer } from '../../shared/selector-input/selector-input-reducer';
 import { actionHasName } from '../../../shared/action-has-name.fn';
 import { Action } from '@ngrx/store';
+import {
+  EventsAlgoliaSearchErrorAction,
+  EventsAlgoliaSearchSuccessAction
+} from '../../events/effects/events-algolia-search.effect';
 
 export const timelineEventsSelectorReducer = reduceWhen<SelectorInputState<TimelineEventLight>>(
   actionNameStartsWith(TIMELINE_EVENTS_SELECTOR_NAME_PREFIX),
@@ -20,7 +23,7 @@ function actionNameStartsWith(namePrefix: string) {
   return (action: Action) => actionHasName(action) && action.payload.name.startsWith(namePrefix);
 }
 
-type EventsSelectorPostReducerAction = EventsSearchSuccessAction | EventsSearchErrorAction;
+type EventsSelectorPostReducerAction = EventsAlgoliaSearchSuccessAction | EventsAlgoliaSearchErrorAction;
 
 function timelineEventsSelectorPostReducer(
   state: SelectorInputState<TimelineEventLight>, action: EventsSelectorPostReducerAction
@@ -28,13 +31,13 @@ function timelineEventsSelectorPostReducer(
 
   switch (action.type) {
 
-    case 'EVENTS_SEARCH_SUCCESS':
-      const results = action.payload.result.hits.hits.map(hit => ({
-        title: hit._source.title,
-        titleHighlighted: hit.highlight.title[0],
+    case 'EVENTS_ALGOLIA_SEARCH_SUCCESS':
+      const results = action.payload.hits.map(hit => ({
+        title: hit.title,
+        titleHighlighted: hit._highlightResult.title.value,
         item: {
-          id: hit._id,
-          title: hit._source.title,
+          id: hit.objectID,
+          title: hit.title,
         }
       }));
 
@@ -45,11 +48,11 @@ function timelineEventsSelectorPostReducer(
         isSearching: false,
       };
 
-    case 'EVENTS_SEARCH_ERROR':
+    case 'EVENTS_ALGOLIA_SEARCH_ERROR':
       return {
         ...state,
         isSearching: false,
-        error: action.payload.error,
+        error: action.payload,
       };
     default:
       return state;

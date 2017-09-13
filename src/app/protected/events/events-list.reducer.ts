@@ -26,8 +26,8 @@ export interface TimelineEventForList {
 
 export const eventsListInitialState: EventsListState = {
   query: null,
-  isSearching: false,
-  isLoading: false,
+  isSearching: true,
+  isLoading: true,
   error: null,
   list: [],
 };
@@ -50,8 +50,6 @@ export function eventsListReducer(state: EventsListState, action: EventsListRedu
       return {
         ...state,
         query: '',
-        isLoading: true,
-        isSearching: true,
       };
     case 'SEARCH_FIELD_INPUT':
       if (action.payload.name !== EVENTS_LIST_SEARCH_FIELD_NAME) {

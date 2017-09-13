@@ -13,6 +13,7 @@ export class AlgoliaSearchService {
   private client: algolia.AlgoliaClient;
   private _eventsIndex: algolia.AlgoliaIndex;
   private _typesIndex: algolia.AlgoliaIndex;
+  private _infoSourcesIndex: algolia.AlgoliaIndex;
 
   constructor(
     private auth: AngularFireAuth,
@@ -42,6 +43,17 @@ export class AlgoliaSearchService {
     );
   }
 
+  searchInfoSources(query: string): Observable<AlgoliaSearchResult<AlgoliaInfoSource>> {
+    return Observable.fromPromise(
+      this.infoSourcesIndex.search({
+        query: query,
+        filters: `ownerId:${this.auth.auth.currentUser.uid}`,
+        hitsPerPage: 20,
+        page: 0,
+      })
+    );
+  }
+
   clearCacheEvents() {
     this.eventsIndex.clearCache();
   }
@@ -62,6 +74,13 @@ export class AlgoliaSearchService {
       this._typesIndex = this.client.initIndex('types');
     }
     return this._typesIndex;
+  }
+
+  private get infoSourcesIndex(): algolia.AlgoliaIndex {
+    if (!this._infoSourcesIndex) {
+      this._infoSourcesIndex = this.client.initIndex('info-sources');
+    }
+    return this._infoSourcesIndex;
   }
 }
 
@@ -86,6 +105,14 @@ export interface AlgoliaEvent extends AlgoliaObject {
 export interface AlgoliaType extends AlgoliaObject {
   ownerId: string;
   kind: TypeKind;
+  title: string;
+  _highlightResult: {
+    title: AlgoliaHighlightedFieldValue;
+  }
+}
+
+export interface AlgoliaInfoSource extends AlgoliaObject {
+  ownerId: string;
   title: string;
   _highlightResult: {
     title: AlgoliaHighlightedFieldValue;

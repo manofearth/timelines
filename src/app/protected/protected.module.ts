@@ -30,7 +30,6 @@ import { EventsAlgoliaSearchEffect } from './events/effects/events-algolia-searc
 import { EffectsModule } from '@ngrx/effects';
 import { TypeDeleteEffect } from './type/effects/type-delete.effect';
 import { SelectorInputBlurEffect } from './shared/selector-input/selector-input-blur.effect';
-import { EventsElasticSearchEffect } from './events/effects/events-elastic-search.effect';
 import { TypeUpdateEffect } from './type/effects/type-update.effect';
 import { TypeGetEffect } from './type/effects/type-get.effect';
 import { TimelineFirebaseCreateEffect } from './timeline/effects/timeline-firebase-create.effect';
@@ -60,6 +59,8 @@ import { TypesAlgoliaSearchEffect } from './types/effects/types-algolia-search.e
 import { EventFirebaseDeleteEffect } from './event/effects/event-firebase-delete.effect';
 import { EventsAlgoliaClearCacheEffect } from './events/effects/events-algolia-clear-cache.effect';
 import { TypesAlgoliaClearCacheEffect } from './types/effects/types-algolia-clear-cache.effect';
+import { InfoSourcesListComponent } from './info-sources-list/info-sources-list.component';
+import { InfoSourcesAlgoliaSearchEffect } from './info-sources-list/effects/info-sources-algolia-search.effect';
 
 // noinspection JSUnusedGlobalSymbols
 @NgModule({
@@ -87,7 +88,6 @@ import { TypesAlgoliaClearCacheEffect } from './types/effects/types-algolia-clea
     EffectsModule.run(TypesAlgoliaSearchEffect),
     EffectsModule.run(TypeGetEffect),
     EffectsModule.run(TypeUpdateEffect),
-    EffectsModule.run(EventsElasticSearchEffect),
     EffectsModule.run(SelectorInputBlurEffect),
     EffectsModule.run(TypeDeleteEffect),
     EffectsModule.run(EventsAlgoliaSearchEffect),
@@ -95,6 +95,7 @@ import { TypesAlgoliaClearCacheEffect } from './types/effects/types-algolia-clea
     EffectsModule.run(EventsRouterEffect),
     EffectsModule.run(EventsAlgoliaClearCacheEffect),
     EffectsModule.run(TypesAlgoliaClearCacheEffect),
+    EffectsModule.run(InfoSourcesAlgoliaSearchEffect),
   ],
   declarations: [
     TimelinesComponent,
@@ -115,6 +116,7 @@ import { TypesAlgoliaClearCacheEffect } from './types/effects/types-algolia-clea
     SelectorSelectComponent,
     InputDirective,
     EventsListComponent,
+    InfoSourcesListComponent,
   ],
   providers: [
     TimelineCanDeactivate,

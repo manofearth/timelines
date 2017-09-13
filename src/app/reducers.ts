@@ -13,6 +13,10 @@ import { typesReducer } from './protected/types/types.reducer';
 import { initialTypeState, TypeState } from './protected/type/type-states';
 import { typeReducer } from './protected/type/type.reducer';
 import { eventsListInitialState, eventsListReducer, EventsListState } from './protected/events/events-list.reducer';
+import {
+  infoSourcesListInitialState, infoSourcesListReducer,
+  InfoSourcesListState
+} from './protected/info-sources-list/info-sources-list.reducer';
 
 export interface AppState {
   auth: AuthState;
@@ -22,6 +26,7 @@ export interface AppState {
   eventsList: EventsListState,
   types: TypesState;
   type: TypeState;
+  infoSourcesList: InfoSourcesListState;
 }
 
 export const initialState: AppState = {
@@ -41,6 +46,7 @@ export const initialState: AppState = {
   eventsList: eventsListInitialState,
   types: typesInitialState,
   type: initialTypeState,
+  infoSourcesList: infoSourcesListInitialState,
 };
 
 export type Reducers<TState> = {
@@ -55,6 +61,7 @@ const reducers: Reducers<AppState> = {
   eventsList: eventsListReducer,
   types: typesReducer,
   type: typeReducer,
+  infoSourcesList: infoSourcesListReducer,
 };
 
 const developmentReducer: ActionReducer<AppState> = compose(storeFreeze, combineReducers)(reducers);

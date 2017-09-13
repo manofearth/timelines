@@ -7,7 +7,6 @@ import {
   SearchFieldUpKeyAction
 } from '../search-field/search-field-actions';
 import { SelectorInputInitAction } from './selector-input-actions';
-import { EventsSearchErrorAction, EventsSearchSuccessAction } from '../../events/effects/events-elastic-search.effect';
 import { SelectorListSelectAction } from '../selector-list/selector-list-actions';
 import { SelectorInputBlurAction } from './selector-input-blur.effect';
 
@@ -16,8 +15,6 @@ type SelectorAction =
   | SelectorInputInitAction
   | SearchFieldUpKeyAction
   | SearchFieldDownKeyAction
-  | EventsSearchSuccessAction
-  | EventsSearchErrorAction
   | SearchFieldEscKeyAction
   | SelectorListSelectAction
   | SearchFieldEnterKeyAction

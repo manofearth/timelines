@@ -1,0 +1,25 @@
+<div class="container-fluid">
+  <h3 class="grid-row">Источники событий</h3>
+  <tl-search-field
+      [placeholder]="'Создайте новый источник событий или найдите существующий'"
+      [name]="searchFieldName"
+      [isSearching$]="isSearching$"
+      [searchQuery$]="searchQuery$"
+      [focusOnShown]="true"
+  ></tl-search-field>
+  <div *ngIf="hasError$ | async" class="alert alert-danger">{{ errorMessage$ | async }}</div>
+  <div *ngIf="isLoading$ | async" class="alert alert-info">Загружаются...</div>
+  <div class="grid-row">
+    <table class="table table-hover">
+      <tbody>
+      <tr *ngFor="let infoSource of (list$ | async)">
+        <td>
+          <a [routerLink]="'/info-sources/' + infoSource.id"
+             class="info-source-title"
+             [innerHtml]="infoSource.title"></a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
