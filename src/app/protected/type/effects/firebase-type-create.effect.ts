@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { TypeCreateErrorAction, TypeCreateSuccessAction } from '../type-create-actions';
+import { TypeCreateErrorAction, TypeCreateSuccessAction } from '../../types/type-create-actions';
 import { Observable } from 'rxjs/Observable';
 import { Actions, Effect } from '@ngrx/effects';
-import { FirebaseType, TypesFirebaseService } from '../types-firebase.service';
+import { FirebaseType, TypesFirebaseService } from '../../types/types-firebase.service';
 import { SearchFieldCreateAction } from '../../shared/search-field/search-field-actions';
-import { TYPES_SEARCH_FIELD_NAME } from '../types.component';
+import { TYPES_SEARCH_FIELD_NAME } from '../../types/types.component';
 import { actionNameIs } from '../../../shared/action-name-is.fn';
-import { toType } from '../../type/effects/type-get.effect';
+import { toType } from './type-get.effect';
 import { toError } from '../../shared/firebase/protected-firebase.effect';
 
 @Injectable()

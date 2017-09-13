@@ -37,7 +37,7 @@
 - [x] Events list. Search before creating
 - [x] Events list. Create new
 - [x] Events list. Edit
-- [ ] Events list. Delete
+- [x] Events list. Delete
 - [ ] Info sources list
 - [ ] Info sources list. Search before creating
 - [ ] Info sources list. Create new

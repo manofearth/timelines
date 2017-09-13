@@ -16,7 +16,7 @@ import { TypeKind } from '../type/type-states';
 
 @Component({
   templateUrl: './event.component.html',
-  styleUrls: ['./event.component.css'],
+  styleUrls: [ './event.component.css' ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventComponent implements OnInit, OnDestroy {
@@ -80,7 +80,7 @@ export class EventComponent implements OnInit, OnDestroy {
       };
       if (state.timeline.timeline) {
         action.payload.timelineId = state.timeline.timeline.id;
-        action.payload.groupId = state.timeline.timeline.groups[state.timeline.currentGroupIndex].id;
+        action.payload.groupId = state.timeline.timeline.groups[ state.timeline.currentGroupIndex ].id;
       }
       this.store.dispatch(action);
       this.activeModal.close();
@@ -96,11 +96,16 @@ export class EventComponent implements OnInit, OnDestroy {
   }
 
   onDeleteConfirmYesClick() {
-    const action: EventDeleteButtonAction = {
-      type: 'EVENT_DELETE_BUTTON'
-    };
-    this.store.dispatch(action);
-    this.activeModal.close();
+    this.store.select<string>(state => state.event.event.id).take(1).subscribe(id => {
+      const action: EventDeleteButtonAction = {
+        type: 'EVENT_DELETE_BUTTON',
+        payload: {
+          eventId: id
+        }
+      };
+      this.store.dispatch(action);
+      this.activeModal.close();
+    });
   }
 
   dismiss() {
@@ -140,6 +145,9 @@ export interface EventSaveButtonAction extends Action {
 
 export interface EventDeleteButtonAction extends Action {
   type: 'EVENT_DELETE_BUTTON';
+  payload: {
+    eventId: string;
+  }
 }
 
 function selectValidationKey(key: keyof EventValidationState) {

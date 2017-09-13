@@ -27,8 +27,18 @@ export function toInt(value: any): number {
     return parseInt(value, 10);
 }
 
-export function spliceOneValue(arr: any[], valueToDelete: any) {
-  arr.splice(arr.findIndex(isEqual(valueToDelete)), 1);
+export function spliceOneValue<T>(arr: T[], valueToDelete: T) {
+  spliceOneIndex(arr, arr.findIndex(isEqual(valueToDelete)));
+}
+
+export function spliceOneIndex<T>(arr: T[], indexToDelete: number) {
+  arr.splice(indexToDelete, 1);
+}
+
+export function deleteOneIndex<T>(arr: T[], indexToDelete: number): T[] {
+  const arrClone = [...arr];
+  spliceOneIndex(arrClone, indexToDelete);
+  return arrClone;
 }
 
 export function push<T>(arr: T[], value: T): T[] {

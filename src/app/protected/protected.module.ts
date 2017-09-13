@@ -45,7 +45,7 @@ import { EventFirebaseAttachEffect } from './event/effects/event-firebase-attach
 import { TimelineFirebaseCreateGroupEffect } from './group/effects/timeline-firebase-create-group.effect';
 import { TimelineFirebaseSaveGroupEffect } from './group/effects/timeline-firebase-save-group.effect';
 import { TimelineFirebaseDeleteGroupEffect } from './group/effects/timeline-firebase-delete-group.effect';
-import { FirebaseTypeCreateEffect } from './types/effects/firebase-type-create.effect';
+import { FirebaseTypeCreateEffect } from './type/effects/firebase-type-create.effect';
 import { AlgoliaSearchService } from './shared/algolia/algolia-search.service';
 import { TimelineEventsElasticSearchService } from './timeline/timeline-events-elastic-search.service';
 import { TypesElasticSearchService } from './types/types-elastic-search.service';
@@ -58,6 +58,8 @@ import { EventModalEffect } from './event/effects/event-modal.effect';
 import { EventsRouterEffect } from './events/effects/events-router.effect';
 import { TypesAlgoliaSearchEffect } from './types/effects/types-algolia-search.effect';
 import { EventFirebaseDeleteEffect } from './event/effects/event-firebase-delete.effect';
+import { EventsAlgoliaClearCacheEffect } from './events/effects/events-algolia-clear-cache.effect';
+import { TypesAlgoliaClearCacheEffect } from './types/effects/types-algolia-clear-cache.effect';
 
 // noinspection JSUnusedGlobalSymbols
 @NgModule({
@@ -91,6 +93,8 @@ import { EventFirebaseDeleteEffect } from './event/effects/event-firebase-delete
     EffectsModule.run(EventsAlgoliaSearchEffect),
     EffectsModule.run(EventModalEffect),
     EffectsModule.run(EventsRouterEffect),
+    EffectsModule.run(EventsAlgoliaClearCacheEffect),
+    EffectsModule.run(TypesAlgoliaClearCacheEffect),
   ],
   declarations: [
     TimelinesComponent,

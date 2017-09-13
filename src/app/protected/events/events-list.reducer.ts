@@ -6,9 +6,9 @@ import { AlgoliaEvent } from '../shared/algolia/algolia-search.service';
 import { ComponentInitAction } from '../../shared/component-init-action';
 import { EVENTS_LIST_COMPONENT_NAME, EVENTS_LIST_SEARCH_FIELD_NAME } from './events-list.component';
 import { SearchFieldInputAction } from '../shared/search-field/search-field-actions';
-import { EventSaveButtonAction } from '../event/event.component';
+import { EventDeleteButtonAction, EventSaveButtonAction } from '../event/event.component';
 import { isNew } from '../shared/event/is-new.fn';
-import { push, setToArr, setToObj } from '../../shared/helpers';
+import { deleteOneIndex, push, setToArr, setToObj } from '../../shared/helpers';
 import { EventInsertSuccessAction } from '../event/effects/event-firebase-insert.effect';
 
 export interface EventsListState {
@@ -38,6 +38,7 @@ type EventsListReducerAction = EventsAlgoliaSearchSuccessAction
   | SearchFieldInputAction
   | EventSaveButtonAction
   | EventInsertSuccessAction
+  | EventDeleteButtonAction
   ;
 
 export function eventsListReducer(state: EventsListState, action: EventsListReducerAction): EventsListState {
@@ -102,8 +103,17 @@ export function eventsListReducer(state: EventsListState, action: EventsListRedu
         list: setToArr(
           state.list,
           eventIndexToSetId,
-          setToObj(state.list[eventIndexToSetId], 'id', action.payload.eventId)
+          setToObj(state.list[ eventIndexToSetId ], 'id', action.payload.eventId)
         )
+      };
+    case 'EVENT_DELETE_BUTTON':
+      const eventIndexToDelete = state.list.findIndex(event => event.id === action.payload.eventId);
+      if (eventIndexToDelete === 1) {
+        return state;
+      }
+      return {
+        ...state,
+        list: deleteOneIndex(state.list, eventIndexToDelete),
       };
     default:
       return state;
