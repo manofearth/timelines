@@ -13,6 +13,8 @@ import { TimelineEvent } from '../shared/event/timeline-event';
 import { getProp, getPropDeep } from '../shared/helpers';
 import { EventValidationState } from './reducers/event-validation.reducer';
 import { TypeKind } from '../type/type-states';
+import { SearchableListState } from '../shared/searchable-list/searchable-list.reducer';
+import { InfoSourceForList } from '../info-sources/info-sources-list.reducer';
 
 @Component({
   templateUrl: './event.component.html',
@@ -25,6 +27,7 @@ export class EventComponent implements OnInit, OnDestroy {
   titleInputName: string = EVENT_TITLE_INPUT_NAME;
   dateBeginInputName: string = EVENT_DATE_BEGIN_INPUT_NAME;
   dateEndInputName: string = EVENT_DATE_END_INPUT_NAME;
+  infoSourceSearchableListName: string = EVENT_INFO_SOURCE_SEARCHABLE_LIST_NAME;
 
   status$: Observable<EventStatus>;
   isTypeEmpty$: Observable<boolean>;
@@ -38,6 +41,7 @@ export class EventComponent implements OnInit, OnDestroy {
   attachedToTimelinesCount$: Observable<number>;
 
   isDeleteConfirmationVisible: boolean = false;
+  isSelectInfoSourceListVisible: boolean = false;
 
   private typeSub: Subscription;
 
@@ -108,6 +112,14 @@ export class EventComponent implements OnInit, OnDestroy {
     });
   }
 
+  onAddInfoSourceButtonClick() {
+    const action: EventAddInfoSourceButtonAction = {
+      type: 'EVENT_ADD_INFO_SOURCE_BUTTON',
+    };
+    this.store.dispatch(action);
+    this.isSelectInfoSourceListVisible = true;
+  }
+
   selectTypeSelectorState(appState: AppState): SelectorInputState<TimelineEventsTypeLight> {
     return appState.event.typeSelector;
   }
@@ -123,12 +135,17 @@ export class EventComponent implements OnInit, OnDestroy {
   selectDateEnd(appState: AppState): TimelineDate {
     return getProp(appState.event.event, 'dateEnd', null);
   }
+
+  selectInfoSourceSearchableListState(appState: AppState): SearchableListState<InfoSourceForList> {
+    return appState.event.infoSourceSelector;
+  }
 }
 
 export const EVENT_TYPE_SELECTOR_NAME = 'event-type-selector';
 export const EVENT_TITLE_INPUT_NAME = 'event-title-input';
 export const EVENT_DATE_BEGIN_INPUT_NAME = 'event-date-begin-input';
 export const EVENT_DATE_END_INPUT_NAME = 'event-date-end-input';
+export const EVENT_INFO_SOURCE_SEARCHABLE_LIST_NAME = 'event-info-source-searchable-list';
 
 export interface EventSaveButtonAction extends Action {
   type: 'EVENT_SAVE_BUTTON';
@@ -144,6 +161,10 @@ export interface EventDeleteButtonAction extends Action {
   payload: {
     eventId: string;
   }
+}
+
+export interface EventAddInfoSourceButtonAction extends Action {
+  type: 'EVENT_ADD_INFO_SOURCE_BUTTON';
 }
 
 function selectValidationKey(key: keyof EventValidationState) {

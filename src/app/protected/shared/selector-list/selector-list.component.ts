@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../../../reducers';
 import { Observable } from 'rxjs/Observable';
 import { SelectorListSelectAction } from './selector-list-actions';
+import { SelectorListState } from './selector-list-state';
 
 @Component({
   selector: 'tl-selector-list',
@@ -14,10 +15,14 @@ import { SelectorListSelectAction } from './selector-list-actions';
 export class SelectorListComponent {
 
   @Input() name: string;
-  @Input() results$: Observable<SelectorListItem<any>[]> = Observable.of([]);
-  @Input() highlightedIndex$: Observable<number> = Observable.of(0);
+  @Input() stateSelector: (state: AppState) => SelectorListState<any>;
+
+  results$: Observable<SelectorListItem<any>[]>;
+  highlightedIndex$: Observable<number>;
 
   constructor(private store: Store<AppState>) {
+    this.results$ = this.store.select(state => this.stateSelector(state).results);
+    this.highlightedIndex$ = this.store.select(state => this.stateSelector(state).highlightedIndex);
   }
 
   onItemSelect(item: SelectorListItem<any>) {

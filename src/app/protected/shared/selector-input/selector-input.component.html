@@ -3,16 +3,14 @@
   <tl-search-field
     [placeholder]="placeholder"
     [name]="name"
-    [isSearching$]="isSearching$"
-    [searchQuery$]="searchQuery$"
-    [createByEnterKey$]="createByEnterKey$"
+    [stateSelector]="stateSelector"
+    [createByEnterKey]="'if-no-results'"
   ></tl-search-field>
 
   <div class="dropdown-menu">
     <tl-selector-list
       [name]="name"
-      [results$]="results$"
-      [highlightedIndex$]="highlightedIndex$"
+      [stateSelector]="stateSelector"
     ></tl-selector-list>
   </div>
 

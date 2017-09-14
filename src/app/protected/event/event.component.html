@@ -57,11 +57,25 @@
 
     </div>
 
+    <div class="row">
+      <div class="dropdown">
+        <button type="button" class="btn btn-link text-muted"
+                (click)="onAddInfoSourceButtonClick()">Добавить источник информации
+        </button>
+        <div class="dropdown-menu" [class.show]="isSelectInfoSourceListVisible">
+          <tl-searchable-list
+              [name]="infoSourceSearchableListName"
+              [stateSelector]="selectInfoSourceSearchableListState"
+          ></tl-searchable-list>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 <div class="tl-event-modal-footer d-flex justify-content-end">
   <button type="button" class="mr-auto btn btn-danger" (click)="onDeleteButtonClick()"
-          [hidden]="isDeleteConfirmationVisible || (status$ | async) === 'NEW'">Удалить</button>
+          [hidden]="isDeleteConfirmationVisible || (status$ | async) === 'NEW'">Удалить
+  </button>
   <div class="mr-auto" *ngIf="isDeleteConfirmationVisible">
     <span class="text-warning small" *ngIf="(attachedToTimelinesCount$ | async) !== 0">
       Событие используется в {{(attachedToTimelinesCount$ | async)}} лентах!

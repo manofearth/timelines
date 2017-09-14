@@ -5,6 +5,7 @@ import { Store } from '@ngrx/store';
 import { InfoSourceForList } from './info-sources-list.reducer';
 import { getProp } from '../shared/helpers';
 import { ComponentInitAction } from '../../shared/component-init-action';
+import { SearchFieldState } from '../shared/search-field/search-field-state';
 
 @Component({
   selector: 'tl-info-sources-list',
@@ -44,6 +45,10 @@ export class InfoSourcesListComponent implements OnInit {
       }
     };
     this.store.dispatch(action);
+  }
+
+  searchFieldStateSelector(state: AppState): SearchFieldState {
+    return state.infoSourcesList;
   }
 
 }

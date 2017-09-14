@@ -1,0 +1,14 @@
+<div>
+  <tl-search-field
+      [name]="name"
+      [placeholder]="'Поиск'"
+      [stateSelector]="stateSelector"
+      [focusOnShown]="true"
+      [createByEnterKey]="'if-no-results'"
+  ></tl-search-field>
+
+  <tl-selector-list
+      [name]="name"
+      [stateSelector]="stateSelector"
+  ></tl-selector-list>
+</div>

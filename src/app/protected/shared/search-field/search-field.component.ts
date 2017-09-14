@@ -29,6 +29,7 @@ import {
 } from './search-field-actions';
 import { Subject } from 'rxjs/Subject';
 import { getProp } from '../helpers';
+import { SearchFieldState } from './search-field-state';
 
 @Component({
   selector: 'tl-search-field',
@@ -39,14 +40,16 @@ import { getProp } from '../helpers';
 export class SearchFieldComponent implements OnInit, OnDestroy, DoCheck {
 
   @Input() name: string;
+  @Input() stateSelector: (state: AppState) => SearchFieldState;
   @Input() placeholder: string;
-  @Input() isSearching$: Observable<boolean> = Observable.of(false);
-  @Input() searchQuery$: Observable<string> = Observable.of('');
-  @Input() createByEnterKey$: Observable<boolean> = Observable.of(true);
   @Input() focusOnShown: boolean = false;
+  @Input('createByEnterKey') createByEnterKeyMode: SearchFieldCreateByEnterKeyMode = 'never';
 
   @ViewChild('searchInput') searchInput: ElementRef;
 
+  isSearching$: Observable<boolean>;
+  searchQuery$: Observable<string>;
+  hasResults$: Observable<boolean>;
   isCreateButtonHidden$: Observable<boolean>;
 
   private valueChangesSub: Subscription;
@@ -57,6 +60,10 @@ export class SearchFieldComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   ngOnInit() {
+
+    this.isSearching$ = this.store.select(state => this.stateSelector(state).isSearching);
+    this.searchQuery$ = this.store.select(state => this.stateSelector(state).query);
+    this.hasResults$ = this.store.select(state => this.stateSelector(state).hasResults);
 
     this.isVisibleSubject = new Subject();
 
@@ -104,16 +111,23 @@ export class SearchFieldComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   onEnterKey() {
-    this.createByEnterKey$
-      .withLatestFrom(this.isCreateButtonHidden$)
-      .take(1)
-      .subscribe(([ createByEnter, isCreateButtonHidden ]) => {
-        if (createByEnter && !isCreateButtonHidden) {
-          this.dispatchActionWithCurrentValue<SearchFieldCreateAction>('SEARCH_FIELD_CREATE');
-        } else {
-          this.dispatchActionWithCurrentValue<SearchFieldEnterKeyAction>('SEARCH_FIELD_ENTER_KEY');
-        }
-      });
+    switch (this.createByEnterKeyMode) {
+      case 'never':
+        this.dispatchActionWithCurrentValue<SearchFieldEnterKeyAction>('SEARCH_FIELD_ENTER_KEY');
+        break;
+      case 'always':
+        this.dispatchActionWithCurrentValue<SearchFieldCreateAction>('SEARCH_FIELD_CREATE');
+        break;
+      case 'if-no-results':
+        this.hasResults$.take(1).subscribe(hasResults => {
+          if (hasResults) {
+            this.dispatchActionWithCurrentValue<SearchFieldEnterKeyAction>('SEARCH_FIELD_ENTER_KEY');
+          } else {
+            this.dispatchActionWithCurrentValue<SearchFieldCreateAction>('SEARCH_FIELD_CREATE');
+          }
+        });
+        break;
+    }
   }
 
   onArrowDownKey() {
@@ -155,3 +169,5 @@ export class SearchFieldComponent implements OnInit, OnDestroy, DoCheck {
 }
 
 const USER_INPUT_DEBOUNCE_TIME = 300;
+
+export type SearchFieldCreateByEnterKeyMode = 'never' | 'always' | 'if-no-results';

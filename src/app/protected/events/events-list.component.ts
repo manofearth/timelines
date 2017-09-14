@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { getProp } from '../shared/helpers';
 import { TimelineEventForList } from './events-list.reducer';
 import { ComponentInitAction } from '../../shared/component-init-action';
+import { SearchFieldState } from '../shared/search-field/search-field-state';
 
 @Component({
   selector: 'tl-events',
@@ -14,8 +15,6 @@ import { ComponentInitAction } from '../../shared/component-init-action';
 })
 export class EventsListComponent implements OnInit, OnDestroy {
 
-  isSearching$: Observable<boolean>;
-  searchQuery$: Observable<string>;
   hasError$: Observable<boolean>;
   errorMessage$: Observable<string>;
   isLoading$: Observable<boolean>;
@@ -29,8 +28,6 @@ export class EventsListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.isSearching$ = this.store.select<boolean>(state => state.eventsList.isSearching);
-    this.searchQuery$ = this.store.select<string>(state => state.eventsList.query);
     this.hasError$ = this.store.select<boolean>(state => state.eventsList.error !== null);
     this.errorMessage$ = this.store.select<string>(state => getProp(state.eventsList.error, 'message', ''));
     this.isLoading$ = this.store.select<boolean>(state => state.eventsList.isLoading);
@@ -40,6 +37,10 @@ export class EventsListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+  }
+
+  searchFieldStateSelector(state: AppState): SearchFieldState {
+    return state.eventsList;
   }
 
   private dispatchInit() {

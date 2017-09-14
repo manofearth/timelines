@@ -3,8 +3,7 @@
   <tl-search-field
     [placeholder]="'Создайте новое событие'"
     [name]="searchFieldName"
-    [isSearching$]="isSearching$"
-    [searchQuery$]="searchQuery$"
+    [stateSelector]="searchFieldStateSelector"
     [focusOnShown]="true"
   ></tl-search-field>
   <div *ngIf="hasError$ | async" class="alert alert-danger">{{ errorMessage$ | async }}</div>

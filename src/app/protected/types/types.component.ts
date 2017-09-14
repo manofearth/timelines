@@ -7,11 +7,11 @@ import { TypeGetAction } from '../type/type-get-actions';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TypeComponent } from '../type/type.component';
 import { TypeEraseAction } from '../type/type-erase-action';
-import { Observable } from 'rxjs/Observable';
 import { ComponentInitAction } from '../../shared/component-init-action';
 import { Actions } from '@ngrx/effects';
 import { SearchFieldCreateAction } from '../shared/search-field/search-field-actions';
 import { actionNameIs } from '../../shared/action-name-is.fn';
+import { SearchFieldState } from '../shared/search-field/search-field-state';
 
 @Component({
   selector: 'tl-types',
@@ -22,9 +22,6 @@ import { actionNameIs } from '../../shared/action-name-is.fn';
 export class TypesComponent implements OnInit, OnDestroy {
 
   state: TypesState;
-
-  isSearching$: Observable<boolean>;
-  searchQuery$: Observable<string>;
 
   searchFieldName: string = TYPES_SEARCH_FIELD_NAME;
 
@@ -52,9 +49,6 @@ export class TypesComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.openTypeModal();
       });
-
-    this.isSearching$ = this.store.select<boolean>(state => state.types.isSearching);
-    this.searchQuery$ = this.store.select<string>(state => state.types.query);
 
     this.fetchTypes();
   }
@@ -86,6 +80,10 @@ export class TypesComponent implements OnInit, OnDestroy {
     this.store.dispatch(action);
 
     this.openTypeModal();
+  }
+
+  searchFieldStateSelector(state: AppState): SearchFieldState {
+    return state.types;
   }
 
   private openTypeModal() {

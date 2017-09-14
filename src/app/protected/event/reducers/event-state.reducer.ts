@@ -1,7 +1,7 @@
 import { EventState } from '../event-states';
 import { Reducers } from '../../../reducers';
 import { ActionReducer, combineReducers } from '@ngrx/store';
-import { EVENT_TYPE_SELECTOR_NAME } from '../event.component';
+import { EVENT_INFO_SOURCE_SEARCHABLE_LIST_NAME, EVENT_TYPE_SELECTOR_NAME } from '../event.component';
 import { reduceWhen } from '../../../shared/reduce-when.fn';
 import { selectorSelectReducer } from '../../shared/selector-select/selector-select-reducer';
 import { selectorInputReducer } from '../../shared/selector-input/selector-input-reducer';
@@ -15,8 +15,15 @@ import {
 } from './event-type-selector.reducer';
 import { eventValidationReducer } from './event-validation.reducer';
 import { actionNameIs } from '../../../shared/action-name-is.fn';
+import { searchableListReducer } from '../../shared/searchable-list/searchable-list.reducer';
 
-export type EventStateWithoutValidate = Pick<EventState, 'status' | 'error' | 'event' | 'typeSelector'>;
+export type EventStateWithoutValidate = Pick<EventState,
+  'status'
+  | 'error'
+  | 'event'
+  | 'typeSelector'
+  | 'infoSourceSelector'>;
+
 const reducersWithoutValidate: Reducers<EventStateWithoutValidate> = {
   status: eventStatusReducer,
   error: eventErrorReducer,
@@ -32,6 +39,10 @@ const reducersWithoutValidate: Reducers<EventStateWithoutValidate> = {
       )
     )
   ),
+  infoSourceSelector: reduceWhen(
+    actionNameIs(EVENT_INFO_SOURCE_SEARCHABLE_LIST_NAME),
+    searchableListReducer,
+  )
 };
 
 const reduceWithoutValidation: ActionReducer<EventStateWithoutValidate> = combineReducers(reducersWithoutValidate);

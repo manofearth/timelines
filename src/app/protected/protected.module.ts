@@ -69,6 +69,7 @@ import { InfoSourcesFirebaseService } from './info-sources/info-sources-firebase
 import { InfoSourcesAlgoliaClearCacheEffect } from './info-sources/effects/info-sources-algolia-clear-cache.effect';
 import { InfoSourceFirebaseUpdateEffect } from './info-source/effects/info-source-firebase-update.effect';
 import { InfoSourceFirebaseGetEffect } from './info-source/effects/info-source-firebase-get.effect';
+import { SearchableListComponent } from './shared/searchable-list/searchable-list.component';
 
 // noinspection JSUnusedGlobalSymbols
 @NgModule({
@@ -132,6 +133,7 @@ import { InfoSourceFirebaseGetEffect } from './info-source/effects/info-source-f
     EventsListComponent,
     InfoSourcesListComponent,
     InfoSourceModalComponent,
+    SearchableListComponent,
   ],
   providers: [
     TimelineCanDeactivate,

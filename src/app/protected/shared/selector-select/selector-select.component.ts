@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { AppState } from '../../../reducers';
 import { Action, Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
@@ -11,7 +11,8 @@ import { SelectorInputBlurEffect } from '../selector-input/selector-input-blur.e
 @Component({
   selector: 'tl-selector-select',
   templateUrl: './selector-select.component.html',
-  styleUrls: ['./selector-select.component.css']
+  styleUrls: ['./selector-select.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectorSelectComponent implements OnInit, OnDestroy {
 
@@ -20,13 +21,8 @@ export class SelectorSelectComponent implements OnInit, OnDestroy {
   @Input() stateSelector: (state: AppState) => SelectorSelectState<any>;
   @Input() hasDanger: boolean = false;
 
-  isSearching$: Observable<boolean>;
-  searchQuery$: Observable<string>;
-  results$: Observable<SelectorListItem<any>[]>;
-  highlightedIndex$: Observable<number>;
   selectedItem$: Observable<SelectorListItem<any>>;
   isDropdownVisible$: Observable<boolean>;
-  createByEnterKey$: Observable<boolean>;
 
   private selectedItemSub: Subscription;
 
@@ -39,15 +35,8 @@ export class SelectorSelectComponent implements OnInit, OnDestroy {
 
     this.dispatchInitAction();
 
-    this.isSearching$ = this.store.select(state => this.stateSelector(state).isSearching);
-    this.searchQuery$ = this.store.select(state => this.stateSelector(state).query);
-    this.results$ = this.store.select(state => this.stateSelector(state).results);
-    this.highlightedIndex$ = this.store.select(state => this.stateSelector(state).highlightedIndex);
     this.isDropdownVisible$ = this.store.select(state => this.stateSelector(state).isDropdownVisible);
-    this.createByEnterKey$ = this.store.select<boolean>(state => {
-      const selectorState = this.stateSelector(state);
-      return !selectorState.isSearching && selectorState.results.length === 0
-    });
+
     this.selectedItem$ = this.store.select(state => this.stateSelector(state).selectedItem).map(val => {
       if (val) {
         return val;
