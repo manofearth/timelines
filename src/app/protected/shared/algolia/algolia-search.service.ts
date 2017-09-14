@@ -62,6 +62,10 @@ export class AlgoliaSearchService {
     this.typesIndex.clearCache();
   }
 
+  clearCacheInfoSources() {
+    this.infoSourcesIndex.clearCache();
+  }
+
   private get eventsIndex(): algolia.AlgoliaIndex {
     if (!this._eventsIndex) {
       this._eventsIndex = this.client.initIndex('events');

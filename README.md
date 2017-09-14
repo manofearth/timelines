@@ -40,8 +40,8 @@
 - [x] Events list. Delete
 - [x] Info sources list
 - [x] Info sources list. Search before creating
-- [ ] Info sources list. Create new
-- [ ] Info sources list. Edit
+- [x] Info sources list. Create new
+- [x] Info sources list. Edit
 - [ ] Edit event. Select info sources
 - [ ] Info sources list. Delete
 - [ ] Edit event. Select group

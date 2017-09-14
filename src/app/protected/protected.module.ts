@@ -64,6 +64,11 @@ import { InfoSourcesAlgoliaSearchEffect } from './info-sources/effects/info-sour
 import { InfoSourceModalComponent } from './info-source/info-source-modal.component';
 import { InfoSourcesRouterEffect } from './info-sources/effects/info-sources-router.effect';
 import { InfoSourceModalEffect } from './info-source/effects/info-source-modal.effect';
+import { InfoSourceFirebaseInsertEffect } from './info-source/effects/info-source-firebase-insert.effect';
+import { InfoSourcesFirebaseService } from './info-sources/info-sources-firebase.service';
+import { InfoSourcesAlgoliaClearCacheEffect } from './info-sources/effects/info-sources-algolia-clear-cache.effect';
+import { InfoSourceFirebaseUpdateEffect } from './info-source/effects/info-source-firebase-update.effect';
+import { InfoSourceFirebaseGetEffect } from './info-source/effects/info-source-firebase-get.effect';
 
 // noinspection JSUnusedGlobalSymbols
 @NgModule({
@@ -101,6 +106,10 @@ import { InfoSourceModalEffect } from './info-source/effects/info-source-modal.e
     EffectsModule.run(InfoSourcesAlgoliaSearchEffect),
     EffectsModule.run(InfoSourcesRouterEffect),
     EffectsModule.run(InfoSourceModalEffect),
+    EffectsModule.run(InfoSourceFirebaseInsertEffect),
+    EffectsModule.run(InfoSourceFirebaseUpdateEffect),
+    EffectsModule.run(InfoSourceFirebaseGetEffect),
+    EffectsModule.run(InfoSourcesAlgoliaClearCacheEffect),
   ],
   declarations: [
     TimelinesComponent,
@@ -136,6 +145,7 @@ import { InfoSourceModalEffect } from './info-source/effects/info-source-modal.e
     TypesElasticSearchService,
     TimelineEventsElasticSearchService,
     AlgoliaSearchService,
+    InfoSourcesFirebaseService,
   ],
   entryComponents: [
     EventComponent,
